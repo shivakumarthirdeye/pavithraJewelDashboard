@@ -1,0 +1,1280 @@
+.orderMainStyle {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    align-items: center;
+    align-content: center;
+}
+
+.productNameStyle {
+    width: 30%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+    gap: 5px;
+}
+
+.productMainStyle {
+    width: 24%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    align-items: center;
+    align-content: center;
+    /* margin-left: -22px; */
+}
+
+.dateStyle {
+    width: 15%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    align-items: center;
+    align-content: center;
+}
+
+.customerStyle {
+    width: 25%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    align-content: center;
+}
+
+.totalStyle {
+    width: 15%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-end; */
+    align-items: center;
+    align-content: center;
+}
+
+.paymentStyle {
+    width: 15%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    align-items: center;
+    align-content: center;
+}
+
+.status {
+    width: 16%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    align-items: center;
+    align-content: center;
+}
+
+.action {
+    width: 5%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+}
+
+.iconStyle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.cardWrap {
+    display: flex;
+    justify-content: flex-start;
+    gap: 13px;
+}
+
+.cardStyle {
+    width: 251px;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background: #FFFFFF;
+}
+
+.skuText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}
+
+.qytText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    align-content: center;
+}
+
+.priceStyle {
+    width: 25%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+.pendingAmountStyle {
+    width: 35%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.backgroundStyle {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    gap: 8px;
+    border-radius: 100px;
+    background: #E878191A;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.generalInfoStyle {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+}
+
+.generalInfoTextStyle {
+    font-family: Public Sans;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 30px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+}
+
+.lineStyle {
+    width: 312px;
+    height: 0px;
+    border-bottom: 1px solid #E0E2E7
+}
+
+.textStyle {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.statusStyling {
+    width: 282px;
+    height: 40px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+}
+
+.shipingCardStyle {
+    width: 331px;
+    height: fit-content;
+    /* padding: 24px; */
+    gap: 16px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+}
+
+.orderDateStyle {
+    font-family: Inter;
+    font-size: 19.17px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    color: #667085;
+}
+
+.orderDateStyle span {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 600;
+    line-height: 32.86px;
+    text-align: left;
+    color: #1D2939;
+}
+
+.dummyLineStyle {
+    width: 0px;
+    height: 25px;
+    border: 1.37px solid #D0D5DD
+}
+
+.estimateDeliveryStyle {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 600;
+    line-height: 32.86px;
+    text-align: left;
+    color: #12B76A;
+}
+
+.bottomLine {
+    width: 1150px;
+    /* height: 1px; */
+    border: 1.37px solid #D0D5DD;
+    margin-top: 20px;
+}
+
+.trackingContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0;
+    position: relative;
+    padding: 10px 0;
+}
+
+.trackingContainer::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #d3d3d3;
+    z-index: 1;
+}
+
+.step,
+.stepCompleted {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.stepCompleted .circle {
+    background-color: #00b894;
+    border-color: #00b894;
+}
+
+.circle {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: #d3d3d3;
+    border: 2px solid #d3d3d3;
+    margin: 0 auto;
+}
+
+.label {
+    font-family: Inter;
+    font-size: 24.64px;
+    font-weight: 500;
+    line-height: 38.34px;
+    text-align: center;
+    color: #D0D5DD;
+}
+
+.stepCompleted .label {
+    color: #12B76A;
+}
+
+.date {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 400;
+    line-height: 32.86px;
+    text-align: center;
+    color: #667085;
+    margin-top: 5px;
+}
+
+.dummyStyle {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.proNameText {
+    font-family: Inter;
+    font-size: 32.86px;
+    font-weight: 400;
+    line-height: 43.81px;
+    text-align: left;
+    color: #344054;
+}
+
+.dummyText {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 400;
+    line-height: 32.86px;
+    text-align: left;
+    color: #667085;
+}
+
+.prizeText {
+    font-family: Inter;
+    font-size: 27.38px;
+    font-weight: 600;
+    line-height: 41.07px;
+    text-align: right;
+    color: #1D2939;
+}
+
+.qtyText {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 400;
+    line-height: 32.86px;
+    text-align: right;
+    color: #667085;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.section {
+    flex: 1;
+    margin-right: 20px;
+}
+
+.section:last-child {
+    margin-right: 0;
+}
+
+.sectionTitle {
+    font-family: Inter;
+    font-size: 27.38px;
+    font-weight: 500;
+    line-height: 41.07px;
+    text-align: left;
+    color: #000000;
+    margin-bottom: 10px;
+}
+
+.paymentInfo {
+    /* background-color: #f5f5f5; */
+    padding-top: 10px;
+    border-radius: 8px;
+}
+
+.paymentCard {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+.cardIcon {
+    font-family: Inter;
+    font-size: 19.17px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    color: #667085;
+}
+
+.deliveryInfo p {
+    font-family: Inter;
+    font-size: 24.64px;
+    font-weight: 500;
+    line-height: 38.34px;
+    text-align: left;
+    color: #667085;
+}
+
+.deliveryInfo span {
+    font-family: Inter;
+    font-size: 19.17px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    color: #667085;
+}
+
+.helpLinks {
+    display: flex;
+    flex-direction: column;
+}
+
+.helpLink {
+    font-family: Inter;
+    font-size: 24.64px;
+    font-weight: 500;
+    line-height: 38.34px;
+    text-align: left;
+    color: #667085;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 5px;
+}
+
+.summaryItem {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-family: Inter;
+    font-size: 24.38px;
+    font-weight: 500;
+    line-height: 41.07px;
+    text-align: left;
+    color: #667085;
+
+}
+
+.total {
+    font-weight: 700;
+    font-size: 18px;
+}
+
+.totalAmount {
+    font-family: Inter;
+    font-size: 27.38px;
+    font-weight: 700;
+    line-height: 41.07px;
+    text-align: right;
+    color: #1D2939;
+}
+
+.summaryLineStyle {
+    width: 100%;
+    /* border: 1px dashed ; */
+    border: 1.37px dashed #D0D5DD
+}
+
+.exportStyle {
+    width: fit-content;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    gap: 4px;
+    border-radius: 8px;
+    background: #F0F1F3;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.customerText {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #0C0D0F;
+    margin-left: 10px;
+}
+
+.imageContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.boxStyle {
+    width: fit-content;
+    height: fit-content;
+    border-radius: 16px;
+    border: 1px solid #DCDEE3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.reviewCard {
+    background: #F0F1F39C;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    width: 488px;
+    height: 244px;
+    top: 10px;
+    left: 20px;
+}
+
+.reviewHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reviewerInfo {
+    display: flex;
+    flex-direction: column;
+}
+
+.reviewerName {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.1599999964237213px;
+    text-align: left;
+    color: #000000DE;
+}
+
+.verifiedBuyer {
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+    color: #4CAF50;
+}
+
+.starRating {
+    color: #f5a623;
+}
+
+.reviewContent {
+    margin-bottom: 10px;
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21.98px;
+    letter-spacing: 0.10000000149011612px;
+    text-align: left;
+    color: #000000DE;
+}
+
+.reviewImages {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.reviewImages img {
+    width: 50px;
+    height: 50px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.reviewStatus {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.statusStyle {
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+    color: #00000061;
+}
+
+.statusActions {
+    display: flex;
+    gap: 15px;
+}
+
+.approve {
+    color: #1DB41D;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.reject {
+    color: #F92929;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.reviewDetails {
+    color: #666;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.pendingStatus {
+    color: #C86550;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: right;
+}
+
+.editIcon {
+    /* position: absolute; */
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    float: right
+}
+
+.dateStyles {
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+    color: #666;
+}
+
+.clothStyle {
+    font-family: Rubik;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 19.2px;
+    text-align: center;
+    color: #232323;
+}
+
+.prizeStyle {
+    font-family: Rubik;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 11px;
+    text-align: center;
+    color: #A69E9E;
+}
+
+.viewCardStyle {
+    width: 350px;
+    height: fit-content;
+    gap: 16px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+}
+
+.productStockContainer {
+    width: 677px;
+    height: fit-content;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+}
+
+.exchangeStyle {
+    width: 152px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #F929291A;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    color: #F92929;
+    cursor: pointer;
+}
+
+.inputbox {
+    width: 100%;
+    height: 140px;
+    padding: 8px 12px 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7
+}
+
+.label {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #777980;
+}
+
+.productTextStyle {
+    width: 100%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+}
+
+.info {
+    padding: 0px 20px;
+    color: var(--Gray-900, #191B1C);
+    font-family: "Public Sans";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    display: flex;
+    text-transform: capitalize;
+    align-items: center;
+    width: 100%;
+    height: 100px;
+}
+
+.bottomLineStyle {
+    width: 100%;
+    border-bottom: 1px solid #E5E7E8;
+}
+
+.nameStyle {
+    font-family: Public Sans;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #777980;
+}
+
+.numStyle {
+    font-family: Public Sans;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 37.6px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    margin-top: 5px;
+}
+
+.trashButton {
+    width: 66px;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    border-radius: 8px;
+    background: #F0F1F3;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1D1F2C;
+    cursor: pointer;
+}
+
+.attributeStyle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.productStyle {
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+}
+
+.filterTextStyle {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.header {
+    width: 100%;
+    height: 42px;
+    padding: 12px 20px 12px 20px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    background: #F5F6F9;
+    margin-top: 10px;
+}
+
+.proNameText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    text-transform: capitalize;
+}
+
+.categoryStyle {
+    font-family: Public Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.totalAmountStyle {
+    width: 22%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: right;
+}
+
+.downloadingButtonStyle {
+    width: 118px;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    gap: 4px;
+    border-radius: 8px;
+    background: #F0F1F3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1D1F2C;
+}
+
+.reviewsCard {
+    background-color: #fff;
+    width: 100%;
+    height: fit-content;
+    border: 1px solid #E5E7EB;
+    border-radius: 10px;
+}
+
+.productContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.productCard {
+    padding: 10px;
+    /* border: 1px solid #E5E7EB; */
+    border-radius: 10px;
+    box-shadow: 3px 3px 14px 5px #00000014;
+    background-color: #fff;
+}
+
+.productsInfo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.productHeading {
+    font-family: Rubik;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: center;
+    color: #232323;
+}
+
+.productImage {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.productPrice {
+    font-family: Rubik;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    text-align: left;
+    color: #000000;
+    margin-top: 10px;
+}
+
+.reviewLine {
+    width: 290px;
+    height: 0px;
+    border: 1px solid #D0D5DD66;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.reviewInfo {
+    width: 290px;
+    height: fit-content;
+    padding: 16px;
+    background: #F0F1F39C;
+    box-shadow: 0px 1px 0px 0px #00000014;
+}
+
+.reviewerDetails {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reviewerHeading {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.1599999964237213px;
+    text-align: left;
+    color: #000000DE;
+}
+
+.reviewDate {
+    color: #999;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.rating {
+    color: #ffcc00;
+    font-size: 14px;
+}
+
+.reviewTitle {
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21.98px;
+    letter-spacing: 0.10000000149011612px;
+    text-align: left;
+    color: #1f1e1ede;
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.reviewImages {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow-x: auto;
+    /* Enables horizontal scrolling */
+    max-width: 100%;
+    /* Adjusts the width as needed */
+    gap: 10px;
+}
+
+.reviewImage {
+    width: 100px;
+    height: 60px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.productAttributes {
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+    color: #000000DE;
+}
+
+.statusActions {
+    display: flex;
+    justify-content: flex-start;
+    /* margin-top: 5px; */
+    align-items: center;
+    gap: 10px;
+}
+
+.approveBtn {
+    color: #1DB41D;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.rejectionBtn {
+    color: #F92929;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.editBtn {
+    color: #000;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.reviews {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #777980;
+}
+
+.editReview {
+    width: 352px;
+    height: 40px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 1px solid #E0E2E7;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #858D9D;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+}
+
+.star {
+    color: #ffcc00;
+    /* Gold color for the stars */
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.star.empty {
+    color: #ddd;
+    /* Gray color for empty stars */
+}
+
+.star.half {
+    color: #ffcc00;
+    /* Half star color should also be gold */
+}
+
+.deleteImage {
+    width: 14px;
+    height: 14px;
+    left: 52px;
+    background: #F92929;
+    align-items: center;
+    display: flex;
+    border-radius: 7px;
+    text-align: center;
+    justify-content: center;
+    margin-left: -15px;
+    margin-top: -5px;
+    z-index: 1px;
+}
+
+.adPayment {
+    font-family: Public Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #667085;
+}
+.jwelleryDetails{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 20px 0;
+}
+.jwelleryText{
+    font-family: Rubik;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #232323;    
+}
+.priceText{
+    font-family: Rubik;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #000000; 
+    padding-top: 10px;  
+}
+.buttonStyle{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}

@@ -1,0 +1,236 @@
+.cardContainer {
+    width: 100%;
+    height: fit-content;
+    padding: 20px 0px 20px 0px;
+    border-radius: 4px;
+    background: #FFFFFF;
+    box-shadow: 0px 5px 15px 0px #00000033;
+    margin-top: 20px;
+}
+
+.imageView {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.notificationItem {
+    width: 100%;
+    height: fit-content;
+    /* padding: 20px; */
+    gap: 8px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #DCDCDC;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10px;
+}
+
+.notificationHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.userIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.fileAttachment,
+.notificationIcon {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 20px;
+}
+
+.fileName {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    color: #1A1F36;
+}
+
+.fileSize {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    color: #A5ACB8;
+}
+
+.fileIcon {
+    width: 20px;
+    height: 20px;
+}
+
+.notificationText {
+    color: #525252;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 21px;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.timeStamp {
+    color: #A5ACB8;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    margin-top: 10px;
+}
+
+.nameText {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 20px;
+    text-align: left;
+    color: #1A1F36;
+}
+
+.nameText span {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    color: #1A1F36;
+}
+
+.titleText {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 18px;
+    text-align: left;
+    color: #292929;
+}
+
+.notificationList {
+    max-height: 500px;
+    overflow-y: hidden;
+
+}
+
+.notificationItem {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.notificationContent {
+    flex-grow: 1;
+}
+
+.notificationTitle {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    text-align: left;
+    color: #1A1F36;
+}
+
+.notificationDescription {
+    color: #1A1F36;
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    /* height: 40px; */
+    border-radius: 2px;
+    /* border-left: 2px solid #DDDEE1; */
+    margin-top: 5px;
+}
+
+.notificationTimestamp {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    color: #A5ACB8;
+}
+
+.headingStyle {
+    display: flex;
+    width: 40%;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 20px 0 20px;
+}
+
+.h3Style {
+    font-family: Poppins;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1A1F36;
+}
+
+.allStyle {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    font-family: Poppins;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #9EA0AA;
+}
+
+.viewStyle {
+    width: 46px;
+    height: 28px;
+    padding: 4px 8px 4px 8px;
+    border-radius: 4px;
+    background: #FFFFFF;
+    border: 1px solid #DDDEE1;
+    font-family: Poppins;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+    letter-spacing: 0.02em;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #3C4257;
+    margin-top: 10px;
+}
+
+.viewAllStyle {
+    display: flex;
+    width: 40%;
+    align-items: center;
+    justify-content: center;
+    padding-top: 10px;
+}
+
+.viewAllStyle span {
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #5458F7;
+}

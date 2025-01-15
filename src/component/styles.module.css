@@ -1,0 +1,218 @@
+.tabView {
+    width: fit-content;
+    height: 40px;
+    gap: 10px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    flex-direction: row;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    /* padding-left: 10px; */
+    /* padding-right: 10px; */
+    border: 1px solid #E0E2E7;
+}
+
+.active {
+    width: fit-content;
+    height: 28px;
+    gap: 8px;
+    border-radius: 6px;
+    justify-content: center;
+    align-content: center;
+    cursor: pointer;
+    background-color: #F0F1F3;
+    padding: 0px 5px;
+    border-radius: 8px;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.inActive {
+    justify-content: center;
+    align-content: center;
+    padding-left: 10px;
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+.activeText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    color: #1D1F2C;
+    
+}
+
+.inActiveText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    color: #667085;
+}
+
+.tabViewStyle {
+    width: 100%;
+    height: 40px;
+    flex-direction: row;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-right: 10px;
+    border-bottom: 1px solid #E0E2E7;
+    margin-top: 30px;
+    gap: 15px;
+}
+
+.activeTab {
+    /* border-bottom: 2px solid #0d0d0e; */
+    cursor: pointer;
+}
+
+.inActiveTab {
+    /* padding-left: 20px; */
+    padding-right: 10px;
+    cursor: pointer;
+}
+
+.activeTabText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    border-bottom: 2px solid #0d0d0e;
+    padding-bottom: 17px;
+}
+
+.inActiveTabText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+    padding-bottom: 17px;
+}
+
+.notificationItem {
+    display: flex;
+    justify-content: flex-start;
+    border-bottom: 1px solid #E4E8EE;
+    align-items: flex-start;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.notificationDot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 10px;
+    background: #90CDF4;
+    border: 1px solid #4299E1;
+    margin-top: 6px;
+}
+
+.notificationContent p {
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+
+}
+
+.notificationActions {
+    margin-top: 10px;
+}
+
+.notificationTime {
+    display: block;
+    margin-top: 10px;
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    color: #A5ACB8;
+    margin-bottom: 20px;
+}
+
+.notification {
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+}
+
+.notifText {
+    font-family: Inter;
+    font-size: 18px;
+    font-weight: 500;
+    line-height: 21.78px;
+    text-align: left;
+    color: #000000;
+}
+
+.notificationAll {
+    flex-direction: row;
+    justify-content: space-evenly;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.notificationAll p {
+    font-family: Poppins;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    color: #9EA0AA;
+}
+.deleteModalStyle {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.notifText {
+    font-family: Public Sans;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 30px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    color: #1D1F2C;
+}
+
+.desc {
+    font-family: Public Sans;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    color: #667085;
+}
+
+.deleteButtonStyle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.crossStyle {
+    justify-content: end;
+    display: flex;
+    align-items: flex-end;
+}

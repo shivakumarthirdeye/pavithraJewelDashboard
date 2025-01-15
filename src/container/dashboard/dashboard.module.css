@@ -1,0 +1,171 @@
+.welcomeText {
+    font-family: Public Sans;
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 37.6px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+}
+
+.mainStyle {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+}
+
+.descText {
+    font-family: Public Sans;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.cardWrap {
+    display: flex;
+    gap: 28px;
+}
+
+.cardStyle {
+    width: 251px;
+    height: 110px;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background: #FFFFFF;
+    margin-top: 25px;
+    /* margin-left: 16px; */
+}
+
+.iconStyle {
+    justify-content: flex-start;
+    width: fit-content;
+    display: flex;
+}
+
+.nameStyle {
+    font-family: Public Sans;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #777980;
+}
+
+.numStyle {
+    font-family: Public Sans;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 37.6px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    margin-top: 5px;
+}
+
+.boxStyle {
+    width: 100%;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 1px solid #E0E2E7;
+    margin-top: 20px;
+}
+
+.goldRateStyle {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.goldRateStyle span {
+    font-family: Public Sans;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #777980;
+}
+
+.labelStyle {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #777980;
+}
+
+.goldInputbox {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--Gray-100, #E0E2E7);
+    background: var(--Gray-White, #FFF);
+    width: 100%;
+    height: 48px;
+    padding: 12px 10px 12px 10px;
+    border-radius: 8px
+}
+
+.goldInputbox input {
+    color: #8C94A3;
+    font-family: Figtree;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    text-align: left;
+    border: none;
+    outline: none;
+    width: 100%;
+}
+
+.perGram {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: right;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #858D9D;
+
+}
+
+.changesStyke {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #E87819;
+}
+
+.description {
+    font-family: Public Sans;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #667085;
+}

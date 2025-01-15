@@ -1,0 +1,191 @@
+.productStockContainer {
+    width: 100%;
+    height: fit-content;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+}
+
+.idStyle {
+    width: 15%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.pageStyle {
+    width: 40%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.lastUpdateStyle {
+    width: 25%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.actionStyle {
+    width: 15%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.info {
+    padding: 15px 20px 15px 20px;
+    /* background-color: #FFF; */
+    color: var(--Gray-900, #191B1C);
+    font-family: "Public Sans";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    /* 142.857% */
+    display: flex;
+    text-transform: capitalize;
+    /* align-items: center; */
+    /* border-bottom: 1px solid #E5E7E8; */
+    width: 100%;
+}
+
+.backToStyle {
+    width: fit-content;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    border-radius: 8px;
+    border: 1px solid #C2C6CE;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1D1F2C;
+    cursor: pointer;
+}
+
+.httpsStyle {
+    width: 86px;
+    height: 39px;
+    padding: 8px;
+    border-radius: 8px 0px 0px 8px;
+    background: #EDEDED;
+    border-top: 1px solid #E0E2E7;
+    border-left: 1px solid #E0E2E7;
+    border-bottom: 1px solid #E0E2E7;
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 22px;
+    letter-spacing: -0.011em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #404040;
+}
+
+.addButtonStyle {
+    width: fit-content;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    gap: 4px;
+    border-radius: 8px;
+    background: #DCDEE38F;
+    border: 1px solid #96969696;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0px 20px 0 20px;
+}
+
+.addButtonStyle span {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1D1F2C;
+}
+
+.deleteBackgroundStyle {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #FEECEE;
+}
+.addBackgroundStyle {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 8px;
+    background: #E87819;
+}
+
+.categoriesStyle {
+    width: fit-content;
+    height: 37px;
+    border-radius: 5px;
+    background: #FFFFFF;
+    box-shadow: 7px 4px 20px 4px #0000001A;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 10px;
+    align-items: center;
+    margin-top: 10px;
+    gap: 15px;
+}
+
+.textStyle {
+    font-family: Poppins;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 15.6px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #666666;
+}

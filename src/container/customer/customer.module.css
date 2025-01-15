@@ -1,0 +1,145 @@
+.customerStyle {
+    width: 28%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.numberStyle {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.emailStyle {
+    width: 30%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.statusStyle {
+    width: 10%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    align-content: center;
+}
+
+.dateStyle {
+    width: 15%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.actionStyle {
+    width: 6%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    align-items: center;
+}
+
+.infoCardStyle {
+    width: 552px;
+    height: fit-content;
+    border-radius: 16px;
+    border: 1px solid #DCDEE3;
+    background: #FFFFFF;
+    padding-bottom: 20px;
+    margin-top: 20px;
+}
+
+.productCardStyle {
+    width: 1, 128px;
+    height: fit-content;
+    background: #FFFFFF;
+    border: 1px solid #DCDEE3;
+    box-shadow: 0px 4px 30px 0px #4D54640D;
+    border-radius: 16px;
+}
+
+.productMainStyle {
+    width: 28%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: flex-start; */
+    align-items: center;
+    align-content: center;
+    /* margin-left: -22px;*/
+}
+
+.actionStyle {
+    width: 8%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: right;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.headerStyle {
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.calendarStyle {
+    /* display: flex; */
+    /* flex-wrap: nowrap; */
+    padding: 10px;
+    font-size: 14px;
+    color: lightgray;
+    font-weight: 400;
+    /* background-color: #FFFFFF; */
+}

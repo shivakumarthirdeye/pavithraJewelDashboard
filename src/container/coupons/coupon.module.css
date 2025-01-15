@@ -1,0 +1,267 @@
+.couponNameStyle {
+    width: 26%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.couponCodeStyle {
+    width: 13%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.usageCount {
+    width: 10%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.dateStyle {
+    width: 23%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.statusStyle {
+    width: 10%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.action {
+    width: 5%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+}
+
+.couponInfoBox {
+    width: 100%;
+    height: fit-content;
+    border-radius: 6px;
+    background: #FFFFFF;
+    box-shadow: 0px 1px 4px 0px #15223214;
+    padding: 30px;
+    margin-top: 30px;
+}
+
+.headingText {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 24px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #131523;
+}
+
+.description {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #5A607F;
+}
+
+.lineStyle {
+    width: 100%;
+    border-bottom: 1px solid #E6E9F4;
+    margin: 20px 0;
+}
+
+.couponTypeStyle {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+.settingLimitStyle{
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    /* gap: 5px; */
+}
+.activeBox {
+    width: 25%;
+    height: 96px;
+    border-radius: 4px;
+    border: 2px solid #E87819;
+    gap: 10px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-right: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.activeBox p {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #E87819;
+}
+
+.inActiveBox {
+    width: 25%;
+    height: 96px;
+    border-radius: 7px;
+    border: 1px solid #D7DBEC;
+    gap: 10px;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    margin-right: 10px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+.inActiveBox p {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #5A607F;
+}
+
+.inputbox {
+    display: flex;
+    /* padding-left: 10px; */
+    align-items: center;
+    border: 1px solid var(--Gray-100, #E0E2E7);
+    background: var(--Gray-White, #FFF);
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+}
+
+.inputbox input::placeholder {
+    color: #858D9D;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    /* letter-spacing: 0.005em; */
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    border: none;
+    outline: none;
+    padding-left: 10px;
+    width: 100%;
+}
+
+.inputbox input {
+    color: #081735;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    /* letter-spacing: 0.005em; */
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    border: none;
+    outline: none;
+    padding-left: 10px;
+    width: 100%;
+    opacity: 1px;
+}
+
+.inputbox>div {
+    display: flex;
+    align-items: center;
+}
+
+.inrBox {
+    border-right: 1px solid #E0E2E7;
+    height: 40px;
+    padding: 10px;
+    border-top-right-radius: 7px;
+    border-bottom-right-radius: 7px;
+    color: #000;
+    font-weight: 600;
+}
+
+.limitText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #131523;
+}

@@ -1,0 +1,83 @@
+.contactMain {
+    display: flex;
+    justify-content: space-between;
+    margin: 40px 10%;
+    gap: 4%;
+}
+
+
+.contactCol2 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 40px;
+}
+
+.contactCol2 h2 {
+    color: #1A1A1A;
+    font-size: 24px;
+    margin: 0px;
+}
+
+.contactCol2 p {
+    color: #808080;
+    font-size: 14px;
+    margin: 0px;
+    text-align: center;
+}
+
+
+
+.buttonGroup {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.saveButton {
+    background-color: #C86550;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.saveButton:hover {
+    background-color: #C86550;
+    color: white;
+}
+
+@media  (max-width: 768px){
+    .contactCol2 img{
+        width: 100%;
+    }
+    .contactCol2{
+        width: auto;
+        padding: 40px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .contactMain{
+        flex-direction: column;
+        gap: 30px;
+        margin: 20px 20px;
+    }
+    .contactCol2{
+        width: auto;
+        padding: 40px;
+    }
+     .contactCol2 img{
+        width: 60%;
+    }
+
+    .profilerow{
+        flex-direction: column;
+    }
+    .profileformGroup input{
+        font-size: 12px;
+    }
+}

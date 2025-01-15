@@ -1,0 +1,322 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Inter:wght@100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Inter:wght@100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Public+Sans:ital,wght@0,100..900;1,100..900&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Inter+Tight:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Karla:ital,wght@0,200..800;1,200..800&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+:root {
+  --toastify-color-info: #3498db;
+  --toastify-color-success: #00df80;
+  --toastify-color-warning: #FFD21E;
+  --toastify-color-error: #F04248;
+
+  --toastify-color-progress-info: var(--toastify-color-info);
+  --toastify-color-progress-success: var(--toastify-color-success);
+  --toastify-color-progress-warning: var(--toastify-color-warning);
+  --toastify-color-progress-error: var(--toastify-color-error);
+}
+
+body {
+  background: #FAFBFF;
+}
+
+.fontSize {
+  font-size: 16px;
+}
+
+.fs2 {
+  font-size: 18px;
+}
+
+.fs3 {
+  font-size: 16px;
+}
+
+.heroText {
+  font-size: 38px;
+}
+
+.btext,
+.btext2 {
+  font-size: 32px;
+}
+
+.highlight {
+  font-size: 23px;
+  color: #343441;
+}
+
+.fyp {
+  display: flex;
+  justify-content: space-between;
+}
+
+.Toastify__toast--success {
+  /* background-image: url("../public/assets/icons/success.svg"); */
+  background-repeat: no-repeat;
+  background-size: 300px;
+  background-position: left;
+  background: '#00CC99';
+}
+
+.Toastify__toast--warning {
+  /* background-image: url("../public/assets/icons/warning.svg");ij */
+  background-repeat: no-repeat;
+  background-size: 300px;
+  background-position: left;
+}
+
+.Toastify__toast--error {
+  /* background-image: url("../public/assets/icons/error.svg"); */
+  background-repeat: no-repeat;
+  background-size: 300px;
+  background-position: left;
+}
+
+button:disabled {
+  opacity: 0.8;
+}
+
+.react-date-picker {
+  border: none !important;
+  background-color: transparent;
+}
+
+/* Remove border from the DatePicker wrapper */
+.react-date-picker__wrapper {
+  border: none !important;
+  background-color: transparent;
+  box-shadow: none;
+  /* Optional: remove box-shadow if present */
+}
+
+/* .react-date-picker {
+  border: 1px solid #E2E8F0;
+  border-radius: 16px;
+  padding: 8px;
+  height: 56px;
+}
+
+.react-date-picker__wrapper {
+  background-color: #f9f9f9;
+  border-radius: 4px;
+  border: none;
+}
+
+.react-date-picker__inputGroup {
+  font-size: 16px;
+  color: #333;
+} */
+/* Custom CSS for the time picker */
+.react-time-picker {
+  border: none !important;
+  /* Remove border */
+  box-shadow: none !important;
+  /* Remove any shadow */
+  padding: 8px;
+  /* Add custom padding */
+  background-color: transparent;
+  /* Add a background color */
+}
+
+.react-time-picker__input {
+  border: none !important;
+  /* Remove border for input */
+  outline: none !important;
+  /* Remove focus outline */
+  font-size: 16px;
+  /* Customize font size */
+  color: #333;
+  /* Text color */
+}
+
+.react-time-picker__wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* background-color: transparent; */
+  border: none;
+  /* Transparent background */
+}
+
+.time-picker__clockButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.time-picker__clearButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.react-time-picker__inputGroup {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: baseline;
+}
+
+.react-time-picker__inputGroup__input {
+  min-width: 1.99em;
+  height: 100%;
+  position: relative;
+  padding: 0 0px;
+  border: 0;
+  background: none;
+  color: currentColor;
+  font: inherit;
+  box-sizing: content-box;
+  appearance: textfield;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.custom-calendar {
+  border: none;
+  font-family: 'Arial', sans-serif;
+  padding: 20px;
+}
+
+.react-calendar__navigation button {
+  background-color: transparent;
+  border: none;
+  color: #222222;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Poppins';
+  margin-top: 10px;
+  padding: 0 10px;
+}
+
+.react-calendar__navigation button:disabled {
+  color: #ccc;
+}
+
+.react-calendar__navigation button:enabled:hover {
+  cursor: pointer;
+}
+
+.react-calendar__navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.react-calendar__month-view__days__day--weekend {
+  color: #000;
+  
+}
+
+.react-calendar__tile--now {
+  background: #E87819;
+  color: white;
+  border-radius: 50%;
+}
+
+.react-calendar__tile--active {
+  background: #E87819;
+  color: white;
+  border-radius: 50%;
+}
+
+.react-calendar__tile {
+  padding: 10px 0;
+  text-align: center;
+  border: none;
+  /* background-color: #fff; */
+}
+
+.react-calendar__tile:enabled:hover {
+  background-color: #eee;
+  border-radius: 50%;
+}
+
+@media screen and (max-width: 1087px) {
+  .btext2 {
+    font-size: 23px;
+  }
+}
+
+@media screen and (max-width: 973px) {
+  .fyp {
+    display: block;
+  }
+
+  .highlight {
+    font-size: 18px;
+  }
+}
+
+@media screen and (max-width: 603px) {
+  .btext2 {
+    font-size: 22px;
+  }
+}
+
+@media screen and (max-width: 525px) {
+  .fontSize {
+    font-size: 15px;
+  }
+
+  .fs2 {
+    font-size: 16.5px;
+  }
+
+  .fs3 {
+    font-size: 15px;
+  }
+
+  .heroText {
+    font-size: 32px;
+  }
+
+  .btext {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .btext2 {
+    font-size: 19px;
+  }
+}
+
+.customMultiselect {
+  text-align: center;
+  /* Centers text inside the dropdown */
+}
+
+.dropdownContent {
+  display: flex;
+  justify-content: center;
+  /* Centers items horizontally */
+}
+
+.dropdownHeading {
+  text-align: center;
+  /* Centers selected items in the heading */
+}
+
+.dropdownOption {
+  justify-content: center;
+  /* Centers text in the dropdown options */
+}

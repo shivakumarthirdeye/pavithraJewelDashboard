@@ -1,0 +1,118 @@
+.viewStyle {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.countryContainer {
+    width: 70%;
+    height: fit-content;
+    border-radius: 8px;
+    background-color: #FFFFFF;
+    /* box-shadow: 0px 10px 60px 0px #00000012; */
+    padding: 0 0 10px 0;
+    border: 1px solid #E0E2E7;
+}
+
+.slNoStyle {
+    width: 10%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.countryStyle {
+    width: 25%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.statusStyle {
+    width: 13%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.dateStyle {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    align-content: center;
+}
+
+.action {
+    width: 13%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    align-content: center;
+}
+
+.addCountryBox {
+    width: 30%;
+    height: fit-content;
+    padding: 20px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 1px solid #0000001A;
+}
+
+.h3Style {
+    font-family: Public Sans;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1D1F2C;
+}

@@ -1,0 +1,243 @@
+.reviews-card {
+    width: 100%;
+}
+
+.product-container {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 20px;
+}
+
+.product-card {
+    width: 32%;
+    height: 256px;
+    padding: 14px 20px 14px 20px;
+    background: #FFFFFF;
+    border-radius: 10px;
+}
+
+.products-info {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.product-heading {
+    font-family: Rubik;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: center;
+    color: #232323;
+}
+
+.product-image {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.product-price {
+    font-family: Rubik;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    text-align: left;
+    color: #000000;
+    margin-top: 10px;
+}
+
+.review-line {
+    width: 290px;
+    height: 0px;
+    border: 1px solid #D0D5DD66
+}
+
+.review-info {
+    width: 100%;
+    height: 100%;
+    padding: 16px;
+    background: #F0F1F39C;
+    box-shadow: 0px 1px 0px 0px #00000014;
+}
+
+.reviewer-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+.reviewer-Buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.reviewer-heading {
+    font-family: Roboto;
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.1599999964237213px;
+    text-align: left;
+    color: #000000DE;
+}
+
+.review-date {
+    color: #999;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.rating {
+    color: #ffcc00;
+    font-size: 14px;
+}
+
+.review-title {
+    font-family: Roboto;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 21.98px;
+    letter-spacing: 0.10000000149011612px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #000000DE;
+
+}
+
+.review-images {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.review-image {
+    width: 100px;
+    height: 80px;
+    border-radius: 4px;
+    object-fit: cover;
+}
+
+.product-attributes {
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 28px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+    color: #000000DE;
+}
+
+.statusActions {
+    display: flex;
+    justify-content: flex-start;
+    /* margin-top: 5px; */
+    align-items: center;
+    gap: 10px;
+}
+
+.approve-btn {
+    color: #1DB41D;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.rejection-btn {
+    color: #F92929;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.edit-btn {
+    color: #000;
+    cursor: pointer;
+    font-family: Roboto;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.14000000059604645px;
+    text-align: left;
+}
+
+.reviews {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #777980;
+}
+
+.edit-review {
+    width: 352px;
+    height: 40px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px;
+    background: #FFFFFF;
+    border: 1px solid #E0E2E7;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #858D9D;
+}
+
+.rating {
+    display: flex;
+    align-items: center;
+}
+
+.star {
+    color: #ffcc00;
+    /* Gold color for the stars */
+    font-size: 20px;
+    margin-right: 5px;
+}
+
+.star.empty {
+    color: #ddd;
+    /* Gray color for empty stars */
+}
+
+.star.half {
+    color: #ffcc00;
+    /* Half star color should also be gold */
+}
+
+.delete-image {
+    width: 14px;
+    height: 14px;
+    left: 52px;
+    background: #F92929;
+    align-items: center;
+    display: flex;
+    border-radius: 7px;
+    text-align: center;
+    justify-content: center;
+    margin-left: -15px;
+    margin-top: -5px;
+    z-index: 1px;
+}

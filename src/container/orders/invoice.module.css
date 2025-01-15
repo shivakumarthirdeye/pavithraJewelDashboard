@@ -1,0 +1,424 @@
+.invoiceContainer {
+    font-family: Arial, sans-serif;
+    width: 100%;
+    /* margin: 0 auto; */
+    padding: 58px;
+    /* border: 1px solid #ddd; */
+    background-color: #fff;
+}
+
+.logoStyle {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+}
+
+.imageStyle {
+    width: 100px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    /* border-bottom: 2px solid #000; */
+    padding-bottom: 20px;
+    margin-bottom: 20px;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.invoiceText {
+    font-family: Inter;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 19px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.companyText {
+    font-family: Inter;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.invoiceNumber {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: 0.01em;
+    text-align: right;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.invoiceNumberText {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0.01em;
+    text-align: right;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #484B4E;
+}
+
+.h3Style {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #FF451C;
+}
+
+.fromTo {
+    width: 65%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.paymentInfo {
+    text-align: right;
+    width: 20%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.addressStyle {
+    font-family: Inter;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.01em;
+    text-align: right;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #484B4E;
+}
+
+.myCompany {
+    font-family: Inter;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.addressTextStyle {
+    font-family: Inter;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 16px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #484B4E;
+}
+
+.invoiceTable {
+    width: 100%;
+    padding: 12px 20px 12px 20px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    /* margin-bottom: 20px; */
+}
+
+.tableData {
+    background-color: #f4f4f4;
+    border-bottom: 0.3px solid #00000033;
+    padding: 18px;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slNoStyle {
+    /* padding: 10px; */
+    width: 12%;
+    text-align: left;
+    font-family: Karla;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.nameStyle {
+    /* padding: 10px; */
+    width: 42%;
+    text-align: left;
+    font-family: Karla;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.hsnStyle {
+    /* padding: 10px; */
+    width: 12%;
+    text-align: left;
+    font-family: Karla;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.qtyStyle {
+    /* padding: 10px; */
+    width: 12%;
+    text-align: left;
+    font-family: Karla;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.goldRateStyle {
+    /* padding: 10px; */
+    width: 12%;
+    text-align: left;
+    font-family: Karla;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.totalStyle {
+    /* padding: 10px; */
+    width: 10%;
+    text-align: right;
+    font-family: Karla;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 14px;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.charges {
+    font-family: Inter;
+    font-size: 9px;
+    font-weight: 400;
+    line-height: 14px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #484B4E;
+}
+
+.summary {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 30px;
+}
+
+.declarationText {
+    font-family: Karla;
+    font-size: 9px;
+    font-weight: 400;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #484B4E;
+}
+
+.notes {
+    width: 39%;
+}
+
+.totals {
+    width: 35%;
+    text-align: right;
+}
+
+.finalAmount {
+    font-size: 1.5em;
+    color: red;
+    margin-top: 10px;
+}
+
+.invoiceGstText {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.gstHeaderStyle {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 100px;
+    padding: 10px 19px 0px 0;
+    width: 100%;
+}
+
+.bottomLine {
+    width: 100%;
+    border-bottom: 0.1px solid #00000033;
+}
+
+.invoiceGst {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 14px;
+    letter-spacing: 0.01em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+    width: 23.79%;
+}
+
+.invoiceTotalAmount {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.totalAmount {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 19px 10px 0;
+}
+
+.inwordsStyle {
+    width: 100%;
+    display: flex;
+    justify-content: flex-start;
+    padding: 10px 19px 10px 0;
+    gap: 20px;
+}
+
+.inWords {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.numInWords {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.declaration {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
+
+.logoTitle {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+    text-transform: uppercase;
+}
+
+.signStyle {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 14px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #484B4E;
+    padding-top: 30px;
+}
+
+.authorityStyle {
+    font-family: Karla;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #101011;
+}
