@@ -107,89 +107,7 @@ button:disabled {
   /* Optional: remove box-shadow if present */
 }
 
-/* .react-date-picker {
-  border: 1px solid #E2E8F0;
-  border-radius: 16px;
-  padding: 8px;
-  height: 56px;
-}
 
-.react-date-picker__wrapper {
-  background-color: #f9f9f9;
-  border-radius: 4px;
-  border: none;
-}
-
-.react-date-picker__inputGroup {
-  font-size: 16px;
-  color: #333;
-} */
-/* Custom CSS for the time picker */
-.react-time-picker {
-  border: none !important;
-  /* Remove border */
-  box-shadow: none !important;
-  /* Remove any shadow */
-  padding: 8px;
-  /* Add custom padding */
-  background-color: transparent;
-  /* Add a background color */
-}
-
-.react-time-picker__input {
-  border: none !important;
-  /* Remove border for input */
-  outline: none !important;
-  /* Remove focus outline */
-  font-size: 16px;
-  /* Customize font size */
-  color: #333;
-  /* Text color */
-}
-
-.react-time-picker__wrapper {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  /* background-color: transparent; */
-  border: none;
-  /* Transparent background */
-}
-
-.time-picker__clockButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.time-picker__clearButton {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.react-time-picker__inputGroup {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: baseline;
-}
-
-.react-time-picker__inputGroup__input {
-  min-width: 1.99em;
-  height: 100%;
-  position: relative;
-  padding: 0 0px;
-  border: 0;
-  background: none;
-  color: currentColor;
-  font: inherit;
-  box-sizing: content-box;
-  appearance: textfield;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
 
 .custom-calendar {
   border: none;
@@ -224,7 +142,7 @@ button:disabled {
 
 .react-calendar__month-view__days__day--weekend {
   color: #000;
-  
+
 }
 
 .react-calendar__tile--now {
@@ -251,6 +169,65 @@ button:disabled {
   border-radius: 50%;
 }
 
+/* Custom Toolbar Styling */
+.ql-toolbar {
+  background-color: #fff;
+  /* Light gray background */
+  border: none;
+  /* Border color */
+  border-top-left-radius: 8px;
+  /* Rounded corners */
+  border-top-right-radius: 8px;
+}
+
+/* Custom Editor Area Styling */
+.ql-editor {
+  min-height: 200px;
+  /* Minimum height of editor */
+  font-family: 'Nunito Sans';
+  /* Custom font */
+  font-size: 14px;
+  /* Font size */
+  color: #081735;
+  /* Text color */
+  padding: 10px;
+  /* Padding inside editor */
+  /* border: 1px solid #E0E2E7;   Border for the editor */
+  border-bottom-left-radius: '8px !important';
+  /* Rounded corners */
+  border-bottom-right-radius: '8px !important';
+  /* Rounded corners */
+  font-weight: 400;
+}
+
+/* Placeholder Styling */
+.ql-editor.ql-blank::before {
+  color: #081735;
+  border: none;
+  /*Border for the editor */
+  border-bottom-left-radius: 8px;
+  /* Rounded corners */
+  border-bottom-right-radius: 8px;
+  /* Rounded corners */
+}
+
+/* Focused Editor Border */
+.ql-container.ql-snow:focus-within {
+  border: 1px solid #007bff;
+  /* Blue border on focus */
+}
+
+/* Remove focus outline */
+.ql-container:focus {
+  outline: none;
+  border: none;
+}
+.ql-container.ql-snow {
+  border: 1px solid #E0E2E7;
+  border-bottom-left-radius: 8px;
+  /* Rounded corners */
+  border-bottom-right-radius: 8px;
+}
 @media screen and (max-width: 1087px) {
   .btext2 {
     font-size: 23px;

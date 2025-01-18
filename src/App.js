@@ -60,10 +60,10 @@ function App() {
             <Route path='/dashboard' element={<Dashboard />} />
             <Route path='/categories/Categories' element={<Categories />} />
             <Route path='/categories/Categories/AddCategory' element={<AddCategory />} />
-            <Route path='/categories/Categories/EditCategory' element={<EditCategory />} />
+            <Route path='/categories/Categories/EditCategory/:id' element={<EditCategory />} />
             <Route path='/categories/Subcategories' element={<Subcategories />} />
             <Route path='/categories/Subcategories/AddSubcategory' element={<AddSubcategory />} />
-            <Route path='/categories/Subcategories/EditSubcategory' element={<EditSubcategory />} />
+            <Route path='/categories/Subcategories/EditSubcategory/:id' element={<EditSubcategory />} />
             <Route path='/product/Product' element={<Product />} />
             <Route path='/product/Product/AddProduct' element={<AddProduct />} />
             <Route path='/product/Product/EditProduct' element={<EditProduct />} />

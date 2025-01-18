@@ -28,7 +28,7 @@ const DeleteModal = ({
         if (data) {
             setValues(data)
         }
-    }, [data,isRefresh])
+    }, [data,setValues,isRefresh])
 
     const style = {
         position: "absolute",

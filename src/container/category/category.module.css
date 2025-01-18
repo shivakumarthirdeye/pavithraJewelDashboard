@@ -93,16 +93,17 @@
 }
 
 .filter {
-    width: 100%;
+    width: fit-content;
     height: 40px;
     padding: 0px 16px 0px 16px;
     border-radius: 8px;
     border: 1px solid #E0E2E7;
     box-shadow: 0px 0px 64px 0px #00000012;
-    justify-content: space-around;
+    justify-content: center;
     display: flex;
     align-items: center;
     gap: 10px;
+    background-color: #ffffff;
 }
 
 .filter span {

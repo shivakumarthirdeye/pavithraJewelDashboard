@@ -1,5 +1,5 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import categoryStyle from './category.module.css';
 import { ImageIcon } from '../../svg';
 import { useFormik } from 'formik';
@@ -8,14 +8,26 @@ import { Button, MenuItem, Select, TextField } from '@mui/material';
 import { cancle, formselect, saveData } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
+import api from '../../helper/Api';
+import { addCategories, editCategories } from '../../redux/categoriesSlice';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import Toastify from '../../helper/Toastify';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const EditCategory = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const { id } = useParams();
+    const location = useLocation();
+    const item = location.state;
+    const data = item?.item;
+
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
         status: yup.string().required("Status is required"),
         description: yup.string().required("Description is required"),
-        img: yup.array().min(1, "Image is required"),
+        thumbnailPhoto: yup.string().required("Image is required"),
     })
 
     const {
@@ -26,13 +38,14 @@ const EditCategory = () => {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             name: "",
             description: "",
             status: "",
-            img: [],
+            thumbnailPhoto: "",
 
         },
         validationSchema: schema,
@@ -41,22 +54,55 @@ const EditCategory = () => {
         }
 
     })
-    const handleSubject = async (values) => {
-        // dispatch(addCategories(values));
-        navigate('/categories/Category')
-    };
-    // const handleImageChange = async (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
+    useEffect(() => {
+        if (data) {
+            setValues({
+                name: data?.name || "",
+                description: data?.description || '',
+                thumbnailPhoto: data?.thumbnailPhoto || '',
+                status: data?.status || '',
+                _id: id
 
-    //         const body = new FormData()
-    //         body.set('image', file)
-    //         const { data, status } = await api.fileUpload(body)
-    //         if (status === 200) {
-    //             setFieldValue("img", data.data)
-    //         }
-    //     }
-    // };
+            });
+        }
+    }, [data, setValues, id]);
+
+    const handleSubject = async (values) => {
+        const result = await dispatch(editCategories(values));
+        unwrapResult(result)
+        navigate('/categories/Categories')
+    };
+
+    const handleImageChange = async (e, attribute, repo) => {
+
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                }
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
+
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
+
+                    setFieldValue('thumbnailPhoto', data?.data?.url)
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
+        }
+    };
+
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={categoryStyle.container}>
@@ -122,11 +168,10 @@ const EditCategory = () => {
                     <div style={{ marginTop: 20 }}>
                         <label className={categoryStyle.label}>Description</label>
                         <br />
-                        {/* <div className={categoryStyle.descriptionBox}> */}
                         <TextField
                             type='text'
                             onBlur={handleBlur}
-                            value={values.na}
+                            value={values.description}
                             placeholder='Type category description here. . .'
                             name="description"
                             onChange={handleChange}
@@ -156,21 +201,17 @@ const EditCategory = () => {
                                     padding: "1px 0px", // adjust padding inside the input
                                 },
                             }}
-                            style={{
-                                fontSize: 12
-                            }}
                         />
-                        {/* </div> */}
                         {
                             errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
                         }
                     </div>
 
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
-                        <Button sx={cancle} onClick={handleSubmit} variant="contained" disableElevation={true}>Cancel</Button>
-                        <div>
-                            <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save Changes</Button>
-                        </div>
+                        <Button sx={cancle} onClick={resetForm} variant="contained" disableElevation={true}>Cancel</Button>
+
+                        <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save Changes</Button>
+
                     </div>
                 </div>
                 <div className={categoryStyle.thumbanilStyle}>
@@ -180,10 +221,10 @@ const EditCategory = () => {
                         <br />
                         <div className={categoryStyle.imageUpload1}>
                             <div className={categoryStyle.imageView}>
-                                {values?.img?.length > 0 ? (
+                                {values?.thumbnailPhoto?.length > 0 ? (
                                     <div>
                                         <img
-                                            src={values.img[0]}
+                                            src={values.thumbnailPhoto}
                                             alt="Selected"
                                             style={{ maxWidth: '100%', marginTop: '0px' }}
                                         />
@@ -203,7 +244,7 @@ const EditCategory = () => {
                                                 accept="image/*"
                                                 id='catFile'
                                                 style={{ display: 'none' }}
-                                                // onChange={handleImageChange}
+                                                onChange={handleImageChange}
                                                 value={values.catFile}
                                             />
                                         </div>
@@ -215,7 +256,26 @@ const EditCategory = () => {
                                     </>
                                 )
                                 }
-
+                                <div>
+                                    <label htmlFor='catFile' className={categoryStyle.uploadBox}>
+                                        <p className={categoryStyle.uploadText} style={{ marginTop: 10 }}>
+                                            Drag and drop image here, or click add image
+                                        </p>
+                                    </label>
+                                    <input
+                                        type='file'
+                                        accept="image/*"
+                                        id='catFile'
+                                        style={{ display: 'none' }}
+                                        onChange={handleImageChange}
+                                        value={values.catFile}
+                                    />
+                                </div>
+                                <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
+                                    <label htmlFor='catFile'>
+                                        Add Image
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         {
@@ -228,10 +288,15 @@ const EditCategory = () => {
                             <label className={categoryStyle.label}>Category Status</label>
                             <br />
                             <Select
-                                // className={categoryStyle.formselect}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                sx={formselect}
+                                sx={{
+                                    ...formselect,
+                                     "& .MuiSelect-select": {
+                                        fontWeight: values.status ? "500" : "400",
+                                        color: values.status ? "#081735" : "#858D9D",
+                                    },
+                                }}
                                 IconComponent={(props) => (
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
@@ -242,9 +307,12 @@ const EditCategory = () => {
                                 onChange={handleChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                <MenuItem value={true}>Active</MenuItem>
-                                <MenuItem value={false}>Inactive</MenuItem>
+                                <MenuItem value="ACTIVE">Active</MenuItem>
+                                <MenuItem value="INACTIVE">Inactive</MenuItem>
                             </Select>
+                            {
+                                errors.status && touched.status && <p style={{ color: "red", fontSize: "12px" }}>{errors.status}</p>
+                            }
                         </div>
                     </div>
                 </div>

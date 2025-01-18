@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Popover, Typography } from '@mui/material';
 
-const PopoverComponent = ({ icon, label, content,formattedDate }) => {
+const PopoverComponent = ({ icon, label, content,value }) => {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (event) => {
@@ -24,6 +24,7 @@ const PopoverComponent = ({ icon, label, content,formattedDate }) => {
                 id={id}
                 open={open}
                 anchorEl={anchorEl}
+                value={value}
                 onClose={handleClose}
                 anchorOrigin={{
                     vertical: 'bottom',

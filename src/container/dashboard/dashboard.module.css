@@ -156,6 +156,7 @@
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
     color: #E87819;
+    cursor: pointer;
 }
 
 .description {

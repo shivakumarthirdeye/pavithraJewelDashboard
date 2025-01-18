@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useMemo } from 'react'
+import React, { useEffect, useRef, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import productStyle from './product.module.css';
-import { ImageIcon, } from '../../svg';
+import { CrossIcon, ImageIcon, } from '../../svg';
 import { useFormik } from 'formik';
 import * as yup from "yup";
 import { Checkbox, IconButton, InputAdornment, MenuItem, Select, TextField } from '@mui/material';
@@ -23,6 +23,10 @@ import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css'; // Import Quill's CSS
 import ImageResize from 'quill-image-resize-module-react';
 import BlotFormatter from 'quill-blot-formatter';
+import axios from 'axios';
+import { getGoldRate } from '../../redux/dashboardSlice';
+import { getCategoriesExport } from '../../redux/categoriesSlice';
+import { getSubCategoriesExport } from '../../redux/subCategoriesSlice';
 
 let Font = Quill.import('attributors/style/font');
 Font.whitelist = ['Rubik'];
@@ -35,53 +39,42 @@ const AddProduct = () => {
     const selectedImage = useRef(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    // const attributData = useSelector((state) => state.products)
-    // const getCategoriesData = useSelector((state) => state.subCategories);
-    // const categoryData = getCategoriesData?.catData?.data;
-    // const subCateData = attributData.subCatData.data
-    // const {supplierList} = useSelector((state) => state.suppliers)
-    // const {attributeList} = useSelector((state => state?.attribute))
 
+    const { goldRateData, } = useSelector((state) => state.dashboard);
+    const { categoriesExportData } = useSelector(
+        (state) => state.categories
+    );
+    const { subCategoiesExportData } = useSelector(
+        (state) => state.subCategories
+    );
 
+    //State
+    const [filteredSubcategory, setFilteredSubcategories] = useState([]);
+
+    useEffect(() => {
+        dispatch(getGoldRate())
+    }, [dispatch,])
+
+    useEffect(() => {
+        dispatch(getCategoriesExport())
+    }, [dispatch])
+
+    useEffect(() => {
+        dispatch(getSubCategoriesExport())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         productName: yup.string().required("Product name is required"),
         status: yup.string().required("Status is required"),
         description: yup.string().required("Description is required"),
-        fabricDetails: yup.string().required("Fabric details are required"),
         tags: yup.string().required("Tags are required"),
-        basePrice: yup.number().typeError("Base Price must be a number").min(1, "Base Price is required"),
-        salePrice: yup.number().typeError("Sale Price must be a number").min(1, "Sale Price is required"),
         discountType: yup.string().required("Discount Type is required"),
         discountValue: yup.number().typeError("Discount Value be a number").min(1, "Discount Value is required"),
         // medias: yup.array().min(1, "At least one image is required"),
-        featuredImage: yup.string().required("At least one image is required"),
-        variations: yup.array().of(
-            yup.object().shape({
-                name: yup.string().required("Variation Type is required"),
-                // type: yup.string().required("Variation Type is required"),
-                // value: yup.array().of(yup.string().required()).min(1, "At least one image is required")
-            })
-        ).min(1, "At least one variation is required"),
-        variationInventory: yup.array().of(
-            yup.object().shape({
-                SKU: yup.string().required("SKU is required"),
-                additionalPrice: yup.number().typeError("Additional Price must be a number").required("Additional Price is required"),
-                quantity: yup.number().typeError("Quantity must be a number").min(1, "Quantity is required"),
-                color: yup.string().nullable().notRequired(),
-                size: yup.string().nullable().notRequired(),
-                images: yup.array().of(
-                    yup.string().url().required("Image must be a valid URL")
-                ).min(1, "At least one image is required"),
-            })
-        ).min(1, "At least one variation is required"),
-        // discountStartDate: yup.date().required("Start Date is required"),
-        // discountEndDate: yup.date().required("End Date is required"),
-        category: yup.string().required("Category is required"),
-        subCategory: yup.string().required("Subcategory is required"),
+        featurerdImage: yup.string().required("At least one image is required"),
+
         GST: yup.number().typeError("GST must be a number").min(1, "GST is required"),
         productId: yup.string().required("Product ID is required"),
-        supplier: yup.string().required("Supplier is required"),
         stockQuantity: yup.number().typeError("Stock Quantity must be a number").min(1, "Stock Quantity is required"),
         productDimensions: yup.object().shape({
             weight: yup.number().typeError("Weight must be a number").min(1, "Weight is required"),
@@ -89,9 +82,115 @@ const AddProduct = () => {
             length: yup.number().typeError("Length must be a number").min(1, "Length is required"),
             width: yup.number().typeError("Width must be a number").min(1, "Width is required"),
         }),
+        features: yup.object().shape({
+            itemWeight: yup.number().typeError("Item weight must be a number").min(1, "Item weight is required"),
+            stoneWeight: yup.number().typeError("Stone weight must be a number").min(1, "Stone weight is required"),
+            stoneColor: yup.string().required("Stone color is required"),
+            feature: yup.string().required("feature is required"),
+            productWidth: yup.number().typeError("Product width must be a number").min(1, "Product width is required"),
+            productHeight: yup.number().typeError("Product height must be a number").min(1, "Product height is required"),
+        }),
+        metalType: yup.array().of(yup.string()).required("At least one metal type is required"),
+        pricing: yup.object().shape({
+            totalWeight: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Total weight must be a number")
+                    .min(1, "Total weight is required")
+                    .when("status", {
+                        is: true,
+                        then: yup.number().required("Total weight is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            goldWeight: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Gold weight must be a number")
+                    .when("status", {
+                        is: true,
+                        then: yup.number().min(1, "Gold weight is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            goldRate: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Gold rate must be a number")
+                    .when(["metalType"], {
+                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Gold"),
+                        then: yup.number().min(1, "Gold rate is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            diamondCarat: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Diamond carat must be a number")
+                    .when(["metalType"], {
+                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Diamond"),
+                        then: yup.number().min(1, "Diamond carat is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            diamondPerCarat: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Diamond per carat must be a number")
+                    .when(["metalType"], {
+                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Diamond"),
+                        then: yup.number().min(1, "Diamond per carat is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            polkiCarat: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Polki carat must be a number")
+                    .when(["metalType"], {
+                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Polki"),
+                        then: yup.number().min(1, "Polki carat is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            polkiCost: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Polki cost must be a number")
+                    .when(["metalType"], {
+                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Polki"),
+                        then: yup.number().min(1, "Polki cost is required"),
+                        otherwise: yup.number(),
+                    }),
+            }),
+            gst: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("GST must be a number")
+                    .min(1, "GST is required"),
+            }),
+            finalSalePrice: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Final sale price must be a number")
+                    .min(1, "Final sale price is required"),
+            }),
+            makingCharges: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Making charges must be a number")
+                    .min(1, "Making charges is required"),
+            }),
+        }),
+        category: yup.object().shape({
+            productCategory: yup.string().required("Category is required"),
+            productSubcategory: yup.string().required("Subcategory is required"),
+        }),
+        gold: yup.object().shape({
+            type: yup.string().required("Gold type is required"),
+            orderType: yup.string().required("Order type is required"),
+        }),
     });
-
-
     const {
         handleSubmit,
         errors,
@@ -100,12 +199,12 @@ const AddProduct = () => {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm
     } = useFormik({
         initialValues: {
             productName: "",
             // medias: [],
             description: "",
-            fabricDetails: "",
             tags: "",
             features: {
                 itemWeight: 0,
@@ -119,7 +218,7 @@ const AddProduct = () => {
                 photo: [],
                 video: []
             },
-            metalType: '',
+            metalType: [],
             pricing: {
                 totalWeight: {
                     value: 0,
@@ -138,7 +237,7 @@ const AddProduct = () => {
                     status: false
                 },
                 stoneType: {
-                    value: 0,
+                    value: '',
                     status: false
                 },
                 stoneCharges: {
@@ -207,7 +306,7 @@ const AddProduct = () => {
                 type: "",
                 orderType: ""
             },
-            featurerdImage: [],
+            featurerdImage: "",
         },
         validationSchema: schema,
         onSubmit: async (values) => {
@@ -215,6 +314,8 @@ const AddProduct = () => {
         }
 
     })
+
+    console.log('valuessssssssssssssssssssssssssss', values);
 
     const handleSubject = async (value) => {
         try {
@@ -229,113 +330,153 @@ const AddProduct = () => {
 
     }
 
-
-    const handleFeatureImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-
-            const body = new FormData()
-            body.set('image', file)
-            const { data, status } = await api.fileUpload(body)
-            if (status === 200) {
-                const imageUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                setFieldValue("featuredImage", imageUrl);  // Store only the string
-            }
-        }
-    };
-    const calculateSalePrice = (basePrice, discountType, discountValue) => {
-        let salePrice = 0;
-        if (discountType === 'PERCENTAGE') {
-            salePrice = basePrice - (basePrice * (discountValue / 100));
-        } else if (discountType === 'FIXED') {
-            salePrice = basePrice - discountValue;
-        }
-        setFieldValue('salePrice', parseFloat(salePrice.toFixed(2)));  // Update the sale price in the form
-        setFieldValue("GST", salePrice * 18 / 100)
-    };
-    // Remove a variation
-
+    // handleCategoryChange
     const handleCategoryChange = (event) => {
-        const selectedAttributeId = event.target.value; // This will be the base ID of the selected category
-        setFieldValue("category", selectedAttributeId); // Update the formik state with the base ID
+        const selectedCategoryId = event.target.value; // Get the selected category ID
+        setFieldValue("category.productCategory", selectedCategoryId); // Update the category value in Formik
 
-        setFieldValue("subCategory", []);
+        // Reset subcategory selection
+        setFieldValue("category.productSubcategory", "");
+
+        // Fetch subcategories for the selected category (assuming you have a function to fetch them)
+        const filteredSubcategories = subCategoiesExportData?.data?.filter(
+            (subCategory) => subCategory.parentId === selectedCategoryId
+        );
+
+        // Optionally, update local state if needed for other purposes
+        setFilteredSubcategories(filteredSubcategories);
     };
-    const handleSubcategoryChange = (event, index) => {
-        const selectedValues = event.target.value;
 
-        setFieldValue("subCategory", selectedValues);
-    };
-    // Add Variation
-
-
-
-    // Function to calculate total stock
-    // const calculateTotalStock = () => {
-    //     const totalStock = values?.variationInventory?.reduce((total, inventory) => {
-    //         return total + (Number(inventory.quantity) || 0); // Ensure quantity is a number
-    //     }, 0);
-    //     setFieldValue("stockQuantity", totalStock);
-    // };
-
-    // Use useEffect to recalculate total stock whenever variationInventory changes
-    // useEffect(() => {
-    //     calculateTotalStock(); // Recalculate total stock whenever variationInventory changes
-    // }, [values.variationInventory]); // Listen to changes in variationInventory
-
-    const handleDimensionChange = (e, dimensionType) => {
-        const { value } = e.target;
-        const numericValue = value ? parseFloat(value) : '';
-        // Use Formik's setFieldValue to update the specific dimension
-        setFieldValue(`productDimensions.${dimensionType}`, numericValue);
+    //handleSubcategoryChange
+    const handleSubcategoryChange = (event) => {
+        const selectedSubCategoryId = event.target.value;
+        setFieldValue("category.productSubcategory", selectedSubCategoryId); // Update the subcategory value in Formik
     };
 
     //Media Image
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const body = new FormData();
-            body.append('image', file);
+    const handleImageChange = async (e, index) => {
+        console.log('e====================', e);
 
-            try {
-                const { data, status } = await api.fileUpload(body);
+        const files = e.target?.files; // Get all selected files
+        if (!files) return;
+
+        try {
+            const uploadedImages = []; // Temporary array to store image URLs
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                };
+
+                const { data, status } = await api.getPutSignedUrl(body);
                 if (status === 200) {
-                    const imageUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                    // Update medias array by spreading existing values and adding the new imageUrl
-                    setFieldValue('medias', [...(values.medias || []), imageUrl]);
-                } else {
-                    console.error(`Upload failed with status: ${status}`);
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type,
+                        },
+                    });
+
+                    const imageUrl = data?.data?.url;
+                    uploadedImages[index].push(imageUrl); // Add uploaded image URL to the array
                 }
-            } catch (error) {
-                console.error('Error uploading file:', error.response ? error.response.data : error.message);
             }
+
+            // Update medias.photo by appending new images
+            setFieldValue(`media[${index}].photo`, [...(values.media.photo || []), ...uploadedImages]);
+
+            // Reset input value to allow selecting more images
+            // e.target.value = null;
+        } catch (err) {
+            console.error(err);
+            Toastify.error("Error uploading images");
         }
     };
+
+
     // Media Video
-    const handleVideoChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const body = new FormData();
-            body.append('image', file);
+    const handleVideoChange = async (e, attribute, repo) => {
 
-            try {
-                const { data, status } = await api.fileUpload(body);
-                if (status === 200 && data.data) {
-                    const videoUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                    // Update medias array by spreading existing values and adding the new videoUrl
-                    setFieldValue('medias', [...(values.medias || []), videoUrl]);
-                } else {
-                    console.error(`Upload failed with status: ${status}`);
+        const file = e.target?.files?.[0] || e.target?.files?.[0];
+        try {
+            if (file) {
+
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
                 }
-            } catch (error) {
-                console.error('Error uploading file:', error.response ? error.response.data : error.message);
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
+
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
+
+                    setFieldValue('media.video', [...(values.media.video || []), data?.data?.url])
+                }
             }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
         }
     };
 
-    const handleGold = (e) => {
-        setFieldValue("metalType", values.metalType)
-    }
+    //Metal Type
+    const handleGold = (e, name) => {
+        const isChecked = e.target.checked;
+        setFieldValue("metalType", isChecked
+            ? [...values.metalType, name] // Add the name if checked
+            : values.metalType?.filter((type) => type !== name) // Remove the name if unchecked
+        );
+    };
+
+    //pricing
+    const handleCheckTotalWeight = (e) => {
+        setFieldValue('pricing.totalWeight.status', e.target.checked);
+    };
+    const handleCheckGoldWeight = (e) => {
+        setFieldValue('pricing.goldWeight.status', e.target.checked);
+    };
+    const handleCheckGoldRate = (e) => {
+        setFieldValue('pricing.goldRate.status', e.target.checked);
+    };
+    const handleCheckMakingCharges = (e) => {
+        setFieldValue('pricing.makingCharges.status', e.target.checked);
+    };
+    const handleCheckStoneType = (e) => {
+        setFieldValue('pricing.stoneType.status', e.target.checked);
+    };
+    const handleCheckStoneCharges = (e) => {
+        setFieldValue('pricing.stoneCharges.status', e.target.checked);
+    };
+    const handleCheckDiamondCarat = (e) => {
+        setFieldValue('pricing.diamondCarat.status', e.target.checked);
+    };
+    const handleCheckDiamondPerCarat = (e) => {
+        setFieldValue('pricing.diamondPerCarat.status', e.target.checked);
+    };
+    const handleCheckDiamondCost = (e) => {
+        setFieldValue('pricing.diamondCost.status', e.target.checked);
+    };
+    const handleCheckPolkiCarat = (e) => {
+        setFieldValue('pricing.polkiCarat.status', e.target.checked);
+    };
+    const handleCheckPolkiPerCarat = (e) => {
+        setFieldValue('pricing.polkiPerCarat.status', e.target.checked);
+    };
+    const handleCheckPolkiCost = (e) => {
+        setFieldValue('pricing.polkiCost.status', e.target.checked);
+    };
+    const handleCheckGst = (e) => {
+        setFieldValue('pricing.gst.status', e.target.checked);
+    };
+    const handleCheckFinalSalePrice = (e) => {
+        setFieldValue('pricing.finalSalePrice.status', e.target.checked);
+    };
 
     const imageHandler = async () => {
 
@@ -352,14 +493,23 @@ const AddProduct = () => {
                 if (file.size > 100000000) {
                     Toastify.error("Error occured", "Please upload file of less than 1 mb")
                 } else {
-                    const formData = new FormData();
-                    formData.append("image", file)
-                    const { data, status } = await api.fileUpload(formData);
+                    const body = {
+                        key: `${Date.now()}_${file.name}`,
+                        fileName: file.name,
+                    }
+                    const { data, status } = await api.getPutSignedUrl(body);
+                    if (status === 200) {
+                        await axios.put(data.data?.preSigned, file, {
+                            headers: {
+                                "Content-Type": file.type
+                            }
+                        })
+                        const range = quillRef.current.getEditorSelecton();
+                        var res = data?.data?.url;
 
-                    const range = quillRef.current.getEditorSelecton();
-                    var res = data.data[0];
+                        quillRef.current.getEditor().insertEmbed(range.index, 'image', res);
+                    }
 
-                    quillRef.current.getEditor().insertEmbed(range.index, 'image', res);
                 }
             } catch (err) {
                 console.log(err)
@@ -436,6 +586,58 @@ const AddProduct = () => {
             document.removeEventListener('keydown', checkImage);
         };
     }, []);
+
+    //Featured Image
+    const handleFeatureImageChange = async (e, attribute, repo) => {
+
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                }
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
+
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
+
+                    setFieldValue('featurerdImage', data?.data?.url)
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
+        }
+    };
+    const handleDeleteImage = (imageUrl, imgIndex) => {
+        // Remove the selected image by filtering it out from the media.photo array
+        const updatedImages = values.media.photo.filter((_, index) => index !== imgIndex);
+
+        // Update the state with the new array
+        setFieldValue("media.photo", updatedImages);
+    };
+    const metalTypeData = [
+        {
+            id: 0,
+            name: 'Gold',
+        },
+        {
+            id: 1,
+            name: 'Diamond',
+        },
+        {
+            id: 2,
+            name: 'Polki',
+        },
+    ]
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={productStyle.container}>
@@ -463,14 +665,14 @@ const AddProduct = () => {
                             <TextField
                                 placeholder='Type product name here. . .'
                                 type={'text'}
-                                name="name"
-                                value={values.name || ''}
+                                name="productName"
+                                value={values.productName || ''}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 sx={fieldText}
                             />
                             {
-                                errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
+                                errors.productName && touched.productName && <p style={{ color: "red", fontSize: "12px" }}>{errors.productName}</p>
                             }
                         </div>
                         <div style={{ marginTop: 20 }}>
@@ -556,9 +758,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.itemWeight && touched.features.itemWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.itemWeight}</p>
-                                } */}
+                                {
+                                    errors?.features?.itemWeight && touched?.features?.itemWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.itemWeight}</p>
+                                }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
                                 <label className={productStyle.label}>Stone Weight</label>
@@ -600,9 +802,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.stoneWeight && touched.features.stoneWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.stoneWeight}</p>
-                                } */}
+                                {
+                                    errors?.features?.stoneWeight && touched?.features?.stoneWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.stoneWeight}</p>
+                                }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
                                 <label className={productStyle.label}>Stone color/type</label>
@@ -615,9 +817,9 @@ const AddProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {/* {
-                                    errors.features.stoneColor && touched.features.stoneColor && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.stoneColor}</p>
-                                } */}
+                                {
+                                    errors?.features?.stoneColor && touched?.features?.stoneColor && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.stoneColor}</p>
+                                }
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle}>
@@ -661,9 +863,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.features?.productWidth && touched?.features?.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.productWidth}</p>
+                                }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
                                 <label className={productStyle.label}>Product Height</label>
@@ -705,9 +907,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productHeight && touched.features.productHeight && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productHeight}</p>
-                                } */}
+                                {
+                                    errors?.features?.productHeight && touched?.features?.productHeight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.productHeight}</p>
+                                }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
                                 <label className={productStyle.label}>Feature</label>
@@ -720,9 +922,9 @@ const AddProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {/* {
-                                    errors.features.feature && touched.features.feature && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.feature}</p>
-                                } */}
+                                {
+                                    errors?.features?.feature && touched?.features?.feature && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.feature}</p>
+                                }
                             </div>
                         </div>
 
@@ -736,43 +938,69 @@ const AddProduct = () => {
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
-                                    {values?.featuredImage ? (
-                                        <div>
-                                            <img
-                                                src={values.featuredImage}
+                                    <>
+                                        {values?.media?.photo?.length > 0 ? (
+                                            <div className={productStyle.imageContainer}>
+                                                {values?.media?.photo?.map((image, imgIndex) => (
+                                                    <div key={imgIndex} className={productStyle.imageWrapper}>
+                                                        <div
+                                                            className={productStyle.deleteImageStyles}
+                                                            style={{ zIndex: 1 }}
+                                                            onClick={() => handleDeleteImage(image, imgIndex)} // Pass inventoryIndex and image URL to delete function
+                                                        >
+                                                            <CrossIcon />  {/* This is the delete icon */}
+                                                        </div>
+                                                        <img src={image} alt="Uploaded" className={productStyle.inventoryImage} />
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            id="imageFile"
+                                                            style={{ display: 'none' }}
+                                                            onChange={(e) => handleImageChange(e, imgIndex)}
+                                                            // value={values.imageFile}
+                                                            // ref={imageRef}
+                                                            multiple
+                                                        />
+                                                    </div>
+                                                ))}
+                                                {/* <img
+                                                src={values.media.photo}
                                                 alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
-                                            />
-                                            {/* <button onClick={handleUpload}>Upload</button> */}
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <ImageIcon />
-                                            <div>
-                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
-                                                    Drag and drop image here, or click add image
-                                                </p>
+                                                style={{ maxWidth: '100%', marginTop: '0px', width: '50px', height: '50px' }}
+                                            /> */}
+                                                {/* <button onClick={handleUpload}>Upload</button> */}
                                             </div>
-                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="imageFile"
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleImageChange}
-                                                />
-                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                    Add Image
-                                                </label>
-                                            </div>
-                                        </>
-                                    )
-                                    }
+                                        ) : (
+                                            <>
+                                                <ImageIcon />
 
+                                            </>
+                                        )}
+                                    </>
+                                    <div>
+                                        <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                            Drag and drop image here, or click add image
+                                        </p>
+                                    </div>
+                                    <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                        {/* <input
+                                            type="file"
+                                            accept="image/*"
+                                            id="imageFile"
+                                            style={{ display: 'none' }}
+                                            onChange={(e) => handleImageChange(e)}
+                                            // value={values.imageFile}
+                                            ref={imageRef}
+                                            multiple
+                                        /> */}
+                                        <label htmlFor="imageFile" className={productStyle.uploadBox}>
+                                            Add Image
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
+                                errors?.media?.photo && touched?.media?.photo && <p style={{ color: "red", fontSize: "12px" }}>{errors?.media?.photo}</p>
                             }
                         </div>
                         {/* video */}
@@ -781,13 +1009,13 @@ const AddProduct = () => {
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
-                                    {values?.featuredImage ? (
+                                    {values?.media?.video?.length ? (
                                         <div>
                                             <video
-                                                src={values.featuredImage}
+                                                src={values.media.video}
                                                 alt="Selected"
                                                 controls
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
+                                                style={{ maxWidth: '100%', marginTop: '0px', width: '100%', height: '200px' }}
                                             />
                                             {/* <button onClick={handleUpload}>Upload</button> */}
                                         </div>
@@ -802,10 +1030,10 @@ const AddProduct = () => {
                                             <div className={productStyle.pixel} style={{ marginTop: 10 }}>
                                                 <input
                                                     type="file"
-                                                    accept="image/*"
+                                                    accept="video/*"
                                                     id="videoFile"
                                                     style={{ display: 'none' }}
-                                                    onChange={handleFeatureImageChange}
+                                                    onChange={handleVideoChange}
                                                 />
                                                 <label htmlFor="videoFile" className={productStyle.uploadBox}>
                                                     Add Video
@@ -818,7 +1046,7 @@ const AddProduct = () => {
                                 </div>
                             </div>
                             {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
+                                errors?.media?.video && touched?.media?.video && <p style={{ color: "red", fontSize: "12px" }}>{errors?.media?.video}</p>
                             }
                         </div>
                     </div>
@@ -828,18 +1056,25 @@ const AddProduct = () => {
                         <h6 className={productStyle.variationText}>
                             Metal Type
                         </h6>
-                        <div className={productStyle.itemsStyle} style={{ justifyContent: 'space-between', marginTop: 20 }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                <CustomizedCheckbox /> <span>Gold</span>
-                            </div>
-                            <div className={productStyle.checkBoxStyle}>
-                                <CustomizedCheckbox /> <span>Diamond</span>
-                            </div>
-                            <div className={productStyle.checkBoxStyle}>
-                                <CustomizedCheckbox /> <span>Polki</span>
-                            </div>
+                        <div style={{ display: 'flex', width: '70%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
+                            {metalTypeData?.map((item, index) => (
+
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }} key={index}>
+                                    <CustomizedCheckbox
+                                        handleCheck={(e) => handleGold(e, item?.name)}
+                                        checked={values.metalType?.includes(item?.name)}
+                                    />
+                                    <span>{item.name}</span>
+                                </div>
+
+                            ))}
                         </div>
+                        {
+                            errors?.metalType && touched?.metalType && <p style={{ color: "red", fontSize: "12px" }}>{errors?.metalType}</p>
+                        }
                     </div>
+
+                    {/* pricing */}
                     <div className={productStyle.variationStyle} style={{ marginTop: 20 }}>
                         <h6 className={productStyle.variationText}>
                             Pricing
@@ -847,13 +1082,13 @@ const AddProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 20 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Total Weight</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckTotalWeight} checked={values.pricing.totalWeight.status} /> <span>Total Weight</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.totalWeight.value"
+                                    value={values.pricing.totalWeight.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -888,19 +1123,19 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.totalWeight?.value && touched?.pricing?.totalWeight?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.totalWeight?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Gold weight*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckGoldWeight} checked={values.pricing.goldWeight.status} /> <span>Gold weight*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.goldWeight.value"
+                                    value={values.pricing.goldWeight.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -935,19 +1170,19 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.goldWeight?.value && touched?.pricing?.goldWeight?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.goldWeight?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Gold rate*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckGoldRate} checked={values.pricing.goldRate.status} /> <span>Gold rate*</span>
                                 </div>
                                 <TextField
                                     placeholder='auto'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.goldRate.value"
+                                    value={values.pricing.goldRate.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -982,21 +1217,19 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Making charges*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckMakingCharges} checked={values.pricing.makingCharges.status} /> <span>Making charges*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.makingCharges.value"
+                                    value={values.pricing.makingCharges.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1033,37 +1266,37 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.makingCharges?.value && touched?.pricing?.makingCharges?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.makingCharges?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Stone type</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckStoneType} checked={values.pricing.stoneType.status} /> <span>Stone type</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    name="pricing.stoneType.value"
+                                    value={values.pricing.stoneType.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                     fullWidth
                                 />
                                 {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
+                                    errors?.pricing?.stoneType?.value && touched?.pricing?.stoneType?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.stoneType?.value}</p>
                                 } */}
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Stone charges</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckStoneCharges} checked={values.pricing.stoneCharges.status} /> <span>Stone charges</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.stoneCharges.value"
+                                    value={values.pricing.stoneCharges.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1099,38 +1332,38 @@ const AddProduct = () => {
                                     }}
                                 />
                                 {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
+                                    errors?.pricing?.stoneCharges?.value && touched?.pricing?.stoneCharges?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.stoneCharges?.value}</p>
                                 } */}
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Diamond carat*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckDiamondCarat} checked={values.pricing.diamondCarat.status} /> <span>Diamond carat*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.diamondCarat.value"
+                                    value={values.pricing.diamondCarat.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
 
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.diamondCarat?.value && touched?.pricing?.diamondCarat?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.diamondCarat?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Diamond per carat*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckDiamondPerCarat} checked={values.pricing.diamondPerCarat.status} /> <span>Diamond per carat*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.diamondPerCarat.value"
+                                    value={values.pricing.diamondPerCarat.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1166,19 +1399,19 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.diamondPerCarat?.value && touched?.pricing?.diamondPerCarat?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.diamondPerCarat?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Diamond cost*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckDiamondCost} checked={values.pricing.diamondCost.status} /> <span>Diamond cost*</span>
                                 </div>
                                 <TextField
                                     placeholder='auto'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type='number'
+                                    name="pricing.diamondCost.value"
+                                    value={values.pricing.diamondCost.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1213,39 +1446,36 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Polki carat</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckPolkiCarat} checked={values.pricing.polkiCarat.status} /> <span>Polki carat</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="pricing.polkiCarat.value"
+                                    value={values.pricing.polkiCarat.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
 
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.polkiCarat?.value && touched?.pricing?.polkiCarat?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.polkiCarat?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Polki per carat</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckPolkiPerCarat} checked={values.pricing.polkiPerCarat.status} /> <span>Polki per carat</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="pricing.polkiPerCarat.value"
+                                    value={values.pricing.polkiPerCarat.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1281,19 +1511,19 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.polkiPerCarat?.value && touched?.pricing?.polkiPerCarat?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.polkiPerCarat?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Polki cost</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckPolkiCost} checked={values.pricing.polkiCost.status} /> <span>Polki cost</span>
                                 </div>
                                 <TextField
                                     placeholder='auto'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="pricing.polkiCost.value"
+                                    value={values.pricing.polkiCost.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1328,39 +1558,36 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>GST</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckGst} checked={values.pricing.gst.status} /> <span>GST</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="pricing.gst.value"
+                                    value={values.pricing.gst.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
 
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.gst?.value && touched?.pricing?.gst?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.gst?.value}</p>
+                                }
                             </div>
                             <div style={{ width: '67%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox /> <span>Final sale price</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckFinalSalePrice} checked={values.pricing.finalSalePrice.status} /> <span>Final sale price</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    name="pricing.finalSalePrice.value"
+                                    value={values.pricing.finalSalePrice.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1396,9 +1623,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.pricing?.finalSalePrice?.value && touched?.pricing?.finalSalePrice?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.finalSalePrice?.value}</p>
+                                }
                             </div>
                         </div>
                         <div className={productStyle.noteTextStyle}>Note: Select checkbox to show in website</div>
@@ -1647,6 +1874,7 @@ const AddProduct = () => {
                     </div>
                 </div>
                 <div style={{ width: '30%' }}>
+                    {/* categories */}
                     <div className={productStyle.thumbanilStyle}>
                         <h6 className={productStyle.variationText}>Category</h6>
                         <div style={{ marginTop: 15 }}>
@@ -1655,55 +1883,140 @@ const AddProduct = () => {
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                sx={formselect}
+                                sx={{
+                                    ...formselect,
+                                    "& .MuiSelect-select": {
+                                        fontWeight: values.category.productCategory ? "500" : "400",
+                                        color: values.category.productCategory ? "#081735" : "#858D9D",
+                                    },
+                                }}
                                 IconComponent={(props) => (
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
                                 defaultValue=''
-                                name='category'
-                                value={values.category}
+                                name='category.productCategory'
+                                value={values.category.productCategory}
                                 onChange={handleCategoryChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                {/* {categoryData?.map((category) => (
-                                    <MenuItem key={category._id} value={category._id}>
+                                {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
+                                    <MenuItem
+                                        key={category._id}
+                                        value={category._id}
+                                    >
                                         {category.name}
                                     </MenuItem>
-                                ))} */}
+                                ))}
                             </Select>
                             {
-                                errors.category && touched.category && <p style={{ color: "red", fontSize: "12px" }}>{errors.category}</p>
+                                errors?.category?.productCategory && touched?.category?.productCategory && <p style={{ color: "red", fontSize: "12px" }}>{errors?.category?.productCategory}</p>
                             }
                         </div>
-                        <div style={{ marginTop: 15 }}>
+                        <div style={{ marginTop: 10 }}>
                             <label className={productStyle.label}>Product Sub-Category</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                sx={formselect}
+                                sx={{
+                                    ...formselect,
+                                    "& .MuiSelect-select": {
+                                        fontWeight: values.category.productSubcategory ? "500" : "400",
+                                        color: values.category.productSubcategory ? "#081735" : "#858D9D",
+                                    },
+                                }}
                                 IconComponent={(props) => (
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
                                 defaultValue=''
-                                name='subCategory'
-                                value={values.subCategory}
+                                name='category.productSubcategory'
+                                value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                {/* {subCateData?.map((category) => (
+                                {filteredSubcategory?.map((category) => (
                                     <MenuItem key={category._id} value={category._id}>
                                         {category.name}
                                     </MenuItem>
-                                ))} */}
+                                ))}
                             </Select>
                         </div>
                         {
-                            errors.subCategory && touched.subCategory && <p style={{ color: "red", fontSize: "12px" }}>{errors.subCategory}</p>
+                            errors.category?.productSubcategory && touched?.category?.productSubcategory && <p style={{ color: "red", fontSize: "12px" }}>{errors?.category?.productSubcategory}</p>
                         }
                     </div>
+
+                    {/* Gold */}
+                    <div className={productStyle.thumbanilStyle} style={{ marginTop: 20 }}>
+                        <div className={productStyle.catStatusStyle}>
+                            <h6 className={productStyle.variationText}>Gold</h6>
+                        </div>
+                        <div style={{ marginTop: 15 }}>
+                            <label className={productStyle.label}>Gold Type*</label>
+                            <br />
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                sx={{
+                                    ...formselect,
+                                    "& .MuiSelect-select": {
+                                        fontWeight: values.gold.type ? "500" : "400",
+                                        color: values.gold.type ? "#081735" : "#858D9D",
+                                    },
+                                }}
+                                IconComponent={(props) => (
+                                    <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
+                                )}
+                                displayEmpty
+                                defaultValue=''
+                                name='gold.type'
+                                value={values.gold.type}
+                                onChange={handleChange}
+                            >
+                                <MenuItem value="">Select</MenuItem>
+                                <MenuItem value="k22">22k</MenuItem>
+                                <MenuItem value="k18">18k</MenuItem>
+                            </Select>
+                        </div>
+                        {
+                            errors?.gold?.type && touched?.gold?.type && <p style={{ color: "red", fontSize: "12px" }}>{errors?.gold?.type}</p>
+                        }
+                        <div style={{ marginTop: 10 }}>
+                            <label className={productStyle.label}>Order Type</label>
+                            <br />
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                sx={{
+                                    ...formselect,
+                                    "& .MuiSelect-select": {
+                                        fontWeight: values.gold.orderType ? "500" : "400",
+                                        color: values.gold.orderType ? "#081735" : "#858D9D",
+                                    },
+                                }}
+                                IconComponent={(props) => (
+                                    <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
+                                )}
+                                displayEmpty
+                                defaultValue=''
+                                name='gold.orderType'
+                                value={values.gold.orderType}
+                                onChange={handleChange}
+                            >
+                                <MenuItem value="">Select</MenuItem>
+                                <MenuItem value="Ready to ship orders">Ready to ship orders</MenuItem>
+                                <MenuItem value="Made to orders">Made to orders</MenuItem>
+
+                            </Select>
+                        </div>
+                        {
+                            errors?.gold?.orderType && touched?.gold?.orderType && <p style={{ color: "red", fontSize: "12px" }}>{errors?.gold?.orderType}</p>
+                        }
+                    </div>
+
+                    {/* Featured image */}
                     <div className={productStyle.thumbanilStyle} style={{ marginTop: 20 }}>
                         <h6 className={productStyle.variationText}>Featured image</h6>
                         <div style={{ marginTop: 20 }}>
@@ -1711,10 +2024,10 @@ const AddProduct = () => {
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
-                                    {values?.featuredImage ? (
+                                    {values?.featurerdImage ? (
                                         <div>
                                             <img
-                                                src={values.featuredImage}
+                                                src={values.featurerdImage}
                                                 alt="Selected"
                                                 style={{ maxWidth: '100%', marginTop: '0px' }}
                                             />
@@ -1747,41 +2060,12 @@ const AddProduct = () => {
                                 </div>
                             </div>
                             {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
+                                errors.featurerdImage && touched.featurerdImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featurerdImage}</p>
                             }
                         </div>
                     </div>
-                    <div className={productStyle.thumbanilStyle} style={{ marginTop: 20 }}>
-                        <div className={productStyle.catStatusStyle}>
-                            <h6 className={productStyle.variationText}>Supplier</h6>
 
-                        </div>
-                        <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Select Supplier</label>
-                            <br />
-                            <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                sx={formselect}
-                                IconComponent={(props) => (
-                                    <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
-                                )}
-                                displayEmpty
-                                defaultValue=''
-                                name='supplier'
-                                value={values.supplier}
-                                onChange={handleChange}
-                            >
-                                <MenuItem value="">Select</MenuItem>
-                                {/* {supplierList?.data?.map((item) => (
-                                    <MenuItem value={item._id} key={item._id}>{item.name}</MenuItem>
-                                ))} */}
-                            </Select>
-                        </div>
-                        {
-                            errors.supplier && touched.supplier && <p style={{ color: "red", fontSize: "12px" }}>{errors.supplier}</p>
-                        }
-                    </div>
+                    {/* Status */}
                     <div className={productStyle.thumbanilStyle} style={{ marginTop: 20 }}>
                         <div className={productStyle.catStatusStyle}>
                             <h6 className={productStyle.variationText}>Status</h6>
@@ -1795,7 +2079,13 @@ const AddProduct = () => {
                             <Select
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                sx={formselect}
+                                sx={{
+                                    ...formselect,
+                                    "& .MuiSelect-select": {
+                                        fontWeight: values.status ? "500" : "400",
+                                        color: values.status ? "#081735" : "#858D9D",
+                                    },
+                                }}
                                 IconComponent={(props) => (
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
@@ -1818,7 +2108,7 @@ const AddProduct = () => {
                 </div>
             </div>
             <div className={productStyle.saveProductStyle} style={{ marginTop: 20 }}>
-                <div className={productStyle.cancelStyle}>
+                <div className={productStyle.cancelStyle} onClick={resetForm}>
                     Cancel
                 </div>
                 <div className={productStyle.buttonStyle} onClick={handleSubmit}>

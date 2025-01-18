@@ -5,8 +5,9 @@ import productSlice from "./productSlice";
 import ordersSlice from "./ordersSlice";
 import customerSlice from "./customerSlice";
 import notificationSlice from "./notificationSlice";
-// import categoriesSlice from "./categoriesSlice"
-// import  subCategoriesSlice  from "./subCategoriesSlice";
+import categoriesSlice from "./categoriesSlice";
+import subCategoriesSlice from "./subCategoriesSlice";
+import dashboardSlice from "./dashboardSlice";
 
 
 export const store = configureStore({
@@ -17,7 +18,8 @@ export const store = configureStore({
         orders: ordersSlice,
         customers: customerSlice,
         notification:notificationSlice,
-        // categories:categoriesSlice,
-        // subCategories:subCategoriesSlice,
+        categories:categoriesSlice,
+        subCategories:subCategoriesSlice,
+        dashboard: dashboardSlice
     }
 })

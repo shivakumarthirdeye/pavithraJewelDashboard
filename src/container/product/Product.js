@@ -3,7 +3,7 @@ import productStyle from './product.module.css';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteProducts, getProducts, getProductsWithoutParams, getAllSingleProductList } from '../../redux/productSlice';
+import { deleteProducts, getProducts, setFilterValues } from '../../redux/productSlice';
 import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
 import * as XLSX from 'xlsx';
@@ -13,79 +13,105 @@ import CheckIcon from '@mui/icons-material/Check';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
 import { DatePickerIcon, DeleteIcon, Drop, EditIcon, ExportIcon, FilterIcon, PlusIcon, SearchIcon, ViewIcon } from '../../svg';
 import DeleteModal from '../../component/DeleteModal';
+import { formatDate } from '../../helper/FormatDate';
+import { getCategoriesExport } from '../../redux/categoriesSlice';
+import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs from 'dayjs';
+import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
 
 
 
 const Product = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
-    const getProductsData = useSelector((state) => state.products);
-    const getProductDataForExport = getProductsData?.productsDataWithoutParam?.data
-    console.log('getProductDataForExport', getProductDataForExport);
-
-    // const {categoriesData} = useSelector((state) => state.categories)
-    // const isLoading = useSelector((state) => state.products.isLoading);
-    // const isRefresh = useSelector((state) => state.products.isRefresh);
-
-    const getCategoriesData = useSelector((state) => state.subCategories);
-    const categoryData = getCategoriesData?.catData?.data;
-    console.log("categoryData", categoryData);
-
-    // useEffect(() => {
-    //     dispatch(getCateData());
-    // }, [dispatch]);
-
-    useEffect(() => {
-        dispatch(getProductsWithoutParams())
-    }, [dispatch])
-
-
-
-    //Product data
-    const productData = getProductsData?.productsData?.data;
-
-    // Pagination
-    const pagination = getProductsData?.productsData?.pagination;
-
-    //Search data 
-    const searchData = getProductsData?.searchData?.data;
-
-    // Search Pagination
-    const searchDataPagination = getProductsData?.searchData?.pagination;
-
-
 
 
     //states
     const [search, setSearch] = useState("");
+    const [status, setStatus] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [data, setData] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1);
-    const [totalPages, setTotalPages] = useState(1);
-    const [totalItems, setTotalItems] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(10);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState(null);
-    const [selectedFilter, setSelectedFilter] = useState(null)
+    const [order, setOrder] = useState('asc')
 
-    console.log('first', selectedDate)
+
+    const { productsData, filterOptions, isLoading, isRefresh } = useSelector(
+        (state) => state.products
+    );
+    const { categoriesExportData } = useSelector(
+        (state) => state.categories
+    );
+    console.log('filterOptions============', filterOptions);
+    // console.log('productsData', productsData);
+
+
+    const calculateShowingRange = () => {
+        const start = (productsData?.currentPage - 1) * productsData.limit + 1;
+        const end = Math.min(
+            productsData?.currentPage * productsData.limit,
+            productsData?.totalItems
+        );
+        return { start, end };
+    };
+
+    const { start, end } = calculateShowingRange();
 
     // Handler function to handle category click
-    const handleCategorySelect = (cat) => {
-        setSelectedCategory((prevFilter) =>
-            prevFilter && prevFilter === cat._id ? null : cat._id // Use `null` to reset state
-        );
+    const handlePageChange = (event, page) => {
+        dispatch(setFilterValues({ page }));
+    };
+
+    const handleSearch = (e) => {
+        setSearch(e.target.value);
+        dispatch(setFilterValues({ search: e.target.value, page: 1 }));
+    };
+
+    const handleFilterSelection = (e) => {
+        setStatus(e.target.value)
+        dispatch(setFilterValues({ status: e.target.value, page: 1 }));
+    };
+
+    const handleCategorySelect = (e) => {
+        setSelectedCategory(e.target.value);
+        dispatch(setFilterValues({ category: e.target.value, page: 1 }))
     };
 
 
-    const handleDateChange = (date) => {
-        setSelectedDate((prevFilter) =>
-            prevFilter && prevFilter.getTime() === date.getTime() ? '' : date
-        );
+    const handleStartDateChange = (e) => {
+        console.log('e==============', e);
+
+        setSelectedDate(e);
+        dispatch(setFilterValues({ startDate: e, page: 1 }))
+    };
+    const handleEndDateChange = (e) => {
+        console.log('e==============', e);
+
+        setSelectedDate(e);
+        dispatch(setFilterValues({ endDate: e, page: 1 }))
     };
 
+    const handleOpenMenu = (e) => {
+        setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+        dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
+    };
+    useEffect(() => {
+        const getAllCategories = async () => {
+            try {
+                await dispatch(getProducts(filterOptions));
+            } catch (error) {
+                console.log(error);
+            }
+        };
+        getAllCategories();
+    }, [dispatch, filterOptions, isRefresh]);
 
-    //Deleting Modal
+    useEffect(() => {
+        dispatch(getCategoriesExport())
+    }, [dispatch])
+
+    //Delete User
     const openDeleteModal = (data) => {
         setData(data);
         setIsDeleteModalOpen(true);
@@ -94,168 +120,92 @@ const Product = () => {
         setIsDeleteModalOpen(false);
     };
 
-
-    //Effects
-
-
-    // useEffect(() => {
-    //     if (search) {
-    //         let data = `?name=${search}&page=${currentPage}&productType=single`;
-    //         dispatch(getSearchProduct(data));
-    //     } else if (selectedCategory || selectedDate || selectedFilter) {
-    //         dispatch(
-    //             filterProducts({
-    //                 date: selectedDate,
-    //                 status: selectedFilter,
-    //                 category: selectedCategory,
-    //                 productType: "single",
-    //                 page: currentPage
-    //             })
-    //         );
-    //     } else {
-    //         let data = `?page=${currentPage}&productType=single`;
-    //         dispatch(getProducts(data));
-    //     }
-    // }, [search, currentPage, selectedCategory, selectedDate, selectedFilter]);
-
-
-    useEffect(() => {
-        // Update pagination state when data changes
-        if (search) {
-            setCurrentPage(searchDataPagination?.currentPage)
-            setTotalPages(searchDataPagination?.totalPages);
-            setTotalItems(searchDataPagination?.totalItems);
-            setItemsPerPage(searchDataPagination?.itemsPerPage || 10);
-        } else {
-            setCurrentPage(pagination?.currentPage);
-            setTotalPages(pagination?.totalPages);
-            setTotalItems(pagination?.totalItems);
-            setItemsPerPage(pagination?.itemsPerPage || 10);
-        }
-    }, [pagination, search, searchDataPagination]);
-
-    //Pagination Functionality
-    const calculateShowingRange = () => {
-        const start = (currentPage - 1) * itemsPerPage + 1;
-        const end = Math.min(currentPage * itemsPerPage, totalItems);
-        return { start, end };
+    const deletedData = (value) => {
+        dispatch(deleteProducts(value));
     };
 
-    const { start, end } = calculateShowingRange();
-
-    // Function to handle page changes
-    const onPageChange = (page) => {
-        if (page > 0 && page <= totalPages) {
-            setCurrentPage(page);
-        }
-    };
-    const getPageNumbers = () => {
-        const maxPagesToShow = 5;
-        const pages = [];
-
-        if (totalPages <= maxPagesToShow) {
-            for (let i = 1; i <= totalPages; i++) {
-                pages.push(i);
-            }
-        } else {
-            if (currentPage <= 3) {
-                pages.push(1, 2, 3, 4, "...", totalPages);
-            } else if (currentPage >= totalPages - 2) {
-                pages.push(1, totalPages - 3, totalPages - 2, totalPages - 1, totalPages);
-            } else {
-                pages.push(1, currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
-            }
-        }
-
-        return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
-
-    //main data and search data and filter data 
-    // let allProductsData = []
-    // if (search) {
-    //     allProductsData = searchData;
-    // } else {
-    //     allProductsData = productData;
-    // }
-
-    //Deleting dispatch function
-    const deletedProduct = (value) => {
-        dispatch(deleteProducts(value))
-    }
-
-    // useEffect(() => {
-    //     let data = `?page=${currentPage}`
-    //     dispatch(getCategories(data));
-    // },[dispatch])
 
 
 
+    console.log('first', selectedDate)
 
-    //date format function
-    const formatDate = (date) => {
-        const dateFromMongoDB = new Date(date);
-        const formattedDate = dateFromMongoDB.toLocaleDateString('en-US', {
-            day: 'numeric',
-            month: 'short', // This will give abbreviated month names (e.g., Dec)
-            year: 'numeric',
-        });
-        return formattedDate;
-    }
+
+
 
     //Export Functionality
-    const exportToExcel = async () => {
-        // console.log(transaction)
+    // const exportToExcel = async () => {
+    //     // console.log(transaction)
 
-        const result = await dispatch(getAllSingleProductList()).unwrap()
-        const excelData = result?.data?.map((item) => ({
-            Product: item?.name || '_',
-            Variations: item?.variations?.length || '_',
-            Product_ID: item?.productId || '_',
-            Category: item?.category?.name || '-',
-            Stock: item?.stockQuantity || '-',
-            Sale_Price: item?.salePrice || '-',
-            Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
-            Status: item?.status || '-',
-        }));
-        const worksheet = XLSX.utils.json_to_sheet(excelData);
-        const workbook = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
-        XLSX.writeFile(workbook, 'products.xlsx');
-    };
+    //     const result = await dispatch(getAllSingleProductList()).unwrap()
+    //     const excelData = result?.data?.map((item) => ({
+    //         Product: item?.name || '_',
+    //         Variations: item?.variations?.length || '_',
+    //         Product_ID: item?.productId || '_',
+    //         Category: item?.category?.name || '-',
+    //         Stock: item?.stockQuantity || '-',
+    //         Sale_Price: item?.salePrice || '-',
+    //         Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
+    //         Status: item?.status || '-',
+    //     }));
+    //     const worksheet = XLSX.utils.json_to_sheet(excelData);
+    //     const workbook = XLSX.utils.book_new();
+    //     XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
+    //     XLSX.writeFile(workbook, 'products.xlsx');
+    // };
 
-    const handleFilterSelection = (filter) => {
-        setSelectedFilter((prevFilter) => (prevFilter === filter ? '' : filter));
-    };
 
     const dateContent = (
         <div style={{ width: "300px" }}>
-            <Calendar
+            {/* <Calendar
                 onChange={handleDateChange}
                 value={selectedDate}
                 maxDate={new Date()}
-            />
+            /> */}
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateRangeCalendar
+                    // value={selectedDate ? dayjs(selectedDate) : null}
+                    onChange={(newValue) => {
+                        const [startDate, endDate] = newValue;
+                        handleStartDateChange( startDate ? dayjs(startDate).format('YYYY-MM-DD') : null);
+                        handleEndDateChange( endDate ? dayjs(endDate).format('YYYY-MM-DD') : null);
+                    }}
+                    calendars={1} 
+                />
+            </LocalizationProvider>
         </div>
     );
 
     const categoryContent = (
-        <div style={{ height: "100%" }}>
-            {categoryData?.map((cat) => (
-                <p
+        <div style={{ height: "100%", width: '100%' }}>
+            <Box
+                onClick={() => handleCategorySelect({ target: { value: "" } })}
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    padding: "8px 0px",
+                    backgroundColor: selectedCategory === "" ? "#F7F7F7" : "#FFFFFF",
+                    cursor: "pointer",
+                    borderBottom: '1px solid #E0E2E7',
+                    borderBottomWidth: '100%',
+                }}
+            >
+                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#822D32', marginLeft: 12, marginRight: 1, fontFamily: 'Poppins' }}> Clear All</Typography>
+            </Box>
+            {categoriesExportData?.data?.map((cat) => (
+                <Box
                     key={cat._id} // Use cat._id as key for better optimization
-                    onClick={() => handleCategorySelect(cat)}
-                    style={{
+                    onClick={() => handleCategorySelect({ target: { value: cat?._id } })}
+                    sx={{
                         display: "flex",
-                        padding: "8px 2px",
                         alignItems: "center",
                         justifyContent: "flex-start",
                         backgroundColor: selectedCategory === cat._id ? "#F7F7F7" : "#FFFFFF",
-                        borderRadius: "8px",
                         cursor: "pointer",
-                        paddingLeft: '20px',
-                        paddingRight: '20px',
                         overflow: 'auto',
+                        padding: "8px 0",
+                        borderBottom: '1px solid #E0E2E7',
+                        borderBottomWidth: '100%',
                     }}
                 >
                     <Typography
@@ -267,29 +217,45 @@ const Product = () => {
                             alignItems: "center",
                             fontSize: '12px',
                             lineHeight: '24px',
-                            fontFamily: 'Poppins'
+                            fontFamily: 'Poppins',
+                            marginLeft: 5,
+                            marginRight: 10
                         }}>
                         {selectedCategory === cat._id && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}{cat?.name}</Typography>
-
-
-                </p>
+                </Box>
             ))}
         </div>
     );
 
     const statusContent = (
-        <div style={{ width: '150px' }}>
+        <div style={{ width: '100%' }}>
             <Box
-                onClick={() => handleFilterSelection("PUBLISHED")}
+                onClick={() => handleFilterSelection({ target: { value: "" } })}
+                sx={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "flex-end",
+                    padding: "8px 0px",
+                    backgroundColor: status === "" ? "#F7F7F7" : "#FFFFFF",
+                    cursor: "pointer",
+                    borderBottom: '1px solid #E0E2E7',
+                    borderBottomWidth: '100%',
+                }}
+            >
+                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#822D32', marginLeft: 12, marginRight: 1, fontFamily: 'Poppins' }}> Clear All</Typography>
+            </Box>
+            <Box
+                onClick={() => handleFilterSelection({ target: { value: "PUBLISHED" } })}
                 sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    padding: "8px 12px",
-                    backgroundColor: selectedFilter === "PUBLISHED" ? "#F7F7F7" : "#FFFFFF",
+                    backgroundColor: status === "PUBLISHED" ? "#F7F7F7" : "#FFFFFF",
                     cursor: "pointer",
-                    borderRadius: "8px",
-                    marginBottom: "8px",
+                    // borderRadius: "8px",
+                    padding: "8px 0px",
+                    borderBottom: '1px solid #E0E2E7',
+                    borderBottomWidth: '100%',
                 }}
             >
                 <Typography
@@ -298,11 +264,15 @@ const Product = () => {
                         fontWeight: 400,
                         display: "flex",
                         alignItems: "center",
+                        gap: '10px',
                         fontSize: '12px',
                         lineHeight: '24px',
-                        fontFamily: 'Poppins'
+                        color: '#2F2F2F',
+                        fontFamily: 'Poppins',
+                        marginLeft: 5,
+                        marginRight: 10
                     }}>
-                    {selectedFilter === "PUBLISHED"
+                    {status === "PUBLISHED"
                         && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}
                     Published
                 </Typography>
@@ -310,15 +280,17 @@ const Product = () => {
             </Box>
 
             <Box
-                onClick={() => handleFilterSelection("STOCKOUT")}
+                onClick={() => handleFilterSelection({ target: { value: "STOCKOUT" } })}
                 sx={{
                     display: "flex",
-                    padding: "8px 12px",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    backgroundColor: selectedFilter === "STOCKOUT" ? "#F7F7F7" : "#FFFFFF",
+                    backgroundColor: status === "STOCKOUT" ? "#F7F7F7" : "#FFFFFF",
                     cursor: "pointer",
-                    borderRadius: "8px",
+                    // borderRadius: "8px",
+                    padding: "8px 0px",
+                    borderBottom: '1px solid #E0E2E7',
+                    borderBottomWidth: '100%',
                 }}
             >
                 <Typography
@@ -327,25 +299,31 @@ const Product = () => {
                         fontWeight: 400,
                         display: "flex",
                         alignItems: "center",
+                        gap: '10px',
                         fontSize: '12px',
                         lineHeight: '24px',
-                        fontFamily: 'Poppins'
+                        fontFamily: 'Poppins',
+                        color: '#2F2F2F',
+                        marginLeft: 5,
+                        marginRight: 10
                     }}>
-                    {selectedFilter === "STOCKOUT"
+                    {status === "STOCKOUT"
                         && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}
                     Stockout
                 </Typography>
             </Box>
             <Box
-                onClick={() => handleFilterSelection("DRAFT")}
+                onClick={() => handleFilterSelection({ target: { value: "DRAFT" } })}
                 sx={{
                     display: "flex",
-                    padding: "8px 12px",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    backgroundColor: selectedFilter === "DRAFT" ? "#F7F7F7" : "#FFFFFF",
+                    backgroundColor: status === "DRAFT" ? "#F7F7F7" : "#FFFFFF",
                     cursor: "pointer",
-                    borderRadius: "8px",
+                    // borderRadius: "8px",
+                    padding: "8px 0px",
+                    borderBottom: '1px solid #E0E2E7',
+                    borderBottomWidth: '100%',
                 }}
             >
                 <Typography
@@ -354,32 +332,25 @@ const Product = () => {
                         fontWeight: 400,
                         display: "flex",
                         alignItems: "center",
+                        gap: '10px',
                         fontSize: '12px',
                         lineHeight: '24px',
-                        fontFamily: 'Poppins'
+                        fontFamily: 'Poppins',
+                        color: '#2F2F2F',
+                        marginLeft: 5,
+                        marginRight: 10
                     }}>
-                    {selectedFilter === "DRAFT" && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}  Draft</Typography>
+                    {status === "DRAFT"
+                        && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}
+                    Draft
+                </Typography>
             </Box>
+
         </div>
     );
 
-    const allProductsData = [
-        {
-            id: 0,
-            featuredImage: '/jweleryImage.png',
-            name: 'Product Name',
-            description: 'description',
-            productId: '2223',
-            category: 'jhumka',
-            stockQuantity: '32',
-            salePrice: '445342',
-            status: 'DRAFT',
-            createdAt: '23 dec 2024',
-        }
-    ]
-
     return (
-        <div style={{ padding: 20, marginTop: 40 }}>
+        <div style={{ padding: 20, marginTop: 60 }}>
             <div className={productStyle.container}>
                 <div>
                     <div>
@@ -388,7 +359,9 @@ const Product = () => {
                     <CustomSeparator dashboard="Dashboard" type="Product" />
                 </div>
                 <div className={productStyle.attributeStyle}>
-                    <div className={productStyle.exportStyle} onClick={exportToExcel}>
+                    <div className={productStyle.exportStyle} 
+                    // onClick={exportToExcel}
+                    >
                         <ExportIcon /> <p style={{ marginLeft: 5 }}>Export</p>
                     </div>
                     <div className={productStyle.buttonStyle} onClick={() => navigate('/product/Product/AddProduct')}>
@@ -405,7 +378,7 @@ const Product = () => {
                     <input
                         type="text"
                         value={search}
-                        onChange={(e) => setSearch(e.target.value)}
+                        onChange={handleSearch}
                         placeholder="Search Product. . ."
                     />
                 </div>
@@ -414,10 +387,10 @@ const Product = () => {
                         <PopoverComponent icon={<DatePickerIcon />} label="Select Dates" content={dateContent} />
                     </div>
                     <div className={productStyle.dateStlye} style={{ width: '25%' }}>
-                        <PopoverComponent icon={<FilterIcon />} label="Category" content={categoryContent} />
+                        <PopoverComponent icon={<FilterIcon />} label="Category" content={categoryContent} value={selectedCategory} />
                     </div>
                     <div className={productStyle.filter}>
-                        <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
+                        <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} value={status} />
                     </div>
                 </div>
             </div>
@@ -425,151 +398,159 @@ const Product = () => {
                 <div className={productStyle.header}>
                     {/* <CustomizedCheckbox /> */}
                     <div className={productStyle.productMainStyle}> Product </div>
-                    <div className={productStyle.dropdownStyle}> <Drop color="#858D9D" /> </div>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "productName" } })}>
+                        <Drop color="#858D9D" />
+                    </div>
                     <div className={productStyle.skuStyle}>ID</div>
                     <div className={productStyle.catStyle}>Category</div>
                     <div className={productStyle.stockStyle}>Stock </div>
-                    <div className={productStyle.dropdownStyle}> <Drop color="#858D9D" /> </div>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "stock" } })}>
+                        <Drop color="#858D9D" />
+                    </div>
                     <div className={productStyle.priceStyle}>Price</div>
-                    <div className={productStyle.dropdownStyle}> <Drop color="#858D9D" /> </div>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "price" } })}>
+                        <Drop color="#858D9D" />
+                    </div>
                     <div className={productStyle.status}>Status</div>
-                    <div className={productStyle.dropdownStyle}> <Drop color="#858D9D" /> </div>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "status" } })}>
+                        <Drop color="#858D9D" />
+                    </div>
                     <div className={productStyle.addedStyle}>Added</div>
-                    <div className={productStyle.dropdownStyle}> <Drop color="#858D9D" /> </div>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "createdAt" } })}>
+                        <Drop color="#858D9D" />
+                    </div>
                     <div className={productStyle.action}>Action</div>
                 </div>
-                {/* {isLoading ? (
+                {isLoading ? (
                     <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
                         <CircularProgress />
                     </Box>
-                ) : ( */}
-                <>
-                    {allProductsData?.length > 0 ? (
-                        <>
-                            <div>
-                                {allProductsData?.map((item, index) => {
-                                    return (
-                                        <div className={productStyle.info} key={index}>
-                                            {/* <CustomizedCheckbox /> */}
-                                            <div className={productStyle.productMainStyle}>
+                ) : (
+                    <>
+                        {productsData?.data?.length > 0 ? (
+                            <>
+                                <div>
+                                    {productsData?.data?.map((item, index) => {
+                                        return (
+                                            <div className={productStyle.info} key={index}>
+                                                {/* <CustomizedCheckbox /> */}
+                                                <div className={productStyle.productMainStyle}>
 
-                                                <img src={item?.featuredImage} width={40} height={40} style={{ borderRadius: 5 }} />
-                                                <div>
-                                                    <span style={{ marginLeft: 5 }}>{item?.name && item.name.length > 10 ? `${item.name.substring(0, 10)}...` : item?.name}</span>
-                                                    <br />
-                                                    <p style={{ marginLeft: 5 }} className={productStyle.description}>{item?.description} </p>
+                                                    <img src={item?.featurerdImage[0]} width={40} height={40} style={{ borderRadius: 5 }} alt='featurerdImage' />
+                                                    <div>
+                                                        <span style={{ marginLeft: 5 }}>{item?.productName && item.productName.length > 10 ? `${item.productName.substring(0, 10)}...` : item?.productName}</span>
+                                                        <br />
+                                                        <p style={{ marginLeft: 5 }} className={productStyle.description}>{item?.description} </p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                            <div className={productStyle.dropdownStyle} />
-                                            <div className={productStyle.skuStyle}>
-                                                {item?.productId}
-                                            </div>
-                                            <div className={productStyle.catStyle} style={{ color: '#667085' }}>
-                                                {item?.category}
-                                            </div>
-                                            <div className={productStyle.stockStyle}>
-                                                {item?.stockQuantity}
-                                            </div>
-                                            <div className={productStyle.dropdownStyle} />
-                                            <div className={productStyle.priceStyle}>
-                                                Rs. {item?.salePrice}
-                                            </div>
-                                            <div className={productStyle.dropdownStyle} />
-                                            <div
-                                                style={{
-                                                    backgroundColor: item?.status === 'DRAFT' ? '#F0F1F3' : item?.status === 'PUBLISHED' ? "#1A98821A" : '#F439391A',
-                                                    width: '13%',
-                                                    borderRadius: 8,
-                                                    height: 30,
-                                                    alignContent: 'center',
-                                                    justifyContent: 'center',
-                                                    display: 'flex',
-                                                    alignItems: 'center',
-                                                    // marginLeft: 20,
-                                                    alignSelf: 'center'
-                                                }}
-                                            >
-                                                <span
+                                                <div className={productStyle.dropdownStyle} />
+                                                <div className={productStyle.skuStyle}>
+                                                    {item?._id}
+                                                </div>
+                                                <div className={productStyle.catStyle} style={{ color: '#667085' }}>
+                                                    {item?.category?.productCategory?.name}
+                                                </div>
+                                                <div className={productStyle.stockStyle}>
+                                                    {item?.inventory?.totalstock}
+                                                </div>
+                                                <div className={productStyle.dropdownStyle} />
+                                                <div className={productStyle.priceStyle}>
+                                                    Rs. {item?.pricing?.finalSalePrice?.value}
+                                                </div>
+                                                <div className={productStyle.dropdownStyle} />
+                                                <div
                                                     style={{
-                                                        fontFamily: 'DM Sans',
-                                                        fontSize: 12,
-                                                        fontWeight: '600',
-                                                        // lineHeight: 20,
-                                                        letterSpacing: 0.5,
-                                                        textAlign: 'center',
-                                                        color: item?.status === 'DRAFT' ? "#4A4C56" : item?.status === 'PUBLISHED' ? '#4DDB4D' : '#F92929',
-                                                        textTransform: 'capitalize'
+                                                        backgroundColor: item?.status === 'DRAFT' ? '#F0F1F3' : item?.status === 'PUBLISHED' ? "#1A98821A" : '#F439391A',
+                                                        width: '13%',
+                                                        borderRadius: 8,
+                                                        height: 30,
+                                                        alignContent: 'center',
+                                                        justifyContent: 'center',
+                                                        display: 'flex',
+                                                        alignItems: 'center',
+                                                        // marginLeft: 20,
+                                                        alignSelf: 'center'
                                                     }}
                                                 >
-                                                    {item?.status === 'DRAFT' ? 'Draft' : item?.status === 'PUBLISHED' ? 'Published' : 'Outofstock'}
-                                                </span>
-                                            </div>
-                                            <div className={productStyle.dropdownStyle} />
-                                            <div className={productStyle.addedStyle} style={{ color: '#667085' }}>
-                                                {formatDate(item?.createdAt)}
-                                            </div>
-                                            <div className={productStyle.dropdownStyle} />
-                                            <div className={productStyle.action}>
-                                                <div onClick={() => navigate(`/product/Product/ProductViewDetails`)}>
-                                                    <ViewIcon />
+                                                    <span
+                                                        style={{
+                                                            fontFamily: 'DM Sans',
+                                                            fontSize: 12,
+                                                            fontWeight: '600',
+                                                            // lineHeight: 20,
+                                                            letterSpacing: 0.5,
+                                                            textAlign: 'center',
+                                                            color: item?.status === 'DRAFT' ? "#4A4C56" : item?.status === 'PUBLISHED' ? '#4DDB4D' : '#F92929',
+                                                            textTransform: 'capitalize'
+                                                        }}
+                                                    >
+                                                        {item?.status === 'DRAFT' ? 'Draft' : item?.status === 'PUBLISHED' ? 'Published' : 'Outofstock'}
+                                                    </span>
                                                 </div>
-                                                <div style={{ marginLeft: 12 }} onClick={() => navigate(`/product/Product/EditProduct${item._id}`, { state: { item } })}>
-                                                    <EditIcon />
+                                                <div className={productStyle.dropdownStyle} />
+                                                <div className={productStyle.addedStyle} style={{ color: '#667085' }}>
+                                                    {formatDate(item?.createdAt)}
                                                 </div>
-                                                <div style={{ marginLeft: 12 }} onClick={() => openDeleteModal(item._id)}>
-                                                    <DeleteIcon />
+                                                <div className={productStyle.dropdownStyle} />
+                                                <div className={productStyle.action}>
+                                                    <div onClick={() => navigate(`/product/Product/ProductViewDetails`)}>
+                                                        <ViewIcon />
+                                                    </div>
+                                                    <div style={{ marginLeft: 12 }} onClick={() => navigate(`/product/Product/EditProduct${item._id}`, { state: { item } })}>
+                                                        <EditIcon />
+                                                    </div>
+                                                    <div style={{ marginLeft: 12 }} onClick={() => openDeleteModal(item._id)}>
+                                                        <DeleteIcon />
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    )
-                                })}
-                            </div>
-                            <div
-                                className={productStyle.entryView}
-                                style={{ padding: 20,}}
-                            >
-                                <div className={productStyle.showingText}>
-                                    {/* Showing {start}-{end} from {categoriesData?.totalCategories}{" "} */}
-                                    Showing 1-2 from 2
+                                        )
+                                    })}
                                 </div>
-                                <Pagination
-                                    // count={categoriesData?.totalPages}
-                                    // page={filterOptions?.page}
-                                    // onChange={handlePageChange}
-                                    count={2}
-                                    page={2}
-                                    shape="rounded"
-                                    siblingCount={1} // Show one sibling page (previous and next)
-                                    boundaryCount={0} // Do not show first and last buttons
-                                    sx={{
-                                        "& .MuiPaginationItem-root": {
-                                            margin: "0 4px",
-                                              color: "#E87819",
-                                            border: "1px solid #E0E2E7",
-                                            borderRadius: "6px",
-                                            fontSize: "14px",
-                                            fontFamily: `'Public Sans', sans-serif`,
-                                        },
-                                        "& .Mui-selected": {
-                                            color: "#fff",
-                                            backgroundColor: "#E87819  !important", // custom color for selected page
-                                        },
-                                        "& .MuiPaginationItem-root:hover": {
-                                            color: "#fff",
-                                            backgroundColor: "#E87819", // custom hover color
-                                        },
-                                    }}
-                                />
-                            </div>
-                        </>
-                    ) : (
-                        <div>
-                            <ErrorPage />
-                        </div>
-                    )}
+                                <div
+                                    className={productStyle.entryView}
+                                    style={{ padding: 20, }}
+                                >
+                                    <div className={productStyle.showingText}>
+                                        Showing {start}-{end} from {productsData?.totalItems}{" "}
 
-                </>
-                {/* )} */}
+                                    </div>
+                                    <Pagination
+                                        count={productsData?.totalPages}
+                                        page={filterOptions?.page}
+                                        onChange={handlePageChange}
+                                        shape="rounded"
+                                        siblingCount={1} // Show one sibling page (previous and next)
+                                        boundaryCount={0} // Do not show first and last buttons
+                                        sx={{
+                                            "& .MuiPaginationItem-root": {
+                                                margin: "0 4px",
+                                                color: "#E87819",
+                                                border: "1px solid #E0E2E7",
+                                                borderRadius: "6px",
+                                                fontSize: "14px",
+                                                fontFamily: `'Public Sans', sans-serif`,
+                                            },
+                                            "& .Mui-selected": {
+                                                color: "#fff",
+                                                backgroundColor: "#E87819  !important", // custom color for selected page
+                                            },
+                                            "& .MuiPaginationItem-root:hover": {
+                                                color: "#fff",
+                                                backgroundColor: "#E87819", // custom hover color
+                                            },
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            <div>
+                                <ErrorPage />
+                            </div>
+                        )}
+
+                    </>
+                )}
             </div >
             <DeleteModal
                 heading={"Delete Product"}
@@ -577,8 +558,7 @@ const Product = () => {
                 open={isDeleteModalOpen}
                 data={data}
                 desc={'Do you want to delete this product? '}
-                handleSubject={deletedProduct}
-            // isRefresh={isRefresh}
+                handleSubject={deletedData}
             />
         </div>
     )

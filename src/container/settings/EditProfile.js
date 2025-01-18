@@ -93,10 +93,6 @@ const EditProfile = () => {
         }
     }
 
-
-
-
-
     useEffect(() => {
         const fetchProfile = async () => {
             try {

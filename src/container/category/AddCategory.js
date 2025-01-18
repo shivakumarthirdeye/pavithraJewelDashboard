@@ -5,17 +5,24 @@ import { ImageIcon } from '../../svg';
 import { useFormik } from 'formik';
 import * as yup from "yup";
 import { Button, MenuItem, Select, TextField } from '@mui/material';
-import { cancle, formselect, saveData } from '../../MaterialsUI';
+import { cancle, fieldText, formselect, saveData, TextArea } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
+import api from '../../helper/Api';
+import { addCategories } from '../../redux/categoriesSlice';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import Toastify from '../../helper/Toastify';
+import { unwrapResult } from '@reduxjs/toolkit';
 
 const AddCategory = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch()
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
         status: yup.string().required("Status is required"),
         description: yup.string().required("Description is required"),
-        img: yup.array().min(1, "Image is required"),
+        thumbnailPhoto: yup.string().required("Image is required"),
     })
 
     const {
@@ -32,7 +39,7 @@ const AddCategory = () => {
             name: "",
             description: "",
             status: "",
-            img: [],
+            thumbnailPhoto: "",
 
         },
         validationSchema: schema,
@@ -42,21 +49,41 @@ const AddCategory = () => {
 
     })
     const handleSubject = async (values) => {
-        // dispatch(addCategories(values));
-        navigate('/categories/Category')
+        const result = await dispatch(addCategories(values));
+        unwrapResult(result)
+        navigate('/categories/Categories')
     };
-    // const handleImageChange = async (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
 
-    //         const body = new FormData()
-    //         body.set('image', file)
-    //         const { data, status } = await api.fileUpload(body)
-    //         if (status === 200) {
-    //             setFieldValue("img", data.data)
-    //         }
-    //     }
-    // };
+    const handleImageChange = async (e, attribute, repo) => {
+
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                }
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
+
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
+
+                    setFieldValue('thumbnailPhoto', data?.data?.url)
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
+        }
+    };
+
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={categoryStyle.container}>
@@ -84,36 +111,7 @@ const AddCategory = () => {
                             placeholder='Type category name here. . .'
                             name="name"
                             onChange={handleChange}
-                            sx={{
-                                width: '100%',
-                                height: '40px',
-                                // borderRadius: 8,
-                                "& .MuiOutlinedInput-root": {
-                                    fontSize: 14,
-                                    color: "#000",
-                                    fontWeight: '400',
-                                    fontFamily: 'Public Sans',
-                                    borderRadius: 2.5,
-                                    height: '40px',
-                                    padding: '0 14px',
-                                    "& fieldset": {
-                                        borderColor: "#E0E2E7", // Default border color
-                                        borderWidth: '1px'
-                                    },
-                                    "&:hover fieldset": {
-                                        borderColor: "#E0E2E7", // Border color on hover
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#E0E2E7", // Border color when focused
-                                    },
-                                },
-                                "& .MuiInputBase-input": {
-                                    padding: "1px 0px", // adjust padding inside the input
-                                },
-                            }}
-                            style={{
-                                fontSize: 12
-                            }}
+                            sx={fieldText}
                         />
                     </div>
                     {
@@ -122,55 +120,27 @@ const AddCategory = () => {
                     <div style={{ marginTop: 20 }}>
                         <label className={categoryStyle.label}>Description</label>
                         <br />
-                        {/* <div className={categoryStyle.descriptionBox}> */}
                         <TextField
                             type='text'
                             onBlur={handleBlur}
-                            value={values.na}
+                            value={values.description}
                             placeholder='Type category description here. . .'
                             name="description"
                             onChange={handleChange}
                             multiline={true}
                             rows={4}
-                            sx={{
-                                width: '100%',
-                                // borderRadius: 8,
-                                "& .MuiOutlinedInput-root": {
-                                    fontSize: 14,
-                                    color: "#000",
-                                    fontWeight: '400',
-                                    fontFamily: 'Public Sans',
-                                    borderRadius: 2.5,
-                                    "& fieldset": {
-                                        borderColor: "#E0E2E7", // Default border color
-                                        borderWidth: '1px'
-                                    },
-                                    "&:hover fieldset": {
-                                        borderColor: "#E0E2E7", // Border color on hover
-                                    },
-                                    "&.Mui-focused fieldset": {
-                                        borderColor: "#E0E2E7", // Border color when focused
-                                    },
-                                },
-                                "& .MuiInputBase-input": {
-                                    padding: "1px 0px", // adjust padding inside the input
-                                },
-                            }}
-                            style={{
-                                fontSize: 12
-                            }}
+                            sx={TextArea}
                         />
-                        {/* </div> */}
                         {
                             errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
                         }
                     </div>
 
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
-                        <Button sx={cancle} onClick={handleSubmit} variant="contained" disableElevation={true}>Cancel</Button>
-                        
-                            <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save</Button>
-                        
+                        <Button sx={cancle} onClick={resetForm} variant="contained" disableElevation={true}>Cancel</Button>
+
+                        <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save</Button>
+
                     </div>
                 </div>
                 <div className={categoryStyle.thumbanilStyle}>
@@ -180,10 +150,10 @@ const AddCategory = () => {
                         <br />
                         <div className={categoryStyle.imageUpload1}>
                             <div className={categoryStyle.imageView}>
-                                {values?.img?.length > 0 ? (
+                                {values?.thumbnailPhoto?.length > 0 ? (
                                     <div>
                                         <img
-                                            src={values.img[0]}
+                                            src={values.thumbnailPhoto}
                                             alt="Selected"
                                             style={{ maxWidth: '100%', marginTop: '0px' }}
                                         />
@@ -203,7 +173,7 @@ const AddCategory = () => {
                                                 accept="image/*"
                                                 id='catFile'
                                                 style={{ display: 'none' }}
-                                                // onChange={handleImageChange}
+                                                onChange={handleImageChange}
                                                 value={values.catFile}
                                             />
                                         </div>
@@ -228,10 +198,15 @@ const AddCategory = () => {
                             <label className={categoryStyle.label}>Category Status</label>
                             <br />
                             <Select
-                                // className={categoryStyle.formselect}
                                 labelId="demo-simple-select-label"
                                 id="demo-simple-select"
-                                sx={formselect}
+                                sx={{
+                                    ...formselect,
+                                     "& .MuiSelect-select": {
+                                        fontWeight: values.status ? "500" : "400",
+                                        color: values.status ? "#081735" : "#858D9D",
+                                    },
+                                }}
                                 IconComponent={(props) => (
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
@@ -242,9 +217,12 @@ const AddCategory = () => {
                                 onChange={handleChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                <MenuItem value={true}>Active</MenuItem>
-                                <MenuItem value={false}>Inactive</MenuItem>
+                                <MenuItem value="ACTIVE">Active</MenuItem>
+                                <MenuItem value="INACTIVE">Inactive</MenuItem>
                             </Select>
+                            {
+                                errors.status && touched.status && <p style={{ color: "red", fontSize: "12px" }}>{errors.status}</p>
+                            }
                         </div>
                     </div>
                 </div>

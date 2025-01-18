@@ -16,7 +16,7 @@ export const custom = {
     background: 'transparent',
     "&:hover": {
         background: '#E87819',
-        color:'#fff'
+        color: '#fff'
     }
 }
 
@@ -73,7 +73,7 @@ export const saveChanges = {
     "&:hover": {
         background: '#E87819'
     },
-    marginRight:'20px'
+    marginRight: '20px'
 }
 export const googlemap = {
     height: '42px',
@@ -104,7 +104,7 @@ export const formselect = {
     fontSize: "14px",
     outline: "none !important",
     borderRadius: '8px',
-    padding: "14px",
+    padding: "10px",
     opacity: 1,
     border: "1px solid var(--Gray-100, #E0E2E7) !important",
     ".MuiSelect-select": {
@@ -114,37 +114,25 @@ export const formselect = {
         border: "none !important",
     },
     "& .MuiOutlinedInput-root": {
-        borderRadius: "1.1ch",
+        borderRadius: "8px",
         borderColor: "#D9D9D9",
         // height: "100%",
         display: 'flex',
         alignItem: 'center',
-        "& input": {
-            padding: "10px 10px",
-            height: "auto",
-            color: "#081735",
-            fontFamily: "Nunito Sans",
-            fontSize: "14px",
-            fontWeight: "400",
-            lineHeight: "20px",
-            textAlign: "left",
-            opacity: 1,
-            "&::placeholder": {
-                color: "#858D9D", // Set your placeholder text color
-                fontFamily: "Public Sans",
-                fontSize: "14px",
-                fontWeight: "400",
-                lineHeight: "24px",
-                textAlign: "left",
-                opacity: 1,
-                padding: "10px 4px",
-            },
-        },
     },
-
+    // "& .MuiSelect-select": {
+    //     color: "#081735",
+    //     fontFamily: "Nunito Sans",
+    //     fontSize: "14px",
+    //     fontWeight: "600",
+    //     outline: "none !important",
+    //     borderRadius: '8px',
+    //     padding: "10px",
+    //     opacity: 1,
+    // },
 }
 export const SelectStyle = {
-    backgroundColor:'#fff',
+    backgroundColor: '#fff',
     width: "100%",
     height: "40px",
     color: "#858D9D",

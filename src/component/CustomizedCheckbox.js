@@ -64,13 +64,14 @@ function BpCheckbox(props) {
   );
 }
 
-export default function CustomizedCheckbox({handleCheck,checked,disabled}) {
+export default function CustomizedCheckbox({handleCheck,checked,disabled,value}) {
   return (
     <div>
       <BpCheckbox 
         onChange={handleCheck}
         checked={checked}
-        disabled={disabled}
+        // disabled={disabled}
+        value={value}
       />
       {/* <BpCheckbox defaultChecked /> */}
       {/* <BpCheckbox disabled /> */}

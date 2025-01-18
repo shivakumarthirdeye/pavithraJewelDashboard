@@ -7,8 +7,17 @@ import {
     OrderIcon,
     ProductIcon,
 } from "../../svg";
+import { useDispatch, useSelector } from "react-redux";
+import { useFormik } from 'formik';
+import * as yup from "yup";
+import { getGoldRate, updateGoldRate } from "../../redux/dashboardSlice";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { fieldText } from "../../MaterialsUI";
 
 export const Dashboard = () => {
+    const dispatch = useDispatch();
+    const { goldRateData,isRefresh } = useSelector((state) => state.dashboard);
+    console.log('goldRateData', goldRateData);
 
     //state
     const [value, setValue] = useState([
@@ -51,7 +60,36 @@ export const Dashboard = () => {
         },
     ];
 
+    const schema = yup.object().shape({
+        k22: yup.string().required("Price is required"),
+        k18: yup.string().required("price is required"),
+    })
 
+    const {
+        handleSubmit,
+        errors,
+        values,
+        touched,
+        handleChange,
+        handleBlur,
+    } = useFormik({
+        initialValues: {
+            k22: "",
+            k18: "",
+        },
+        validationSchema: schema,
+        onSubmit: async (values) => {
+            handleSubject(values)
+        }
+
+    })
+    const handleSubject = async (values) => {
+        dispatch(updateGoldRate(values));
+    };
+
+    useEffect(() => {
+        dispatch(getGoldRate())
+    }, [dispatch,isRefresh])
 
     return (
         <div style={{ padding: 20 }}>
@@ -73,50 +111,164 @@ export const Dashboard = () => {
                     <IncomeIcon />
                     <span>Today’s Gold Rate</span>
                 </div>
-                <div className={dashboardStyle.goldRateStyle} style={{gap:50,paddingTop:20}}>
+                <div className={dashboardStyle.goldRateStyle} style={{ gap: 50, paddingTop: 20 }}>
                     <div>
                         <label className={dashboardStyle.labelStyle}>
                             22k gold
                         </label>
                         <div className={dashboardStyle.goldRateStyle}>
-                            <div className={dashboardStyle.goldInputbox}>
-                                <input
-                                    type='text'
-                                    // onBlur={handleBlur}
-                                    placeholder="Rs."
-                                    name='goldRate' // Map to Formik's skillsGained array
-                                    // value={}
-                                    // onChange={handleChange}
-                                    maxLength={120}
-                                />
-                                <div className={dashboardStyle.perGram}>
-                                    /g
-                                </div>
-                            </div>
-                            <div className={dashboardStyle.changesStyke}>Change</div>
+                            <TextField
+                                type='text'
+                                onBlur={handleBlur}
+                                placeholder="Rs."
+                                name='k22' // Map to Formik's skillsGained array
+                                value={values.k22 || goldRateData?.data?.k22}
+                                onChange={handleChange}
+                                sx={fieldText}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="flex-start" sx={{
+                                            backgroundColor: 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                // edge="end"
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    // padding: '8px',
+                                                    border: "none",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-start",
+                                                    fontSize: '14px',
+                                                    color: '#000000',
+                                                    marginLeft: '-10px',
+                                                    marginRight: '-15px',
+                                                    // marginBottom: '20px'
+                                                }}
+                                                disableRipple // disables ripple effect for a cleaner loo
+                                            >
+                                                Rs.
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="flex-end" sx={{
+                                            backgroundColor: 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                // edge="end"
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    // padding: '8px',
+                                                    border: "none",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-end",
+                                                    fontSize: '14px',
+                                                    fontWeight: '400',
+                                                    fontFamily: 'Public Sans',
+                                                    marginRight: '-10px'
+                                                    // marginBottom: '20px'
+                                                }}
+                                                disableRipple // disables ripple effect for a cleaner loo
+                                            >
+                                                /g
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <div
+                                className={dashboardStyle.changesStyke}
+                                onClick={handleSubmit}
+                            >Change</div>
                         </div>
+                        {
+                            errors.k22 && touched.k22 && <p style={{ color: "red", fontSize: "12px" }}>{errors.k22}</p>
+                        }
                     </div>
                     <div>
                         <label className={dashboardStyle.labelStyle}>
                             18k gold
                         </label>
                         <div className={dashboardStyle.goldRateStyle}>
-                            <div className={dashboardStyle.goldInputbox}>
-                                <input
-                                    type='text'
-                                    // onBlur={handleBlur}
-                                    placeholder="Rs."
-                                    name='goldRate' // Map to Formik's skillsGained array
-                                    // value={}
-                                    // onChange={handleChange}
-                                    maxLength={120}
-                                />
-                                <div className={dashboardStyle.perGram}>
-                                    /g
-                                </div>
-                            </div>
-                            <div className={dashboardStyle.changesStyke}>Change</div>
+                            <TextField
+                                type='text'
+                                onBlur={handleBlur}
+                                placeholder="Rs."
+                                name='k18' // Map to Formik's skillsGained array
+                                value={values.k18 || goldRateData?.data?.k18}
+                                onChange={handleChange}
+                                sx={fieldText}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="flex-start" sx={{
+                                            backgroundColor: 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                // edge="end"
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    // padding: '8px',
+                                                    border: "none",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-start",
+                                                    fontSize: '14px',
+                                                    color: '#000000',
+                                                    marginLeft: '-10px',
+                                                    marginRight: '-15px',
+                                                    // marginBottom: '20px'
+                                                }}
+                                                disableRipple // disables ripple effect for a cleaner loo
+                                            >
+                                                Rs.
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="flex-end" sx={{
+                                            backgroundColor: 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                // edge="end"
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    // padding: '8px',
+                                                    border: "none",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-end",
+                                                    fontSize: '14px',
+                                                    fontWeight: '400',
+                                                    fontFamily: 'Public Sans',
+                                                    marginRight: '-10px'
+                                                    // marginBottom: '20px'
+                                                }}
+                                                disableRipple // disables ripple effect for a cleaner loo
+                                            >
+                                                /g
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <div
+                                className={dashboardStyle.changesStyke}
+                                onClick={handleSubmit}
+                            >Change</div>
                         </div>
+                        {
+                            errors.k18 && touched.k18 && <p style={{ color: "red", fontSize: "12px" }}>{errors.k18}</p>
+                        }
                     </div>
                 </div>
             </div>

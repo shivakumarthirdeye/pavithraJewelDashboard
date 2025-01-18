@@ -233,11 +233,11 @@ export const CustomersDetails = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    padding: "8px 0px",
-                    backgroundColor: selectedFilter === "NEW" ? "#F7F7F7" : "#FFFFFF",
+                    padding: "8px 0px",                    
                     cursor: "pointer",
                     borderBottom: '1px solid #E0E2E7',
                     borderBottomWidth: '100%',
+                    backgroundColor: selectedFilter === "NEW" ? "#F7F7F7" : "#FFFFFF",
                 }}
             >
                 <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#2F2F2F', fontFamily: 'Poppins', marginLeft: 5, marginRight: 10 }}>  {selectedFilter === "NEW" && <CheckIcon fontSize="small" />}  New</Typography>

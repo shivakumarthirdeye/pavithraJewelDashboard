@@ -146,15 +146,12 @@ const Coupons = () => {
                         />
                     </div>
                 </div>
-
-                <div>
-                    <div
-                        className={catStyle.filter}
-                    //   onClick={exportToExcel}
-                    >
-                        <FilterIcon />
-                        <span>Status</span>
-                    </div>
+                <div
+                    className={catStyle.filter}
+                //   onClick={exportToExcel}
+                >
+                    <FilterIcon />
+                    <span>Status</span>
                 </div>
             </div>
             <div

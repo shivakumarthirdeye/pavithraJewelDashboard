@@ -80,45 +80,56 @@ class Api {
     fileUpload = (data, config) => {
         return this.init('multipart/form-data').post("/admin/upload-file", data)
     }
+    getPutSignedUrl = (data, config) => {
+        return this.init('multipart/form-data').post("/admin/get-put-url", data)
+    }
+
+    //Categories
     addCategories = (data) => {
-        return this.init().post("/admin/category/new", data)
+        return this.init().post("/admin/category", data)
     }
     getCategories = (data) => {
-        return this.init().get(`/admin/category/get-all-categories?${data}`, data)
+        return this.init().get(`/admin/category?${data}`, data)
+    }
+    getCategoriesExport = (data) => {
+        return this.init().get('/admin/allcategories', data)
     }
     editCategories = (data) => {
-        return this.init().put(`/admin//category/edit-category/${data?._id}`, data)
+        return this.init().put(`/admin/category/${data?._id}`, data)
     }
     deleteCategories = (data) => {
-        return this.init().delete(`/admin/category/delete-category/${data}`, data)
+        return this.init().delete(`/admin/category/${data}`, data)
     }
-    getParentCategories = () => {
-        return this.init().get('/admin/sub-category/parentcategorties')
-    }
+    
+    //Subcategories
 
-    getUndeletedCategories =()=>{
-        return this.init().get('/admin/sub-category/undeleted-categories')
-
-    }
     addSubCategories = (data) => {
-        return this.init().post("/admin/sub-category/new", data)
+        return this.init().post("/admin/subcategory", data)
     }
     getSubCategories = (data) => {
-        return this.init().get(`/admin/sub-category/get-all-subcategories?${data}`, data)
+        return this.init().get(`/admin/subcategory?${data}`, data)
     }
     editSubCategories = (data) => {
-        return this.init().put(`/admin/sub-category/edit-sub-category/${data?._id}`, data)
-    }
-    getChildCategories = (data) => {
-        return this.init().get(`/admin/sub-category/childCategories`, data)
+        return this.init().put(`/admin/subcategory/${data?._id}`, data)
     }
     deleteSubCategories = (data) => {
-        return this.init().delete(`/admin/sub-category/delete-sub-category/${data}`, data)
+        return this.init().delete(`/admin/subcategory/${data}`, data)
+    }
+    getSubCategoriesExport = (data) => {
+        return this.init().get('/admin/allsubcategories', data)
+    }
+
+    //Dasboards Api 
+    updateGoldRate = (data) => {
+        return this.init().post('/admin/goldrate',data)
+    }
+    getGoldRate = (data) => {
+        return this.init().get('/admin/goldrate', data)
     }
     
     // get Products
     getProducts = (data) => {
-        return this.init().get(`/admin/product${data}`, data)
+        return this.init().get(`/admin/product?${data}`, data)
     }
     getProductsWithoutParams = () => {
         return this.init().get(`/admin/product/get-all-products`)
