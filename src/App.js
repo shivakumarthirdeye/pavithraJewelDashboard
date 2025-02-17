@@ -38,6 +38,8 @@ import EditCoupon from './container/coupons/EditCoupon';
 import Country from './container/country/Country';
 import Notifications from './container/notification/Notification';
 import EditProfile from './container/settings/EditProfile';
+import { TrashMadeToOrders } from './container/orders/TrashMadeToOrders';
+import ViewHomePageBuilder from './container/appearance/ViewHomePageBuilder';
 
 function App() {
   return (
@@ -66,23 +68,25 @@ function App() {
             <Route path='/categories/Subcategories/EditSubcategory/:id' element={<EditSubcategory />} />
             <Route path='/product/Product' element={<Product />} />
             <Route path='/product/Product/AddProduct' element={<AddProduct />} />
-            <Route path='/product/Product/EditProduct' element={<EditProduct />} />
-            <Route path='/product/Product/ProductViewDetails' element={<ProductViewDetails />} />
+            <Route path='/product/Product/EditProduct/:id' element={<EditProduct />} />
+            <Route path='/product/Product/ProductViewDetails/:id' element={<ProductViewDetails />} />
             <Route path='/orders/ReadyToShipOrders' element={<ReadyToShipOrders />} />
             <Route path='/orders/MadeToOrders' element={<MadeToOrders />} />
-            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails' element={<ReadyToShipOrderDetails />} />
-            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews' element={<CustomerReview />} />
+            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/:id' element={<ReadyToShipOrderDetails />} />
+            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/:id' element={<CustomerReview />} />
             <Route path='/orders/ReadyToShipOrders/TrashReadyToShip' element={<TrashReadyToShip />} />
             <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice' element={<OrdersInvoice />} />
-            <Route path='/orders/MadeToOrders/MadeToOrderDetails' element={<MadeToOrderDetails />} />
+            <Route path='/orders/MadeToOrders/MadeToOrderDetails/:id' element={<MadeToOrderDetails />} />
+            <Route path='/orders/MadeToOrders/TrashMadeToOrders' element={<TrashMadeToOrders />} />
             <Route path='/customer/Customers' element={<Customers />} />
-            <Route path='/customer/Customers/CustomersDetails' element={<CustomersDetails />} />
+            <Route path='/customer/Customers/CustomersDetails/:id' element={<CustomersDetails />} />
             <Route path='/appearance/Appearance' element={<Appearance />} />
             <Route path='/appearance/Appearance/HomePageBuilder' element={<HomePageBuilder />} />
+            <Route path='/appearance/Appearance/ViewHomePageBuilder' element={<ViewHomePageBuilder />} />
             <Route path='/appearance/Appearance/OffersPage' element={<OffersPage />} />
             <Route path='/coupons/Coupons' element={<Coupons />} />
             <Route path='/coupons/Coupons/AddCoupons' element={<AddCoupon />} />
-            <Route path='/coupons/Coupons/EditCoupon' element={<EditCoupon />} />
+            <Route path='/coupons/Coupons/EditCoupon/:id' element={<EditCoupon />} />
             <Route path='/country/Country' element={<Country />} />
             <Route path='/notification/Notifications' element={<Notifications />} />
             <Route path='/settings/EditProfile' element={<EditProfile />} />

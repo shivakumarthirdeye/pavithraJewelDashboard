@@ -5,13 +5,19 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, MenuItem, Select } from '@mui/material';
-import { custom, saveChanges, SelectStyle } from '../../MaterialsUI';
+import { Box, Button, Checkbox, ListItemText, MenuItem, Select } from '@mui/material';
+import { custom, saveChanges, formselect, SelectStyle } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import * as yup from "yup";
 import { CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCategoriesExport } from '../../redux/categoriesSlice';
+import { addAppearanceCategories } from '../../redux/appearanceSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -24,9 +30,19 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
     overflow: 'visible',
 }));
 export default function Categories() {
-    const schema = yup.object().shape({
-        category: yup.string().required("Category is required"),
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
+    const { categoriesExportData } = useSelector(
+        (state) => state.categories);
+
+
+    const [selectedCategories, setSelectedCategories] = React.useState([]);
+
+    const schema = yup.object().shape({
+        categories: yup.array()
+        .min(5, "You must select at least 5 categories")
+        .required("Category is required"),
     });
 
 
@@ -38,40 +54,45 @@ export default function Categories() {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm,
     } = useFormik({
         initialValues: {
-            category: '',
+            categories: [],
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleSubject(values)
+            handleSubject(values)
         }
 
     })
-    const handleCategoryChange = (event) => {
-        const selectedAttributeId = event.target.value; // This will be the base ID of the selected category
-        setFieldValue("category", selectedAttributeId); // Update the formik state with the base ID
 
-        setFieldValue("subCategory", []);
+    const handleSubject = async (value) => {
+        try {
+            const resultAction = await dispatch(addAppearanceCategories(value))
+
+            unwrapResult(resultAction)
+
+            navigate("/appearance/Appearance")
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+    }
+    React.useEffect(() => {
+        dispatch(getCategoriesExport())
+    }, [dispatch])
+
+    const handleCategoryChange = (event) => {
+        const selectedCategoryIds = event.target.value; // Get selected category IDs
+        // Find the full category objects based on selected IDs
+        const selectedCategoriesData = categoriesExportData?.filter((category) =>
+            selectedCategoryIds.includes(category._id)
+        );
+
+        setSelectedCategories(selectedCategoriesData);
+        setFieldValue('categories', selectedCategoryIds, true); // Store only the IDs in Formik
     };
-    const data = [
-        {
-            id: 0,
-            name: 'Category Name'
-        },
-        {
-            id: 1,
-            name: 'Category Name'
-        },
-        {
-            id: 2,
-            name: 'Category Name'
-        },
-        {
-            id: 3,
-            name: 'Category Name'
-        },
-    ]
+
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -124,19 +145,36 @@ export default function Categories() {
                             )}
                             displayEmpty
                             defaultValue=''
-                            name='category'
-                            value={values.category}
+                            multiple
+                            name='categories'
+                            value={selectedCategories.map(category => category._id)}
                             onChange={handleCategoryChange}
+                            renderValue={(selected) =>
+                                selected?.length > 0
+                                    ? categoriesExportData
+                                        ?.filter(category => selected.includes(category._id))
+                                        .map(category => category.name)
+                                        .join(', ')
+                                    : "Select Category"
+                            }
                         >
                             <MenuItem value="">Select</MenuItem>
-                            {/* {categoryData?.map((category) => (
-                                    <MenuItem key={category._id} value={category._id}>
-                                        {category.name}
-                                    </MenuItem>
-                                ))} */}
+                            {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
+                                <MenuItem key={category._id} value={category._id}>
+                                    {/* <Checkbox checked={categoriesExportData.some(cat => cat._id === category._id)} /> */}
+                                    <ListItemText
+                                        primary={category.name}
+                                        primaryTypographyProps={{
+                                            fontSize: 12,
+                                            fontFamily: "Poppins",
+                                            fontWeight: 400,
+                                        }}
+                                    />
+                                </MenuItem>
+                            ))}
                         </Select>
                         {
-                            errors.category && touched.category && <p style={{ color: "red", fontSize: "12px" }}>{errors.category}</p>
+                            errors.categories && touched.categories && <p style={{ color: "red", fontSize: "12px" }}>{errors.categories}</p>
                         }
                     </Box>
                     <Typography
@@ -151,8 +189,8 @@ export default function Categories() {
                     >
                         You need to select 4 categories
                     </Typography>
-                    <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center',gap:10,width:'100%'}}>
-                        {data?.map((item, index) => (
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
+                        {selectedCategories?.map((item, index) => (
                             <div className={appearancStyle.categoriesStyle} key={index}>
                                 <div className={appearancStyle.textStyle}>{item.name} </div>
                                 <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
@@ -169,8 +207,8 @@ export default function Categories() {
                     alignItems: 'center',
                     gap: '10px'
                 }}>
-                    <Button sx={custom}>Cancel</Button>
-                    <Button sx={saveChanges}>Save Changes</Button>
+                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
+                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </CustomAccordion>
         </div >

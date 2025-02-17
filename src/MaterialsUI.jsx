@@ -238,7 +238,7 @@ export const fieldText = {
         "& input": {
             padding: "10px 10px",
             height: "auto",
-            color: "#081735",
+            color: "#000",
             fontFamily: "Nunito Sans",
             fontSize: "14px",
             fontWeight: "600",

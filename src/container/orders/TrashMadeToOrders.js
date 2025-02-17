@@ -17,7 +17,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
 
-export const TrashReadyToShip = () => {
+export const TrashMadeToOrders = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const { trashOrdersData, filterOptions, isLoading, isRefresh, } = useSelector((state) => state.orders);
@@ -67,7 +67,7 @@ export const TrashReadyToShip = () => {
         dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
     };
     useEffect(() => {
-        dispatch(setFilterValues({ orderType: 'Ready to ship orders' }))
+        dispatch(setFilterValues({ orderType: 'Made to orders' }))
     }, [dispatch])
 
     useEffect(() => {
@@ -159,7 +159,7 @@ export const TrashReadyToShip = () => {
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
-                        onClick={() => navigate('/orders/ReadyToShipOrders')}
+                        onClick={() => navigate('/orders/MadeToOrders')}
                     >
                         <span className={productStyle.addcategoryText}>Back To List</span>
                     </div>

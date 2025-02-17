@@ -6,6 +6,7 @@ const initialState = {
     isLoading: false,
     isRefresh: false,
     productsData: {},
+    exportProductsData: {},
     filterOptions: {
         status: "",
         search: "",
@@ -17,7 +18,6 @@ const initialState = {
         sortBy: '',
         limit: 10
     },
-    productsDataWithoutParam: {},
     productsDetailsData: {},
     addProductsData: {},
     editProductsData: {},
@@ -42,15 +42,15 @@ export const getProducts = createAsyncThunk('getProducts', async (body, { reject
     }
 }
 )
-export const getProductsWithoutParams = createAsyncThunk('getProducts', async (body, { rejectWithValue, dispatch }) => {
+export const getExportProducts = createAsyncThunk('getExportProducts', async (body, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.getProductsWithoutParams();
+        const { data, status } = await api.getExportProducts();
         if (status === 200) {
             //get categories data
-            dispatch(setProductsWithoutParam(data.data))
+            dispatch(setExportProducts(data))
 
         }
-        return data.data
+        return data
     } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
@@ -74,10 +74,10 @@ export const addProducts = createAsyncThunk('addProducts', async (body, { reject
     try {
         const { data, status } = await api.addProduct(body);
 
-        if (status === 201) {
+        if (status === 200) {
             // render otp screen
-            dispatch(setAddProducts(body));
-            Toastify.success(data.data.message);
+            // dispatch(setAddProducts(body));
+            Toastify.success('Product Added Successfuly');
             dispatch(setRefresh());
         }
         return data.data
@@ -147,8 +147,8 @@ export const productSlice = createSlice({
         setProducts: (state, action) => {
             state.productsData = action.payload
         },
-        setProductsWithoutParam: (state, action) => {
-            state.productsDataWithoutParam = action.payload
+        setExportProducts: (state, action) => {
+            state.exportProductsData = action.payload
         },
         setProductsDetails: (state, action) => {
             state.productsDetailsData = action.payload
@@ -212,7 +212,7 @@ export const {
     setProductsDetails,
     setRefresh,
     setCustomerReviews,
-    setProductsWithoutParam,
+    setExportProducts,
     setFilterValues
 } = productSlice.actions
 

@@ -13,6 +13,13 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import api from '../../helper/Api';
 import appearancStyle from './appearance.module.css'
+import Toastify from '../../helper/Toastify';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { addOfferbanner } from '../../redux/appearanceSlice';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
     backgroundColor: '#fff',
@@ -26,12 +33,16 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
 
 export default function OffersBanner() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+
     const schema = yup.object().shape({
-        productName: yup.string().required("Product name is required"),
-        status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
-        
-    });
+        title: yup.string().required("Title is required"),
+        image: yup.string().required("At least one image is required"),
+        subtitle: yup.string().required("Sub title is required"),
+        buttonText: yup.string().required("Button text is required"),
+        buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
+    })
 
 
     const {
@@ -42,45 +53,60 @@ export default function OffersBanner() {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm
     } = useFormik({
         initialValues: {
-            productName: "",
-            // medias: [],
-            description: "",
-            
-            media: {
-                photo: [],
-                video: []
-            },
-            featuredImage: [],
+            title: '',
+            subtitle: '',
+            image: '',
+            buttonText: '',
+            buttonLink: ''
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleSubject(values)
+            handleSubject(values)
         }
 
     })
-    //Media Image
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const body = new FormData();
-            body.append('image', file);
+    const handleSubject = async (value) => {
+        try {
+            const resultAction = await dispatch(addOfferbanner(value))
 
-            try {
-                const { data, status } = await api.fileUpload(body);
+            unwrapResult(resultAction)
+
+            navigate("/appearance/Appearance")
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+    }
+    //Media Image
+
+    const handleImageChange = async (e, index) => {
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                };
+
+                const { data, status } = await api.getPutSignedUrl(body);
                 if (status === 200) {
-                    const imageUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                    // Update medias array by spreading existing values and adding the new imageUrl
-                    setFieldValue('featuredImage', imageUrl);
-                } else {
-                    console.error(`Upload failed with status: ${status}`);
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: { "Content-Type": file.type }
+                    });
+
+                    setFieldValue('image', data?.data?.url);
                 }
-            } catch (error) {
-                console.error('Error uploading file:', error.response ? error.response.data : error.message);
             }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file");
         }
     };
+
+
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -127,15 +153,15 @@ export default function OffersBanner() {
                         <TextField
                             placeholder='Enter'
                             type={'text'}
-                            name="name"
-                            // value={values.name || ''}
-                            // onChange={handleChange}
-                            // onBlur={handleBlur}
+                            name="title"
+                            value={values.title || ''}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             sx={TextInput}
                         />
-                        {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
+                        {
+                            errors.title && touched.title && <p style={{ color: "red", fontSize: "12px" }}>{errors.title}</p>
+                        }
                     </Box>
                     <Box sx={{ marginBottom: '10px' }}>
                         <Typography
@@ -153,15 +179,15 @@ export default function OffersBanner() {
                         <TextField
                             placeholder='Enter'
                             type={'text'}
-                            name="name"
-                            // value={values.name || ''}
-                            // onChange={handleChange}
-                            // onBlur={handleBlur}
+                            name="subtitle"
+                            value={values.subtitle || ''}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             sx={TextInput}
                         />
-                        {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
+                        {
+                            errors.subtitle && touched.subtitle && <p style={{ color: "red", fontSize: "12px" }}>{errors.subtitle}</p>
+                        }
                     </Box>
                     <Box sx={{ marginBottom: '10px' }}>
                         <Typography
@@ -178,10 +204,10 @@ export default function OffersBanner() {
                         </Typography>
                         <div className={productStyle.imageUpload1}>
                             <div className={productStyle.imageView}>
-                                {values?.featuredImage.length > 0 ? (
+                                {values?.image?.length > 0 ? (
                                     <div>
                                         <img
-                                            src={values.featuredImage}
+                                            src={values.image}
                                             alt="Selected"
                                             style={{ maxWidth: '100%', marginTop: '0px' }}
                                         />
@@ -213,9 +239,9 @@ export default function OffersBanner() {
 
                             </div>
                         </div>
-                        {/* {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
-                            } */}
+                        {
+                            errors.image && touched.image && <p style={{ color: "red", fontSize: "12px" }}>{errors.image}</p>
+                        }
                     </Box>
                     <Typography
                         sx={{
@@ -242,15 +268,15 @@ export default function OffersBanner() {
                             <TextField
                                 placeholder='Button Text'
                                 type={'text'}
-                                name="name"
-                                // value={values.name || ''}
-                                // onChange={handleChange}
-                                // onBlur={handleBlur}
+                                name="buttonText"
+                                value={values.buttonText || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
                                 sx={TextInput}
                             />
-                            {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
+                            {
+                                errors.buttonText && touched.buttonText && <p style={{ color: "red", fontSize: "12px" }}>{errors.buttonText}</p>
+                            }
                         </div>
                         <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
                             <div className={appearancStyle.httpsStyle}>
@@ -259,25 +285,20 @@ export default function OffersBanner() {
                             <TextField
                                 placeholder='Add Redirection Link Here'
                                 type={'text'}
-                                name="name"
-                                // value={values.name || ''}
-                                // onChange={handleChange}
-                                // onBlur={handleBlur}
+                                name="buttonLink"
+                                value={values.buttonLink || ''}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
                                 sx={InputURL}
                             />
 
-                            {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
+                            {
+                                errors.buttonLink && touched.buttonLink && <p style={{ color: "red", fontSize: "12px" }}>{errors.buttonLink}</p>
+                            }
                         </div>
                     </Box>
 
                 </AccordionDetails>
-                <Box sx={{ marginBottom: '20px' }}>
-                    <div className={appearancStyle.addButtonStyle}>
-                        <AddIcon /> <span>Add Slider</span>
-                    </div>
-                </Box>
                 <Box sx={{
                     marginBottom: '20px',
                     marginRight: '20px',
@@ -287,8 +308,8 @@ export default function OffersBanner() {
                     alignItems: 'center',
                     gap: '10px'
                 }}>
-                    <Button sx={custom}>Cancel</Button>
-                    <Button sx={saveChanges}>Save Changes</Button>
+                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
+                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </CustomAccordion>
         </div >

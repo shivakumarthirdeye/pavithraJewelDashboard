@@ -13,26 +13,40 @@ import productStyle from '../product/product.module.css';
 import { useFormik } from 'formik';
 import * as yup from "yup";
 import api from '../../helper/Api';
+import { useDispatch } from 'react-redux';
+import { addSliders } from '../../redux/appearanceSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import axios from 'axios';
+import Toastify from '../../helper/Toastify';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
     backgroundColor: '#fff',
     boxShadow: 'none',
     border: '1px solid #E0E2E7',
-    borderRadius: '20px',
+    borderRadius: '8px !important',
     // '&:before': { display: 'none' }, // Hides the default divider line
     width: '70%',
     overflow: 'visible',
 }));
 export default function Slider() {
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+
     const schema = yup.object().shape({
-        productName: yup.string().required("Product name is required"),
-        status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
-        featuredImage: yup.string().required("At least one image is required"),
-
+        sliders: yup.array().of(
+            yup.object().shape({
+                title: yup.string().required("Title is required"),
+                image: yup.string().required("At least one image is required"),
+                description: yup.string().required("Description is required"),
+                buttonText: yup.string().required("Button text is required"),
+                buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
+            })
+        ).min(1, "At least one slider is required"), // Ensure there's at least one slider
     });
-
 
     const {
         handleSubmit,
@@ -42,42 +56,76 @@ export default function Slider() {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm
     } = useFormik({
         initialValues: {
-            productName: "",
-            // medias: [],
-            description: "",
-            media: {
-                photo: [],
-                video: []
-            },
+            sliders: [
+                {
+                    title: '',
+                    description: '',
+                    image: '',
+                    buttonText: '',
+                    buttonLink: ''
+                }
+            ]
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleSubject(values)
+            handleSubject(values)
         }
 
     })
-    //Media Image
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const body = new FormData();
-            body.append('image', file);
+    const handleSubject = async (value) => {
+        try {
+            const resultAction = await dispatch(addSliders(value))
 
-            try {
-                const { data, status } = await api.fileUpload(body);
-                if (status === 200) {
-                    const imageUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                    // Update medias array by spreading existing values and adding the new imageUrl
-                    setFieldValue('featuredImage', imageUrl);
-                } else {
-                    console.error(`Upload failed with status: ${status}`);
-                }
-            } catch (error) {
-                console.error('Error uploading file:', error.response ? error.response.data : error.message);
-            }
+            unwrapResult(resultAction)
+
+            navigate("/appearance/Appearance")
+        } catch (error) {
+            toast.error(error.message)
         }
+
+    }
+    //Media Image
+
+    const handleImageChange = async (e, index) => {
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                };
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: { "Content-Type": file.type }
+                    });
+
+                    // Update the specific slider image in the array
+                    const updatedSliders = [...values.sliders];
+                    updatedSliders[index].image = data?.data?.url;
+                    setFieldValue(`sliders[${index}].image`, data?.data?.url);
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file");
+        }
+    };
+
+    const handleAddSlider = () => {
+        setFieldValue('sliders', [
+            ...values.sliders,
+            { title: '', description: '', image: '', buttonText: '', buttonLink: '' }
+        ]);
+    };
+
+    const handleDeleteSlider = (index) => {
+        const updatedSliders = values.sliders.filter((_, i) => i !== index);
+        setFieldValue('sliders', updatedSliders);
     };
     return (
         <div style={{ marginTop: 20 }}>
@@ -86,7 +134,7 @@ export default function Slider() {
                     expandIcon={<ExpandMoreIcon />}
                     aria-controls="panel1-content"
                     id="panel1-header"
-                    sx={{                        
+                    sx={{
                         '& .MuiSvgIcon-root': { color: '#000000' }, // Custom color for the icon
                     }}
                 >
@@ -96,195 +144,197 @@ export default function Slider() {
                         fontSize: '16px',
                         lineHeight: '28px',
                         letterSpacing: '0.005em',
-                        textAlign:'left'
+                        textAlign: 'left'
 
                     }}>Sliders</Typography>
                 </AccordionSummary>
-                <AccordionDetails
-                    sx={{
-                        backgroundColor: '#F8F9FF',
-                        // width:'100%',
-                        height: 'fit-content',
-                        padding: '18px 29px',
-                        margin: "0px 20px 20px 19px"
-                    }}>
-                    <Box sx={{ marginBottom: '10px' }}>
-                        <Typography
-                            sx={{
-                                fontWeight: '500',
-                                fontFamily: 'Public Sans',
-                                fontSize: '14px',
-                                lineHeight: '28px',
-                                letterSpacing: '0.005em',
-                                textAlign: 'left',
-                                color: '#777980'
-                            }}>
-                            Slider 1
-                        </Typography>
-                        <div style={{
-                            display:'flex',
-                            justifyContent:'flex-start',
-                            alignItems:'center',
-                            gap:'10px'
+                {values.sliders.map((slider, index) => (
+                    <AccordionDetails
+                        sx={{
+                            backgroundColor: '#F8F9FF',
+                            // width:'100%',
+                            height: 'fit-content',
+                            padding: '18px 29px',
+                            margin: "0px 20px 20px 19px"
                         }}>
+
+                        <Box sx={{ marginBottom: '10px' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: '500',
+                                    fontFamily: 'Public Sans',
+                                    fontSize: '14px',
+                                    lineHeight: '28px',
+                                    letterSpacing: '0.005em',
+                                    textAlign: 'left',
+                                    color: '#777980'
+                                }}>
+                                Slider {index + 1}
+                            </Typography>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                alignItems: 'center',
+                                gap: '10px'
+                            }}>
+                                <TextField
+                                    placeholder='Enter'
+                                    type={'text'}
+                                    name={`sliders[${index}].title`}
+                                    value={slider.title}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    sx={TextInput}
+                                />
+                                {errors.sliders?.[index]?.title && touched.sliders?.[index]?.title && (
+                                    <div style={{ color: "red" }}>{errors.sliders[index].title}</div>
+                                )}
+                                <div className={appearancStyle.deleteBackgroundStyle}
+                                    onClick={() => handleDeleteSlider(index)}
+                                >
+                                    <DeletIcon />
+                                </div>
+                            </div>
+                        </Box>
+                        <Box sx={{ marginBottom: '10px' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: '500',
+                                    fontFamily: 'Public Sans',
+                                    fontSize: '14px',
+                                    lineHeight: '28px',
+                                    letterSpacing: '0.005em',
+                                    textAlign: 'left',
+                                    color: '#777980'
+                                }}>
+                                Description
+                            </Typography>
                             <TextField
                                 placeholder='Enter'
                                 type={'text'}
-                                name="name"
-                                // value={values.name || ''}
-                                // onChange={handleChange}
-                                // onBlur={handleBlur}
-                                sx={TextInput}
+                                name={`sliders[${index}].description`}
+                                value={slider.description}
+                                onChange={handleChange}
+                                onBlur={handleBlur}
+                                sx={TextArea}
+                                multiline
+                                rows={4}
+                                fullWidth
                             />
-                            {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
-                            <div className={appearancStyle.deleteBackgroundStyle}>
-                                <DeletIcon />
-                            </div>
-                        </div>
-                    </Box>
-                    <Box sx={{ marginBottom: '10px' }}>
-                        <Typography
-                            sx={{
-                                fontWeight: '500',
-                                fontFamily: 'Public Sans',
-                                fontSize: '14px',
-                                lineHeight: '28px',
-                                letterSpacing: '0.005em',
-                                textAlign: 'left',
-                                color: '#777980'
-                            }}>
-                            Description
-                        </Typography>
-                        <TextField
-                            placeholder='Enter'
-                            type={'text'}
-                            name="name"
-                            // value={values.name || ''}
-                            // onChange={handleChange}
-                            // onBlur={handleBlur}
-                            sx={TextArea}
-                            multiline
-                            rows={4}
-                            fullWidth
-                        />
-                        {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
-                    </Box>
-                    <Box sx={{ marginBottom: '10px' }}>
-                        <Typography
-                            sx={{
-                                fontWeight: '500',
-                                fontFamily: 'Public Sans',
-                                fontSize: '14px',
-                                lineHeight: '28px',
-                                letterSpacing: '0.005em',
-                                textAlign: 'left',
-                                color: '#777980'
-                            }}>
-                            Slider 1 Image
-                        </Typography>
-                        <div className={productStyle.imageUpload1}>
-                            <div className={productStyle.imageView}>
-                                {values?.featuredImage?.length > 0 ? (
-                                    <div>
+                            {errors.sliders?.[index]?.description && touched.sliders?.[index]?.description && (
+                                <div style={{ color: "red" }}>{errors.sliders[index].description}</div>
+                            )}
+                        </Box>
+                        <Box sx={{ marginBottom: '10px' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: '500',
+                                    fontFamily: 'Public Sans',
+                                    fontSize: '14px',
+                                    lineHeight: '28px',
+                                    letterSpacing: '0.005em',
+                                    textAlign: 'left',
+                                    color: '#777980'
+                                }}>
+                                Slider {index + 1} Image
+                            </Typography>
+                            <div className={productStyle.imageUpload1}>
+                                <div className={productStyle.imageView}>
+                                    {values.sliders[index].image ? (
                                         <img
-                                            src={values.featuredImage}
+                                            src={values.sliders[index].image}
                                             alt="Selected"
-                                            style={{ maxWidth: '100%', marginTop: '0px' }}
+                                            style={{ maxWidth: '100%', marginTop: '0px', width: 200, height: 200 }}
                                         />
-                                        {/* <button onClick={handleUpload}>Upload</button> */}
-                                    </div>
-                                ) : (
-                                    <>
-                                        <ImageIcon />
-                                        <div>
-                                            <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
-                                                Drag and drop image here, or click add image
-                                            </p>
-                                        </div>
-                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                id="imageFile"
-                                                style={{ display: 'none' }}
-                                                onChange={handleImageChange}
-                                            />
-                                            <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                Add Image
-                                            </label>
-                                        </div>
-                                    </>
-                                )
-                                }
+                                    ) : (
+                                        <>
+                                            <ImageIcon />
+                                            <div>
+                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                    Drag and drop image here, or click add image
+                                                </p>
+                                            </div>
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id={`imageFile-${index}`}
+                                                    style={{ display: 'none' }}
+                                                    onChange={(e) => handleImageChange(e, index)}
+                                                />
+                                                <label htmlFor={`imageFile-${index}`} className={productStyle.uploadBox}>
+                                                    Add Image
+                                                </label>
+                                            </div>
+                                        </>
+                                    )
+                                    }
 
+                                </div>
                             </div>
-                        </div>
-                        {/* {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
-                            } */}
-                    </Box>
-                    <Typography
-                        sx={{
-                            fontWeight: '500',
-                            fontFamily: 'Public Sans',
-                            fontSize: '14px',
-                            lineHeight: '28px',
-                            letterSpacing: '0.005em',
-                            textAlign: 'left',
-                            color: '#777980'
-                        }}>
-                        Button Link
-                    </Typography>
-                    <Box
-                        sx={{
-                            marginBottom: '10px',
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            width: '100%',
-                            alignItems: 'center',
-                            gap: '10px'
-                        }}>
-                        <div style={{ width: '30%' }}>
-                            <TextField
-                                placeholder='Button Text'
-                                type={'text'}
-                                name="name"
-                                // value={values.name || ''}
-                                // onChange={handleChange}
-                                // onBlur={handleBlur}
-                                sx={TextInput}
-                            />
-                            {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
-                        </div>
-                        <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                            <div className={appearancStyle.httpsStyle}>
-                                https://
+                            {errors.sliders?.[index]?.image && touched.sliders?.[index]?.image && (
+                                <div style={{ color: "red" }}>{errors.sliders[index].image}</div>
+                            )}
+                        </Box>
+                        <Typography
+                            sx={{
+                                fontWeight: '500',
+                                fontFamily: 'Public Sans',
+                                fontSize: '14px',
+                                lineHeight: '28px',
+                                letterSpacing: '0.005em',
+                                textAlign: 'left',
+                                color: '#777980'
+                            }}>
+                            Button Link
+                        </Typography>
+                        <Box
+                            sx={{
+                                marginBottom: '10px',
+                                display: 'flex',
+                                justifyContent: 'flex-start',
+                                width: '100%',
+                                alignItems: 'center',
+                                gap: '10px'
+                            }}>
+                            <div style={{ width: '30%' }}>
+                                <TextField
+                                    placeholder='Button Text'
+                                    type={'text'}
+                                    name={`sliders[${index}].buttonText`}
+                                    value={slider.buttonText || ''}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    sx={TextInput}
+                                />
+                                {errors.sliders?.[index]?.buttonText && touched.sliders?.[index]?.buttonText && (
+                                    <div style={{ color: "red" }}>{errors.sliders[index].buttonText}</div>
+                                )}
                             </div>
-                            <TextField
-                                placeholder='Add Redirection Link Here'
-                                type={'text'}
-                                name="name"
-                                // value={values.name || ''}
-                                // onChange={handleChange}
-                                // onBlur={handleBlur}
-                                sx={InputURL}
-                            />
+                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+                                <div className={appearancStyle.httpsStyle}>
+                                    https://
+                                </div>
+                                <TextField
+                                    placeholder='Add Redirection Link Here'
+                                    type={'text'}
+                                    name={`sliders[${index}].buttonLink`}
+                                    value={slider.buttonLink || ''}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
+                                    sx={InputURL}
+                                />
 
-                            {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
-                        </div>
-                    </Box>
+                                {errors.sliders?.[index]?.buttonLink && touched.sliders?.[index]?.buttonLink && (
+                                    <div style={{ color: "red" }}>{errors.sliders[index].buttonLink}</div>
+                                )}
+                            </div>
+                        </Box>
 
-                </AccordionDetails>
+                    </AccordionDetails>
+                ))}
                 <Box sx={{ marginBottom: '20px' }}>
-                    <div className={appearancStyle.addButtonStyle}>
+                    <div className={appearancStyle.addButtonStyle} onClick={handleAddSlider}>
                         <AddIcon /> <span>Add Slider</span>
                     </div>
                 </Box>
@@ -297,8 +347,8 @@ export default function Slider() {
                     alignItems: 'center',
                     gap: '10px'
                 }}>
-                    <Button sx={custom}>Cancel</Button>
-                    <Button sx={saveChanges}>Save Changes</Button>
+                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
+                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </CustomAccordion>
         </div >

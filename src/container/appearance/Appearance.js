@@ -39,11 +39,11 @@ const Appearance = () => {
                     <div className={appearanceStyle.actionStyle}>
                         <div
                             // onClick={() => navigate(`/customers/Customers/CustomersDetails/${item?._id}`)}
-                            onClick={() => navigate(`/appearance/Appearance/HomePageBuilder`)}
+                            onClick={() => navigate(`/appearance/Appearance/ViewHomePageBuilder`)}
                         >
                             <ViewIcon />
                         </div>
-                        <div style={{ marginLeft: 12 }}>
+                        <div style={{ marginLeft: 12 }} onClick={() => navigate(`/appearance/Appearance/HomePageBuilder`)}>
                             <EditIcon />
                         </div>
                     </div>

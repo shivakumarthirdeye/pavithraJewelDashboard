@@ -11,13 +11,14 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { useDispatch } from 'react-redux';
 import productStyle from './product.module.css'
+import { editReviews } from '../../redux/ordersSlice';
 
 const EditReview = ({ open, onClose, data }) => {
     const dispatch = useDispatch()
 
     const schema = yup.object().shape({
-        comment: yup.string().required("Comment is required"),
-        rating: yup.string().required("Rating is required"),
+        review: yup.string().required("Comment is required"),
+        ratings: yup.string().required("Rating is required"),
     })
 
     const {
@@ -32,17 +33,20 @@ const EditReview = ({ open, onClose, data }) => {
         setValues
     } = useFormik({
         initialValues: {
-            comment: "",
-            rating: 0,
+            // orderId: data.orderId,
+            // productId: data.productId,
+            ratings: 0,
+            review: "",
+            // images:[]
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleEdit(values)
+            handleEdit(values)
             onClose()
         }
 
     })
-    console.log('data============', values);
+    console.log('data============', data);
 
     useEffect(() => {
         if (data) {
@@ -50,9 +54,9 @@ const EditReview = ({ open, onClose, data }) => {
         }
     }, [data, setValues])
 
-    // const handleEdit = (val) => {
-    //     dispatch(editReviews({ url: `${data._id}`, val }))
-    // }
+    const handleEdit = (val) => {
+        dispatch(editReviews({ url: `${data._id}`, val }))
+    }
 
     // Function to delete an image
     const handleDeleteImage = (index) => {
@@ -62,14 +66,14 @@ const EditReview = ({ open, onClose, data }) => {
     // Function to handle rating change
     const handleRatingChange = (newRating) => {
         // Toggle rating: if the clicked star is already filled, decrease the rating; otherwise, set the new rating
-        if (newRating === values.rating) {
-            setFieldValue("rating", newRating - 1); // Remove one star
+        if (newRating === values.ratings) {
+            setFieldValue("ratings", newRating - 1); // Remove one star
         } else {
-            setFieldValue("rating", newRating); // Add stars up to the clicked star
+            setFieldValue("ratings", newRating); // Add stars up to the clicked star
         }
     };
-    const fullStars = Math.floor(values.rating);
-    const halfStar = values.rating % 1 >= 0.5;
+    const fullStars = Math.floor(values.ratings);
+    const halfStar = values.ratings % 1 >= 0.5;
     const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
     const style = {
         position: "absolute",
@@ -108,9 +112,9 @@ const EditReview = ({ open, onClose, data }) => {
                     </div>
                 </div>
                 <div className="products-info">
-                    <img src={values?.productId?.featuredImage} alt='baby clothes' className="product-image" />
+                    <img src={values?.productId?.featurerdImage[0]} alt='featuredImage' className="product-image" />
                     <div style={{ marginLeft: 20 }}>
-                        <h3 className="product-heading">{values?.productId?.name}</h3>
+                        <h3 className="product-heading">{values?.productId?.productName}</h3>
                         <p className="product-price">₹{values?.productId?.salePrice} </p>
                     </div>
                 </div>
@@ -119,10 +123,10 @@ const EditReview = ({ open, onClose, data }) => {
                 </div>
                 <div>
                     <div className={productStyle.inputbox}>
-                        <input type='text' onBlur={handleBlur} value={values.comment} placeholder='Type comment name here. . .' name="comment" onChange={handleChange} />
+                        <input type='text' onBlur={handleBlur} value={values.review} placeholder='Type comment name here. . .' name="review" onChange={handleChange} />
                     </div>
                     {
-                        errors.comment && touched.comment && <p style={{ color: "red", fontSize: "12px" }}>{errors.comment}</p>
+                        errors.review && touched.review && <p style={{ color: "red", fontSize: "12px" }}>{errors.review}</p>
                     }
                 </div>
                 <div className='reviews' style={{ marginTop: 20 }}>Ratings</div>
@@ -131,7 +135,7 @@ const EditReview = ({ open, onClose, data }) => {
                         <FontAwesomeIcon
                             key={index}
                             icon={index < fullStars ? filledStar : emptyStar}
-                            className={`star ${index >= values.rating ? 'empty-star' : ''}`}
+                            className={`star ${index >= values.ratings ? 'empty-star' : ''}`}
                             color={index < fullStars ? '#FFB400' : '#ddd'}
                             onClick={() => handleRatingChange(index + 1)}
                         />

@@ -201,6 +201,7 @@
     color: #4A4C56;
     text-align: left;
 }
+
 .pendingAmountStyle {
     width: 35%;
     font-family: Public Sans;
@@ -1243,7 +1244,8 @@
     text-decoration-skip-ink: none;
     color: #667085;
 }
-.jwelleryDetails{
+
+.jwelleryDetails {
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -1251,7 +1253,8 @@
     width: 100%;
     padding: 20px 0;
 }
-.jwelleryText{
+
+.jwelleryText {
     font-family: Rubik;
     font-size: 16px;
     font-weight: 400;
@@ -1259,9 +1262,10 @@
     text-align: left;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #232323;    
+    color: #232323;
 }
-.priceText{
+
+.priceText {
     font-family: Rubik;
     font-size: 14px;
     font-weight: 500;
@@ -1269,12 +1273,28 @@
     text-align: left;
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
-    color: #000000; 
-    padding-top: 10px;  
+    color: #000000;
+    padding-top: 10px;
 }
-.buttonStyle{
+
+.buttonStyle {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+}
+
+.goldRateStyle {
+    font-family: Public Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #4A4C56;
+}
+.goldRateStyle span{
+    color: #1D1F2C;
 }

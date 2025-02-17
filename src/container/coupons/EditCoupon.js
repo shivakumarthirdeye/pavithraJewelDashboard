@@ -1,5 +1,5 @@
-import React from 'react'
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import categoryStyle from '../category/category.module.css';
 import { ActiveBankDiscount, ActivePercentageDiscount, ActivePriceDiscount, ImageIcon, InActiveBankDiscount, InActivePercentageDiscount, InActivePriceDiscount } from '../../svg';
 import { useFormik } from 'formik';
@@ -13,15 +13,35 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { DateRangePicker, SingleInputDateRangeField } from '@mui/x-date-pickers-pro';
 import CustomizedCheckbox from '../../component/CustomizedCheckbox';
+import { useDispatch } from 'react-redux';
+import { addCoupons, editCoupons } from '../../redux/couponSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import Toastify from '../../helper/Toastify';
 
 
 const EditCoupon = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { id } = useParams();
+    const location = useLocation();
+    const item = location.state;
+    const data = item?.item;
+   
+
+    const [isDatePickerDisabled, setIsDatePickerDisabled] = useState(false);
+    const [isUsageLimitDisabled, setIsUsageLimitDisabled] = useState(false);
+
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
-        status: yup.string().required("Status is required"),
+        code: yup.string().required("Code is required"),
         description: yup.string().required("Description is required"),
-        img: yup.array().min(1, "Image is required"),
+        type: yup.string().required("Discount type is required"),
+        discountValue: yup.number().min(1, "Discount value is required"),
+        minimumCheckoutValue: yup.number().min(1, "Minimum checkout value is required"),
+        appliesTo: yup.string().required("Applies to is required"),
+        startDate: yup.date().required("Applies to is required"),
+        endDate: yup.date().required("Applies to is required"),
     })
 
     const {
@@ -32,16 +52,22 @@ const EditCoupon = () => {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             name: "",
             description: "",
-            status: "",
-            img: [],
-            details: {
-                discountType: ''
-            }
+            code: "",
+            type: "",
+            discountValue: 0,
+            minimumCheckoutValue: 0,
+            appliesTo: "",
+            startDate: null,
+            endDate: null,
+            usageLimit: 0,
+            noDurationLimit: false,
+            noUsageLimit: false
         },
         validationSchema: schema,
         onSubmit: async (values) => {
@@ -49,27 +75,51 @@ const EditCoupon = () => {
         }
 
     })
-    const handleSubject = async (values) => {
-        // dispatch(addCategories(values));
-        navigate('/categories/Category')
-    };
-    // const handleImageChange = async (e) => {
-    //     const file = e.target.files[0];
-    //     if (file) {
 
-    //         const body = new FormData()
-    //         body.set('image', file)
-    //         const { data, status } = await api.fileUpload(body)
-    //         if (status === 200) {
-    //             setFieldValue("img", data.data)
-    //         }
-    //     }
-    // };
+    console.log('vaslue==========================', values);
+
+    useEffect(() => {
+        if (data) {
+            setValues({
+                name: data?.name || "",
+                description: data?.description || '',
+                code: data?.code || '',
+                type: data?.type || '',
+                discountValue: data?.discountValue || 0,
+                minimumCheckoutValue: data?.minimumCheckoutValue || 0,
+                appliesTo: data?.appliesTo || '',
+                startDate: data?.startDate ? new Date(data.startDate) : null,
+                endDate: data?.endDate ? new Date(data.endDate) : null,
+                usageLimit: data?.usageLimit || 0,
+                noDurationLimit: data?.noDurationLimit || false,
+                noUsageLimit: data?.noUsageLimit || false,
+                _id: id
+
+            });
+        }
+    }, [data, setValues, id]);
+
+    const handleSubject = async (values) => {
+        try {
+            const resultAction = await dispatch(editCoupons(values))
+
+            unwrapResult(resultAction)
+
+            navigate("/coupons/Coupons")
+        } catch (error) {
+            Toastify.error(error.message)
+        }
+    };
+
     const handleCheck = (e) => {
-        setFieldValue('details.noLimits', e.target.checked);
-        // if (e.target.checked) {
-        //     setFieldValue('details.usageLimits', '');
-        // }
+        const isChecked = e.target.checked
+        setFieldValue('noDurationLimit', isChecked);
+        setIsDatePickerDisabled(isChecked)
+    };
+    const handleLimitCheck = (e) => {
+        const isChecked = e.target.checked
+        setFieldValue('noUsageLimit', isChecked);
+        setIsUsageLimitDisabled(isChecked)
     };
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
@@ -113,9 +163,9 @@ const EditCoupon = () => {
                         <TextField
                             type='text'
                             onBlur={handleBlur}
-                            value={values.name}
+                            value={values.code}
                             placeholder='Enter'
-                            name="name"
+                            name="code"
                             onChange={handleChange}
                             sx={fieldText}
                             style={{
@@ -124,7 +174,7 @@ const EditCoupon = () => {
                         />
 
                         {
-                            errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
+                            errors.code && touched.code && <p style={{ color: "red", fontSize: "12px" }}>{errors.code}</p>
                         }
                     </div>
                 </Box>
@@ -135,7 +185,7 @@ const EditCoupon = () => {
                     <TextField
                         type='text'
                         onBlur={handleBlur}
-                        value={values.na}
+                        value={values.description}
                         placeholder='Enter'
                         name="description"
                         onChange={handleChange}
@@ -158,12 +208,12 @@ const EditCoupon = () => {
                 <p className={couponStyle.description}>Code will be used by users in checkout</p>
                 <div className={couponStyle.couponTypeStyle}>
 
-                    <div className={values.details.discountType === 'FIXED' ?
+                    <div className={values.type === 'Fixed Discount' ?
                         couponStyle.activeBox : couponStyle.inActiveBox
                     }
-                        onClick={() => setFieldValue('details.discountType', 'FIXED')}
+                        onClick={() => setFieldValue('type', 'Fixed Discount')}
                     >
-                        {values.details.discountType === 'FIXED' ? (
+                        {values.type === 'Fixed Discount' ? (
                             <ActivePriceDiscount />
                         ) :
                             <InActivePriceDiscount />
@@ -173,12 +223,12 @@ const EditCoupon = () => {
                             Fixed Discount
                         </p>
                     </div>
-                    <div className={values.details.discountType === 'PERCENTAGE' ?
+                    <div className={values.type === 'Percentage Discount' ?
                         couponStyle.activeBox : couponStyle.inActiveBox
                     }
-                        onClick={() => setFieldValue('details.discountType', 'PERCENTAGE')}
+                        onClick={() => setFieldValue('type', 'Percentage Discount')}
                     >
-                        {values.details.discountType === 'PERCENTAGE' ? (
+                        {values.type === 'Percentage Discount' ? (
                             <ActivePercentageDiscount />
                         ) :
                             <InActivePercentageDiscount />
@@ -187,12 +237,12 @@ const EditCoupon = () => {
                             Percentage Discount
                         </p>
                     </div>
-                    <div className={values.details.discountType === 'BANK' ?
+                    <div className={values.type === 'Bank Discount' ?
                         couponStyle.activeBox : couponStyle.inActiveBox
                     }
-                        onClick={() => setFieldValue('details.discountType', 'PERCENTAGE')}
+                        onClick={() => setFieldValue('type', 'Bank Discount')}
                     >
-                        {values.details.discountType === 'PERCENTAGE' ? (
+                        {values.type === 'Bank Discount' ? (
                             <ActiveBankDiscount />
                         ) :
                             <InActiveBankDiscount />
@@ -202,7 +252,7 @@ const EditCoupon = () => {
                         </p>
                     </div>
                     {
-                        errors.details?.discountType && touched.details?.discountType && <p style={{ color: "red", fontSize: "12px" }}>{errors.details?.discountType}</p>
+                        errors.type && touched.type && <p style={{ color: "red", fontSize: "12px" }}>{errors.type}</p>
                     }
                 </div>
                 <div className={couponStyle.couponTypeStyle} style={{ marginTop: 20, }}>
@@ -211,31 +261,31 @@ const EditCoupon = () => {
                         <br />
                         <div className={couponStyle.inputbox}>
                             <div className={couponStyle.inrBox}>
-                                {values.details.discountType === 'FIXED' ? 'INR' : '%'}
+                                {values.type === 'Percentage Discount' ? '%' : 'INR'}
                             </div>
                             <div>
                                 <input
-                                    type="text"
-                                    placeholder={values.details.discountType === 'FIXED' ? 'Amount' : 'Enter'}
+                                    type="number"
+                                    placeholder={values.type === 'Percentage Discount' ? 'Enter' : 'Amount'}
                                     onBlur={handleBlur}
-                                    value={values.details.discountValue}
-                                    name='details.discountValue'
+                                    value={values.discountValue || ''}
+                                    name='discountValue'
                                     onChange={(e) => {
                                         let value = e.target.value;
-                                        if (values.details.discountType === 'PERCENTAGE') {
+                                        if (values.type === 'Percentage Discount') {
                                             // Ensure the value is a number and within 0-100 range for percentage
                                             if (!isNaN(value) && value >= 0 && value <= 100) {
-                                                setFieldValue('details.discountValue', value);
+                                                setFieldValue('discountValue', value);
                                             }
                                         } else {
-                                            setFieldValue('details.discountValue', value);
+                                            setFieldValue('discountValue', value);
                                         }
                                     }}
                                 />
                             </div>
                         </div>
                         {
-                            errors.details?.discountValue && touched.details?.discountValue && <p style={{ color: "red", fontSize: "12px" }}>{errors.details?.discountValue}</p>
+                            errors.discountValue && touched.discountValue && <p style={{ color: "red", fontSize: "12px" }}>{errors.discountValue}</p>
                         }
                     </div>
                     <div style={{ width: '50%' }}>
@@ -251,69 +301,73 @@ const EditCoupon = () => {
                             )}
                             displayEmpty
                             defaultValue=''
-                            name='status'
-                            value={values.status}
+                            name='appliesTo'
+                            value={values.appliesTo}
                             onChange={handleChange}
                         >
                             <MenuItem value="">Select</MenuItem>
-                            <MenuItem value={true}>Active</MenuItem>
-                            <MenuItem value={false}>Inactive</MenuItem>
+                            <MenuItem value='All'>All</MenuItem>
+                            <MenuItem value='Checkout'>Checkout</MenuItem>
                         </Select>
                     </div>
                 </div>
                 <div className={couponStyle.couponTypeStyle} style={{ marginTop: 20, }}>
-                    <div style={{ width: '50%' }}>
-                        <label className={categoryStyle.label}>Minimum checkout value</label>
-                        <br />
-                        <div className={couponStyle.inputbox}>
-                            <div className={couponStyle.inrBox}>
-                                {values.details.discountType === 'FIXED' ? 'INR' : '%'}
-                            </div>
-                            <input
-                                type="text"
-                                placeholder={values.details.discountType === 'FIXED' ? 'Amount' : 'Enter'}
-                                onBlur={handleBlur}
-                                value={values.details.discountValue}
-                                name='details.discountValue'
-                                onChange={(e) => {
-                                    let value = e.target.value;
-                                    if (values.details.discountType === 'PERCENTAGE') {
-                                        // Ensure the value is a number and within 0-100 range for percentage
-                                        if (!isNaN(value) && value >= 0 && value <= 100) {
-                                            setFieldValue('details.discountValue', value);
+                    {values.appliesTo ? (
+                        <div style={{ width: '50%' }}>
+                            <label className={categoryStyle.label}>Minimum checkout value</label>
+                            <br />
+                            <div className={couponStyle.inputbox}>
+                                <div className={couponStyle.inrBox}>
+                                    {'INR'}
+                                </div>
+                                <input
+                                    type="number"
+                                    placeholder={'Amount'}
+                                    onBlur={handleBlur}
+                                    value={values.minimumCheckoutValue || ''}
+                                    name='minimumCheckoutValue'
+                                    onChange={(e) => {
+                                        let value = e.target.value;
+                                        if (values.type === 'Percentage Discount') {
+                                            // Ensure the value is a number and within 0-100 range for percentage
+                                            if (!isNaN(value) && value >= 0 && value <= 100) {
+                                                setFieldValue('minimumCheckoutValue', value);
+                                            }
+                                        } else {
+                                            setFieldValue('minimumCheckoutValue', value);
                                         }
-                                    } else {
-                                        setFieldValue('details.discountValue', value);
-                                    }
-                                }}
-                            />
+                                    }}
+                                />
+                            </div>
+                            {
+                                errors.minimumCheckoutValue && touched.minimumCheckoutValue && <p style={{ color: "red", fontSize: "12px" }}>{errors.minimumCheckoutValue}</p>
+                            }
                         </div>
-                        {
-                            errors.details?.discountValue && touched.details?.discountValue && <p style={{ color: "red", fontSize: "12px" }}>{errors.details?.discountValue}</p>
-                        }
-                    </div>
-                    <div style={{ width: '50%' }}>
-                        <label className={categoryStyle.label}>Bank Card</label>
-                        <br />
-                        <Select
-                            // className={categoryStyle.formselect}
-                            labelId="demo-simple-select-label"
-                            id="demo-simple-select"
-                            sx={formselect}
-                            IconComponent={(props) => (
-                                <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
-                            )}
-                            displayEmpty
-                            defaultValue=''
-                            name='status'
-                            value={values.status}
-                            onChange={handleChange}
-                        >
-                            <MenuItem value="">Select</MenuItem>
-                            <MenuItem value={true}>Active</MenuItem>
-                            <MenuItem value={false}>Inactive</MenuItem>
-                        </Select>
-                    </div>
+                    ) : null}
+                    {values.type === 'Bank Discount' ? (
+                        <div style={{ width: '50%' }}>
+                            <label className={categoryStyle.label}>Bank Card</label>
+                            <br />
+                            <Select
+                                // className={categoryStyle.formselect}
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                sx={formselect}
+                                IconComponent={(props) => (
+                                    <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
+                                )}
+                                displayEmpty
+                                defaultValue=''
+                                name='status'
+                                value={values.status}
+                                onChange={handleChange}
+                            >
+                                <MenuItem value="">Select</MenuItem>
+                                <MenuItem value={true}>Active</MenuItem>
+                                <MenuItem value={false}>Inactive</MenuItem>
+                            </Select>
+                        </div>
+                    ) : null}
                 </div>
                 <div className={couponStyle.couponTypeStyle} style={{ marginTop: 20, }}>
                     <div style={{ width: '50%' }}>
@@ -329,6 +383,8 @@ const EditCoupon = () => {
                                 }}
                                 slots={{ field: SingleInputDateRangeField }}
                                 slotProps={{ textField: { InputProps: { endAdornment: <CalendarIcon /> } } }}
+                                disablePast={true}
+                                disabled={isDatePickerDisabled}
                                 sx={{
                                     width: '100%',
                                     height: '40px',
@@ -367,46 +423,47 @@ const EditCoupon = () => {
                             />
                         </LocalizationProvider>
                         {
-                            errors.details?.discountValue && touched.details?.discountValue && <p style={{ color: "red", fontSize: "12px" }}>{errors.details?.discountValue}</p>
+                            errors.startDate && touched.startDate && <p style={{ color: "red", fontSize: "12px" }}>{errors.startDate}</p>
                         }
-                        <div className={couponStyle.settingLimitStyle} style={{ marginTop: 5,marginLeft:-10 }}>
+                        <div className={couponStyle.settingLimitStyle} style={{ marginTop: 5, marginLeft: -10 }}>
                             <CustomizedCheckbox
                                 handleCheck={handleCheck}
-                                checked={values.details.noLimits}
-                                disabled={values.details.usageLimits}
+                                checked={values.noDurationLimit}
+                                disabled={values.noDurationLimit}
                             />
                             <p className={couponStyle.limitText}>Don't set duration</p>
                         </div>
                     </div>
-                    <div style={{  width: '50%' }}>
+                    <div style={{ width: '50%' }}>
                         <label className={categoryStyle.label}>Usage limits</label>
                         <TextField
-                            type='text'
+                            type='number'
                             onBlur={handleBlur}
-                            value={values.name}
+                            value={values.usageLimit || ''}
                             placeholder='Enter'
-                            name="name"
+                            name="usageLimit"
                             onChange={handleChange}
                             sx={fieldText}
                             style={{
                                 fontSize: 12
                             }}
+                            disabled={isUsageLimitDisabled}
                         />
                         {
-                            errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
+                            errors.usageLimit && touched.usageLimit && <p style={{ color: "red", fontSize: "12px" }}>{errors.usageLimit}</p>
                         }
-                        <div className={couponStyle.settingLimitStyle} style={{ marginTop: 5,marginLeft:-10 }}>
+                        <div className={couponStyle.settingLimitStyle} style={{ marginTop: 5, marginLeft: -10 }}>
                             <CustomizedCheckbox
-                                handleCheck={handleCheck}
-                                checked={values.details.noLimits}
-                                disabled={values.details.usageLimits}
+                                handleCheck={handleLimitCheck}
+                                checked={values.noUsageLimit}
+                                disabled={values.noUsageLimit}
                             />
                             <p className={couponStyle.limitText}>Don't limit amount of uses</p>
                         </div>
                     </div>
                 </div>
                 <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
-                    <Button sx={cancle} onClick={handleSubmit} variant="contained" disableElevation={true}>Cancel</Button>
+                    <Button sx={cancle} onClick={resetForm} variant="contained" disableElevation={true}>Cancel</Button>
                     <div>
                         <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save</Button>
                     </div>

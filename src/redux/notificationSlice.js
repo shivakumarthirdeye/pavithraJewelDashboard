@@ -14,9 +14,9 @@ const initialState = {
 
 export const getNotification = createAsyncThunk('getNotification', async (body, { rejectWithValue, dispatch }) => {
     try {              
-         console.log(body,"userId");
+        //  console.log(body,"userId");
          
-        const { data, status } = await api.getNotification(body);
+        const { data, status } = await api.getNotification();
         console.log(data,status ,"getall notifications");
          
 
@@ -86,40 +86,6 @@ export const markAllAsRead=createAsyncThunk('markAllAsRead',async(body,{rejectWi
 })
 
 
-export const createNotification=createAsyncThunk('createNotification',async(body,{rejectWithValue,dispatch})=>{
-    try {
-
-        const { data, status } = await api.addnotification(body);
-        if(status === 200){
-            Toastify.success("notification added successfully")
-            dispatch(setRefresh())           
-        }
-        return data.data
-        
-    } catch (err) {
-
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-
-    }
-})
-
-export const getAllCreatedNotification=createAsyncThunk('getCreatedNotification',async(body,{rejectWithValue,dispatch})=>{
-    try {
-        const { data, status } = await api.getallCreatedNotification(body);
-         
-        if(status === 200){
-            // Toastify.success("notification added successfully")
-            console.log(data,"created notifications");
-            
-            dispatch(setCreatednotification(data.createdNotifications||[]))
-            // dispatch(setRefresh())           
-        }
-        return data.data
-    } catch (err) {
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-
-    }
-})
 
 
 

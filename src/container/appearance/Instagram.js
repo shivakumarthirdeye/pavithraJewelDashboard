@@ -13,6 +13,13 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { AddIcon, ImageIcon } from '../../svg';
 import api from '../../helper/Api';
+import Toastify from '../../helper/Toastify';
+import axios from 'axios';
+import { addInstagram } from '../../redux/appearanceSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -25,14 +32,18 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
     overflow: 'visible',
 }));
 export default function Instagram() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate()
+
     const schema = yup.object().shape({
-        productName: yup.string().required("Product name is required"),
-        status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
-        featuredImage: yup.string().required("At least one image is required"),
-
+        instagram: yup.array().of(
+            yup.object().shape({
+                image1: yup.string().required("Image one is required"),
+                image2: yup.string().required("Image two is required"),
+                buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
+            })
+        ).min(1, "At least one slider is required"), // Ensure there's at least one slider
     });
-
 
     const {
         handleSubmit,
@@ -42,42 +53,96 @@ export default function Instagram() {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm
     } = useFormik({
         initialValues: {
-            productName: "",
-            // medias: [],
-            description: "",
-            media: {
-                photo: [],
-                video: []
-            },
+            instagram: [
+                {
+                    image1: '',
+                    image2: '',
+                    buttonLink: ''
+                }
+            ]
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleSubject(values)
+            handleSubject(values)
         }
 
     })
-    //Media Image
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const body = new FormData();
-            body.append('image', file);
 
-            try {
-                const { data, status } = await api.fileUpload(body);
-                if (status === 200) {
-                    const imageUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                    // Update medias array by spreading existing values and adding the new imageUrl
-                    setFieldValue('featuredImage', imageUrl);
-                } else {
-                    console.error(`Upload failed with status: ${status}`);
-                }
-            } catch (error) {
-                console.error('Error uploading file:', error.response ? error.response.data : error.message);
-            }
+    console.log('values----------------------', values);
+
+    const handleSubject = async (value) => {
+        try {
+            const resultAction = await dispatch(addInstagram(value))
+
+            unwrapResult(resultAction)
+
+            navigate("/appearance/Appearance")
+        } catch (error) {
+            toast.error(error.message)
         }
+
+    }
+    //Media Image
+
+    const handleImageOneChange = async (e, index) => {
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                };
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: { "Content-Type": file.type }
+                    });
+                    setFieldValue(`instagram[${index}].image1`, data?.data?.url);
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file");
+        }
+    };
+    const handleImageTwoChange = async (e, index) => {
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                };
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: { "Content-Type": file.type }
+                    });
+
+                    setFieldValue(`instagram[${index}].image2`, data?.data?.url);
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file");
+        }
+    };
+
+    const handleAddInstagram = () => {
+        setFieldValue('instagram', [
+            ...values.instagram,
+            { image1: '', image2: '', buttonLink: '' }
+        ]);
+    };
+
+    const handleDeleteHeroBanner = (index) => {
+        const updatedSliders = values.banner.filter((_, i) => i !== index);
+        setFieldValue('banner', updatedSliders);
     };
     return (
         <div style={{ marginTop: 20 }}>
@@ -100,127 +165,127 @@ export default function Instagram() {
 
                     }}>Instagram</Typography>
                 </AccordionSummary>
-                <AccordionDetails
-                    sx={{
-                        backgroundColor: '#F8F9FF',
-                        // width:'100%',
-                        height: 'fit-content',
-                        padding: '18px 29px',
-                        margin: "0px 20px 20px 19px"
-                    }}
-                >
-                    <Box sx={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <Box>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Image 1
-                            </Typography>
-                            <div className={productStyle.imageUpload1}>
-                                <div className={productStyle.imageView}>
-                                    {values?.featuredImage?.length > 0 ? (
-                                        <div>
-                                            <img
-                                                src={values.featuredImage}
-                                                alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
-                                            />
-                                            {/* <button onClick={handleUpload}>Upload</button> */}
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <ImageIcon />
+                {values?.instagram?.map((insta, index) => (
+                    <AccordionDetails
+                        sx={{
+                            backgroundColor: '#F8F9FF',
+                            // width:'100%',
+                            height: 'fit-content',
+                            padding: '18px 29px',
+                            margin: "0px 20px 20px 19px"
+                        }}
+                    >
+                        <Box sx={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '500',
+                                        fontFamily: 'Public Sans',
+                                        fontSize: '14px',
+                                        lineHeight: '28px',
+                                        letterSpacing: '0.005em',
+                                        textAlign: 'left',
+                                        color: '#777980'
+                                    }}>
+                                    Image 1
+                                </Typography>
+                                <div className={productStyle.imageUpload1}>
+                                    <div className={productStyle.imageView}>
+                                        {values?.instagram[index]?.image1.length > 0 ? (
                                             <div>
-                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
-                                                    Drag and drop image here, or click add image
-                                                </p>
-                                            </div>
-                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="imageFile"
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleImageChange}
+                                                <img
+                                                    src={values?.instagram[index]?.image1}
+                                                    alt="Selected"
+                                                    style={{ maxWidth: '100%', marginTop: '0px',width:250,height:200,objectFit:'cover' }}
                                                 />
-                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                    Add Image
-                                                </label>
+                                                {/* <button onClick={handleUpload}>Upload</button> */}
                                             </div>
-                                        </>
-                                    )
-                                    }
+                                        ) : (
+                                            <>
+                                                <ImageIcon />
+                                                <div>
+                                                    <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                        Drag and drop image here, or click add image
+                                                    </p>
+                                                </div>
+                                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        id={`imageOneFile-${index}`}
+                                                        style={{ display: 'none' }}
+                                                        onChange={(e) => handleImageOneChange(e, index)}
+                                                    />
+                                                    <label htmlFor={`imageOneFile-${index}`} className={productStyle.uploadBox}>
+                                                        Add Image
+                                                    </label>
+                                                </div>
+                                            </>
+                                        )
+                                        }
 
+                                    </div>
                                 </div>
-                            </div>
-                            {/* {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
-                            } */}
-                        </Box>
-                        <Box>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Image 2
-                            </Typography>
-                            <div className={productStyle.imageUpload1}>
-                                <div className={productStyle.imageView}>
-                                    {values?.featuredImage?.length > 0 ? (
-                                        <div>
-                                            <img
-                                                src={values.featuredImage}
-                                                alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
-                                            />
-                                            {/* <button onClick={handleUpload}>Upload</button> */}
-                                        </div>
-                                    ) : (
-                                        <>
-                                            <ImageIcon />
+                                {
+                                    errors.instagram?.[index]?.image1 && touched.instagram?.[index]?.image1 && <p style={{ color: "red", fontSize: "12px" }}>{errors.instagram?.[index]?.image1}</p>
+                                }
+                            </Box>
+                            <Box>
+                                <Typography
+                                    sx={{
+                                        fontWeight: '500',
+                                        fontFamily: 'Public Sans',
+                                        fontSize: '14px',
+                                        lineHeight: '28px',
+                                        letterSpacing: '0.005em',
+                                        textAlign: 'left',
+                                        color: '#777980'
+                                    }}>
+                                    Image 2
+                                </Typography>
+                                <div className={productStyle.imageUpload1}>
+                                    <div className={productStyle.imageView}>
+                                        {values?.instagram[index]?.image2?.length > 0 ? (
                                             <div>
-                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
-                                                    Drag and drop image here, or click add image
-                                                </p>
-                                            </div>
-                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="imageFile"
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleImageChange}
+                                                <img
+                                                    src={values?.instagram[index]?.image2}
+                                                    alt="Selected"
+                                                    style={{ maxWidth: '100%', marginTop: '0px',width:250,height:200,objectFit:'cover'  }}
                                                 />
-                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                    Add Image
-                                                </label>
+                                                {/* <button onClick={handleUpload}>Upload</button> */}
                                             </div>
-                                        </>
-                                    )
-                                    }
+                                        ) : (
+                                            <>
+                                                <ImageIcon />
+                                                <div>
+                                                    <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                        Drag and drop image here, or click add image
+                                                    </p>
+                                                </div>
+                                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        id={`imageTwoFile-${index}`}
+                                                        style={{ display: 'none' }}
+                                                        onChange={(e) => handleImageTwoChange(e, index)}
+                                                    />
+                                                    <label htmlFor={`imageTwoFile-${index}`} className={productStyle.uploadBox}>
+                                                        Add Image
+                                                    </label>
+                                                </div>
+                                            </>
+                                        )
+                                        }
 
+                                    </div>
                                 </div>
-                            </div>
-                            {/* {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
-                            } */}
+                                {errors.instagram?.[index]?.image2 && touched.instagram?.[index]?.image2 && (
+                                    <div style={{ color: "red" }}>{errors.instagram?.[index]?.image2}</div>
+                                )}
+                            </Box>
                         </Box>
-                    </Box>
-                    <Box sx={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                        <div style={{ width: '50%' }}>
+                        <Box sx={{ marginBottom: '10px', }}>
                             <Typography
                                 sx={{
                                     fontWeight: '500',
@@ -240,54 +305,26 @@ export default function Instagram() {
                                 <TextField
                                     placeholder='Add Redirection Link Here'
                                     type={'text'}
-                                    name="name"
-                                    // value={values.name || ''}
-                                    // onChange={handleChange}
-                                    // onBlur={handleBlur}
+                                    name={`instagram[${index}].buttonLink`}
+                                    value={insta.buttonLink || ''}
+                                    onChange={handleChange}
+                                    onBlur={handleBlur}
                                     sx={InputURL}
                                 />
 
-                                {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
-                            </div>
-                        </div>
-                        <div style={{ width: '50%' }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Button Link
-                            </Typography>
-                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                                <div className={appearancStyle.httpsStyle}>
-                                    https://
-                                </div>
-                                <TextField
-                                    placeholder='Add Redirection Link Here'
-                                    type={'text'}
-                                    name="name"
-                                    // value={values.name || ''}
-                                    // onChange={handleChange}
-                                    // onBlur={handleBlur}
-                                    sx={InputURL}
-                                />
 
-                                {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
                             </div>
-                        </div>
-                    </Box>
-                </AccordionDetails>
+                            {errors.instagram?.[index]?.buttonLink && touched.instagram?.[index]?.buttonLink && (
+                                <div style={{ color: "red" }}>{errors.instagram?.[index]?.buttonLink}</div>
+                            )}
+                        </Box>
+                    </AccordionDetails>
+                ))}
                 <Box sx={{ marginBottom: '20px' }}>
-                    <div className={appearancStyle.addButtonStyle}>
+                    <div
+                        className={appearancStyle.addButtonStyle}
+                        onClick={handleAddInstagram}
+                    >
                         <AddIcon /> <span>Add another</span>
                     </div>
                 </Box>
@@ -300,8 +337,8 @@ export default function Instagram() {
                     alignItems: 'center',
                     gap: '10px'
                 }}>
-                    <Button sx={custom}>Cancel</Button>
-                    <Button sx={saveChanges}>Save Changes</Button>
+                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
+                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </CustomAccordion>
         </div >

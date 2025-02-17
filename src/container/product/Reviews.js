@@ -6,7 +6,8 @@ import { getReviewsForProducts } from "../../redux/productSlice";
 import { EditIcon, EditReviewIcon, InfoIcon, } from "../../svg";
 import EditReview from "./EditReview";
 
-const Reviews = () => {
+const Reviews = ({data}) => {
+console.log('data===============',data);
 
     const navigate = useNavigate()
     const { id } = useParams();
@@ -20,7 +21,7 @@ const Reviews = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isRejectModalOpen, setIsRejectModalOpen] = useState(false);
-    const [data, setData] = useState(null);
+    const [datas, setData] = useState(null);
 
     useEffect(() => {
         dispatch(getReviewsForProducts(id))
@@ -112,7 +113,7 @@ const Reviews = () => {
                 <p className={orderStyle.customerText}>Customer Reviews</p>
             </div> */}
             <div className='product-container'>
-                {ordersById?.map((item, index) => (
+                {data?.map((item, index) => (
                         <div className='product-card'>
                             {/* <div className="products-info" key={index}>
                                 <img src={item?.productId?.featuredImage} alt='' className="product-image" />
@@ -125,14 +126,14 @@ const Reviews = () => {
                             <div className="review-info">
                                 <div className="reviewer-details">
                                     <div>
-                                        <h4 className="reviewer-heading">{item?.userName}</h4>
+                                        <h4 className="reviewer-heading">{item?.userId}</h4>
                                         <p className="review-date">{formatDate(item?.createdAt)}</p>
                                     </div>
                                     <div className="rating">
-                                        {"★".repeat(item?.rating)}
+                                        {"★".repeat(item?.ratings)}
                                     </div>
                                 </div>
-                                <h4 className="review-title">{item?.comment}</h4>
+                                <h4 className="review-title">{item?.review}</h4>
                                 <div className="review-images">
                                     {item?.images?.map((image, index) => (
                                         <img src={image} alt={`review-${index}`} key={index} className="review-image" />
@@ -148,12 +149,12 @@ const Reviews = () => {
                                                 fontSize: 12,
                                                 fontWeight: '400',
                                                 letterSpacing: 0.14,
-                                                color: item?.isApproved === 'APPROVED' ? '#1DB41D' : item?.isApproved === 'PENDING' ? '#C86550' : '#F92929',
+                                                color: item?.status === 'APPROVED' ? '#1DB41D' : item?.status === 'PENDING' ? '#C86550' : '#F92929',
 
-                                            }}>{item?.isApproved === 'PENDING' ? 'Pending' : item?.isApproved === 'APPROVED' ? 'Approved' : 'Rejected'}</span>
+                                            }}>{item?.status === 'PENDING' ? 'Pending' : item?.status === 'APPROVED' ? 'Approved' : 'Rejected'}</span>
                                     </div>
                                 </div>
-                                {item?.isApproved === "PENDING" && (
+                                {item?.status === "APPROVED" && (
                                     <div className="statusActions">
                                         <div className="review-date">Status:</div>
                                         <div className="approve-btn" 
@@ -171,7 +172,7 @@ const Reviews = () => {
         <EditReview
             open={isModalOpen}
             onClose={closeModal}
-            data={data}
+            data={datas}
         />
         {/* <RejectionModal
             open={isRejectModalOpen}

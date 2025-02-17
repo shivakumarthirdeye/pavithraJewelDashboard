@@ -420,7 +420,7 @@ export const RatingIcon = () => {
 }
 export const LineIcon = () => {
     return (
-        <svg width="2" height="15" viewBox="0 0 2 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="2" height="17" viewBox="0 0 2 15" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M1.422 14.254H0.288L0.281 0.436H1.422V14.254Z" fill="#C2C6CE" />
         </svg>
     )

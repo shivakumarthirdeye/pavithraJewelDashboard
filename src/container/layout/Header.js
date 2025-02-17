@@ -5,6 +5,7 @@ import { Divider, Popover } from '@mui/material';
 import { Drop, Dropdown, Notification } from '../../svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogOut } from '../../redux/userSlice';
+import customerStyle from '../customer/customer.module.css'
 
 
 const Header = ({ children }) => {
@@ -77,13 +78,18 @@ const Header = ({ children }) => {
                     </div>
                     <Divider orientation="vertical" variant="middle" flexItem sx={{ marginLeft: '10px', marginRight: '10px' }} />
                     <div>
-                        <img src='/profile.png' style={{ width: 30, height: 30, borderRadius: 15 }} alt='Avatar' />
+                        {user?.profileImg > 0 ? (
+                            <img src={user?.profileImg} alt='Avatar' style={{ width: 30, height: 30, borderRadius: 15 }} />
+                        ) :
+                            <div className={customerStyle.profileStyle}>
+                                {user?.name?.charAt(0).toUpperCase()}
+                            </div>
+                        }
                     </div>
 
                     <div style={{ paddingLeft: 5 }}>
                         <div className={layoutStyles.userName}>
-                            {/* {adminDetails.name} */}
-                            Supriya
+                            {user.name}
                         </div>
                         <span className={layoutStyles.admin}>
                             Admin

@@ -6,14 +6,26 @@ const initialState = {
     isLoading: false,
     isRefresh: false,
     ordersData: {},
-    searchOrdersData: {},
+    trashOrdersData: {},
     ordersDetailsData: {},
     deleteOrdersData: {},
     customerReviewsData: {},
     editReviewsData: {},
     revertOrdersData: {},
     approveRejectData: {},
-    orderStatistics: {},
+    orderStatisticsData: {},
+    editPendingPriceData: {},
+    filterOptions: {
+        status: "",
+        search: "",
+        startDate: "",
+        endDate: "",
+        page: 1,
+        order: '',
+        sortBy: '',
+        limit: 10,
+        orderType:''
+    },
     errorMsg: "",
     isError: false
 }
@@ -23,7 +35,9 @@ const initialState = {
 
 export const orderStatistics = createAsyncThunk('orderStatistics', async (body, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.orderStatistics();
+        const { data, status } = await api.orderStatistics(body);
+        // console.log('dasta=======>',body);
+        
         if (status === 200) {
                 //get categories data
                 dispatch(setStatistics(data.data))
@@ -38,13 +52,13 @@ export const orderStatistics = createAsyncThunk('orderStatistics', async (body, 
 
 export const getOrders = createAsyncThunk('getOrders', async (body, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.getOrders(body);
+        const queryParams = new URLSearchParams(body).toString();
+        const { data, status } = await api.getOrders(queryParams);
         if (status === 200) {
                 //get categories data
-                dispatch(setOrders(data.data))
-                
+                dispatch(setOrders(data))
             } 
-            return data.data
+            return data
         } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
@@ -83,27 +97,12 @@ export const getAllOrdersList = createAsyncThunk('getAllOrdersList', async (body
 }
 )
 
-export const searchOrders = createAsyncThunk('searchOrders', async (body, { rejectWithValue, dispatch }) => {
-    try {
-        const { data, status } = await api.searchOrders(body);
-        if (status === 200) {
-                //get categories data
-                dispatch(setSearchOrders(data.data))
-                
-            } 
-            return data.data
-        } catch (err) {
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-    }
-}
-)
 export const getOrdersDetails = createAsyncThunk('getOrdersDetails', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.getOrdersDetails(body);
         if (status === 200) {
                 //get categories data
-                dispatch(setOrdersDetails(data.data))
-                
+                dispatch(setOrdersDetails(data.data))                
             } 
             return data.data
         } catch (err) {
@@ -179,6 +178,24 @@ export const editReviews = createAsyncThunk('editReviews', async ({url,val}, { r
     }
 }
 )
+export const editPendingPrice = createAsyncThunk('editPendingPrice', async ({url,val}, { rejectWithValue, dispatch }) => {
+    try {
+        const { data, status } = await api.editPendingPrice({url,val});
+
+        if (status === 200) {
+            // render otp screen
+            dispatch(setEditPendingPrice({url,val}));
+            Toastify.success("Price Edited successfully");
+            dispatch(setRefresh());
+        }
+        return data.data
+
+    } catch (err) {
+        Toastify.error(err.response.data.message);
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
 export const approveReject = createAsyncThunk('approveReject', async ({ url, val }, { rejectWithValue, dispatch }) => {
     console.log('url:', url);  // Check if URL is properly constructed
     console.log('value:', val);  // Ensure the value is correct
@@ -197,36 +214,16 @@ export const approveReject = createAsyncThunk('approveReject', async ({ url, val
     }
 });
 
-
-
-export const exchangeProduct = createAsyncThunk('exchangeProduct', async ({orderId,reasonForRejection}, { rejectWithValue, dispatch }) => {
+export const getTrashOrders = createAsyncThunk('getTrashOrders', async (body, { rejectWithValue, dispatch }) => {
     try {
-        console.log("rejectttttttttttttttt",orderId,reasonForRejection)
-        const { data, status } = await api.exchangeProduct(orderId,reasonForRejection);
-        console.log("reduxxxxxxxxxx",data)
+        const queryParams = new URLSearchParams(body).toString();
+        const { data, status } = await api.getTrashOrders(queryParams);
         if (status === 200) {
-            Toastify.success(data.data.message);
-            // dispatch(setRefresh());
-        }
-        return data.data
-
-    } catch (err) {
-        Toastify.error(err.response.data.message);
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-    }
-}
-)
-
-
-export const filterOrder = createAsyncThunk('filterOrder', async ({date,status,filter,isDeleted,page}, { rejectWithValue, dispatch }) => {
-    try {
-        const response = await api.filterOrder(date,status,filter,isDeleted,page);
-        if (response.status === 200) {
-              
-                dispatch(setOrders(response.data.data))
+                //get categories data
+                dispatch(setTrashOrders(data))
                 
             } 
-            return response.data.data
+            return data
         } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
@@ -239,9 +236,6 @@ export const ordersSlice = createSlice({
     reducers: {
         setOrders: (state, action) => {
             state.ordersData = action.payload
-        },
-        setSearchOrders: (state, action) => {
-            state.searchOrdersData = action.payload
         },
         setOrdersDetails: (state, action) => {
             state.ordersDetailsData = action.payload
@@ -261,12 +255,21 @@ export const ordersSlice = createSlice({
         setApproveReject: (state, action) => {
             state.approveRejectData = action.payload
         },
+        setFilterValues: (state, action) => {
+            state.filterOptions = { ...state.filterOptions, ...action.payload }
+        },
         setRefresh:(state) => {
             state.isRefresh = !state.isRefresh
         },
         setStatistics:(state,action) => {
-            state.orderStatistics = action.payload
-        }
+            state.orderStatisticsData = action.payload
+        },
+        setEditPendingPrice:(state,action) => {
+            state.editPendingPriceData = action.payload
+        },
+        setTrashOrders: (state, action) => {
+            state.trashOrdersData = action.payload
+        },
     },
     extraReducers: (builder) => {
 
@@ -283,19 +286,7 @@ export const ordersSlice = createSlice({
             state.isLoading = false
             state.errorMsg = action.payload
         })
-        // searchOrdersData
-        builder.addCase(searchOrders.pending, (state) => {
-            state.isLoading = true
-            state.isError = false
-        })
-        builder.addCase(searchOrders.fulfilled, (state, action) => {
-            state.isLoading = false
-            state.searchOrdersData = action.payload
-        })
-        builder.addCase(searchOrders.rejected, (state, action) => {
-            state.isLoading = false
-            state.errorMsg = action.payload
-        })
+        
         // getProductsDetails
         builder.addCase(getOrdersDetails.pending, (state) => {
             state.isLoading = true
@@ -322,42 +313,17 @@ export const ordersSlice = createSlice({
             state.isLoading = false
             state.errorMsg = action.payload
         })
-        // editReviews
-        builder.addCase(editReviews.pending, (state) => {
+        
+        // getTrashOrders
+        builder.addCase(getTrashOrders.pending, (state) => {
             state.isLoading = true
             state.isError = false
         })
-        builder.addCase(editReviews.fulfilled, (state, action) => {
+        builder.addCase(getTrashOrders.fulfilled, (state, action) => {
             state.isLoading = false
-            state.editReviewsData = action.payload
+            state.trashOrdersData = action.payload
         })
-        builder.addCase(editReviews.rejected, (state, action) => {
-            state.isLoading = false
-            state.errorMsg = action.payload
-        })
-        // revertOrders
-        builder.addCase(revertOrders.pending, (state) => {
-            state.isLoading = true
-            state.isError = false
-        })
-        builder.addCase(revertOrders.fulfilled, (state, action) => {
-            state.isLoading = false
-            state.revertOrdersData = action.payload
-        })
-        builder.addCase(revertOrders.rejected, (state, action) => {
-            state.isLoading = false
-            state.errorMsg = action.payload
-        })
-        // ApproveReject
-        builder.addCase(approveReject.pending, (state) => {
-            state.isLoading = true
-            state.isError = false
-        })
-        builder.addCase(approveReject.fulfilled, (state, action) => {
-            state.isLoading = false
-            state.approveRejectData = action.payload
-        })
-        builder.addCase(approveReject.rejected, (state, action) => {
+        builder.addCase(getTrashOrders.rejected, (state, action) => {
             state.isLoading = false
             state.errorMsg = action.payload
         })
@@ -375,7 +341,10 @@ export const {
     setSearchOrders,
     setRevertOrders,
     setApproveReject,
-    setStatistics
+    setStatistics,
+    setFilterValues,
+    setEditPendingPrice,
+    setTrashOrders
  } = ordersSlice.actions
 
 export default ordersSlice.reducer;

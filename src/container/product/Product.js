@@ -3,7 +3,7 @@ import productStyle from './product.module.css';
 import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteProducts, getProducts, setFilterValues } from '../../redux/productSlice';
+import { deleteProducts, getExportProducts, getProducts, setFilterValues } from '../../redux/productSlice';
 import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
 import * as XLSX from 'xlsx';
@@ -37,14 +37,13 @@ const Product = () => {
     const [order, setOrder] = useState('asc')
 
 
-    const { productsData, filterOptions, isLoading, isRefresh } = useSelector(
+    const { productsData, filterOptions, isLoading, isRefresh,exportProductsData } = useSelector(
         (state) => state.products
     );
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
-    console.log('filterOptions============', filterOptions);
-    // console.log('productsData', productsData);
+    console.log('exportProductsData', exportProductsData);
 
 
     const calculateShowingRange = () => {
@@ -133,25 +132,25 @@ const Product = () => {
 
 
     //Export Functionality
-    // const exportToExcel = async () => {
-    //     // console.log(transaction)
+    const exportToExcel = async () => {
+        // console.log(transaction)
 
-    //     const result = await dispatch(getAllSingleProductList()).unwrap()
-    //     const excelData = result?.data?.map((item) => ({
-    //         Product: item?.name || '_',
-    //         Variations: item?.variations?.length || '_',
-    //         Product_ID: item?.productId || '_',
-    //         Category: item?.category?.name || '-',
-    //         Stock: item?.stockQuantity || '-',
-    //         Sale_Price: item?.salePrice || '-',
-    //         Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
-    //         Status: item?.status || '-',
-    //     }));
-    //     const worksheet = XLSX.utils.json_to_sheet(excelData);
-    //     const workbook = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
-    //     XLSX.writeFile(workbook, 'products.xlsx');
-    // };
+        const result = await dispatch(getExportProducts()).unwrap()
+        const excelData = result?.data?.map((item) => ({
+            Product: item?.productdetails?.productName || '_',
+            Sku: item?.productdetails?.inventory?.sku || '_',
+            Product_ID: item?.productdetails?._id || '_',
+            SubCategory: item?.productdetails?.category?.productSubcategory?.name || '-',
+            Stock: item?.productdetails?.inventory?.totalstock || '-',
+            Sale_Price: item?.sellingPrice || '-',
+            Date: moment(item?.productdetails?.createdAt).format('MMM DD,YYYY, HH:MMA'),
+            Status: item?.productdetails?.status || '-',
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(excelData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
+        XLSX.writeFile(workbook, 'products.xlsx');
+    };
 
 
     const dateContent = (
@@ -360,7 +359,7 @@ const Product = () => {
                 </div>
                 <div className={productStyle.attributeStyle}>
                     <div className={productStyle.exportStyle} 
-                    // onClick={exportToExcel}
+                    onClick={exportToExcel}
                     >
                         <ExportIcon /> <p style={{ marginLeft: 5 }}>Export</p>
                     </div>
@@ -436,31 +435,31 @@ const Product = () => {
                                                 {/* <CustomizedCheckbox /> */}
                                                 <div className={productStyle.productMainStyle}>
 
-                                                    <img src={item?.featurerdImage[0]} width={40} height={40} style={{ borderRadius: 5 }} alt='featurerdImage' />
+                                                    <img src={item?.productdetails?.featurerdImage} style={{height:40,width:40,objectFit:'cover',borderRadius: 5}} alt='featurerdImage' />
                                                     <div>
-                                                        <span style={{ marginLeft: 5 }}>{item?.productName && item.productName.length > 10 ? `${item.productName.substring(0, 10)}...` : item?.productName}</span>
+                                                        <span style={{ marginLeft: 5 }}>{item?.productdetails?.productName && item?.productdetails?.productName?.length > 10 ? `${item?.productdetails?.productName?.substring(0, 10)}...` : item?.productdetails?.productName}</span>
                                                         <br />
-                                                        <p style={{ marginLeft: 5 }} className={productStyle.description}>{item?.description} </p>
+                                                        <p style={{ marginLeft: 5 }} className={productStyle.description}>{item?.productdetails?.inventory?.sku} </p>
                                                     </div>
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={productStyle.skuStyle}>
-                                                    {item?._id}
+                                                    {item?.productdetails?._id}
                                                 </div>
                                                 <div className={productStyle.catStyle} style={{ color: '#667085' }}>
-                                                    {item?.category?.productCategory?.name}
+                                                    {item?.productdetails?.category?.productCategory?.name}
                                                 </div>
                                                 <div className={productStyle.stockStyle}>
-                                                    {item?.inventory?.totalstock}
+                                                    {item?.productdetails?.inventory?.totalstock}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={productStyle.priceStyle}>
-                                                    Rs. {item?.pricing?.finalSalePrice?.value}
+                                                    Rs. {item?.sellingPrice}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div
                                                     style={{
-                                                        backgroundColor: item?.status === 'DRAFT' ? '#F0F1F3' : item?.status === 'PUBLISHED' ? "#1A98821A" : '#F439391A',
+                                                        backgroundColor: item?.productdetails?.status === 'DRAFT' ? '#F0F1F3' : item?.productdetails?.status === 'PUBLISHED' ? "#1A98821A" : '#F439391A',
                                                         width: '13%',
                                                         borderRadius: 8,
                                                         height: 30,
@@ -480,26 +479,26 @@ const Product = () => {
                                                             // lineHeight: 20,
                                                             letterSpacing: 0.5,
                                                             textAlign: 'center',
-                                                            color: item?.status === 'DRAFT' ? "#4A4C56" : item?.status === 'PUBLISHED' ? '#4DDB4D' : '#F92929',
+                                                            color: item?.productdetails?.status === 'DRAFT' ? "#4A4C56" : item?.productdetails?.status === 'PUBLISHED' ? '#4DDB4D' : '#F92929',
                                                             textTransform: 'capitalize'
                                                         }}
                                                     >
-                                                        {item?.status === 'DRAFT' ? 'Draft' : item?.status === 'PUBLISHED' ? 'Published' : 'Outofstock'}
+                                                        {item?.productdetails?.status === 'DRAFT' ? 'Draft' : item?.productdetails?.status === 'PUBLISHED' ? 'Published' : 'Outofstock'}
                                                     </span>
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={productStyle.addedStyle} style={{ color: '#667085' }}>
-                                                    {formatDate(item?.createdAt)}
+                                                    {formatDate(item?.productdetails?.createdAt)}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={productStyle.action}>
-                                                    <div onClick={() => navigate(`/product/Product/ProductViewDetails`)}>
+                                                    <div onClick={() => navigate(`/product/Product/ProductViewDetails/${item?.productdetails?._id}`)}>
                                                         <ViewIcon />
                                                     </div>
-                                                    <div style={{ marginLeft: 12 }} onClick={() => navigate(`/product/Product/EditProduct${item._id}`, { state: { item } })}>
+                                                    <div style={{ marginLeft: 12 }} onClick={() => navigate(`/product/Product/EditProduct/${item?.productdetails?._id}`, { state: { item } })}>
                                                         <EditIcon />
                                                     </div>
-                                                    <div style={{ marginLeft: 12 }} onClick={() => openDeleteModal(item._id)}>
+                                                    <div style={{ marginLeft: 12 }} onClick={() => openDeleteModal(item?.productdetails?._id)}>
                                                         <DeleteIcon />
                                                     </div>
                                                 </div>

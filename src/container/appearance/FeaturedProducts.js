@@ -5,13 +5,19 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, MenuItem, Select } from '@mui/material';
+import { Box, Button, ListItemText, MenuItem, Select } from '@mui/material';
 import { custom, saveChanges, SelectStyle } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import * as yup from "yup";
 import { CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
+import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { addFeaturerdProducts } from '../../redux/appearanceSlice';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { getExportProducts, getProducts } from '../../redux/productSlice';
+import { toast } from 'react-toastify';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -24,9 +30,20 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
     overflow: 'visible',
 }));
 export default function FeaturedProducts() {
-    const schema = yup.object().shape({
-        category: yup.string().required("Category is required"),
+    const navigate = useNavigate();
+    const dispatch = useDispatch();
 
+    const { exportProductsData } = useSelector(
+        (state) => state.products);
+    console.log('exportProductsData', exportProductsData);
+    const viewProductsData = exportProductsData?.data
+
+    const [selectedProducts, setSelectedProduct] = React.useState([]);
+
+    const schema = yup.object().shape({
+        products: yup.array()
+        .min(8, "You must select at least 8 products")
+        .required("Product is required"),
     });
 
 
@@ -38,40 +55,62 @@ export default function FeaturedProducts() {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm,
     } = useFormik({
         initialValues: {
-            category: '',
+            products: [],
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleSubject(values)
+            handleSubject(values)
         }
 
     })
-    const handleCategoryChange = (event) => {
-        const selectedAttributeId = event.target.value; // This will be the base ID of the selected category
-        setFieldValue("category", selectedAttributeId); // Update the formik state with the base ID
+    const handleSubject = async (value) => {
+        try {
+            const resultAction = await dispatch(addFeaturerdProducts(value))
 
-        setFieldValue("subCategory", []);
+            unwrapResult(resultAction)
+
+            navigate("/appearance/Appearance")
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+    }
+    
+
+    React.useEffect(() => {
+        dispatch(getExportProducts())
+    }, [dispatch])
+
+    const handleProductChange = (event) => {
+        const selectedProductIds = event.target.value; // Get selected product IDs
+        // Find the full product objects based on selected IDs
+        const selectedProductData = viewProductsData?.filter((product) =>
+            selectedProductIds.includes(product?.productdetails?._id)
+        );
+
+        setSelectedProduct(selectedProductData);
+        setFieldValue('products', selectedProductIds, true); // Store only the IDs in Formik
     };
-    const data = [
-        {
-            id: 0,
-            name: 'Product Name'
-        },
-        {
-            id: 1,
-            name: 'Product Name'
-        },
-        {
-            id: 2,
-            name: 'Product Name'
-        },
-        {
-            id: 3,
-            name: 'Product Name'
-        },
-    ]
+    const handleRemoveProduct = (productId) => {
+        // Filter out the removed product
+        const updatedProducts = selectedProducts.filter(
+            (product) => product?.productdetails?._id !== productId
+        );
+    
+        setSelectedProduct(updatedProducts); // Update state
+    
+        // Update Formik's field value to remove the product
+        setFieldValue(
+            'products',
+            updatedProducts.map(product => product?.productdetails?._id),
+            true
+        );
+    };
+    
+
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -124,19 +163,36 @@ export default function FeaturedProducts() {
                             )}
                             displayEmpty
                             defaultValue=''
-                            name='category'
-                            value={values.category}
-                            onChange={handleCategoryChange}
+                            multiple
+                            name='products'
+                            value={selectedProducts.map(product => product?.productdetails?._id)}
+                            onChange={handleProductChange}
+                            renderValue={(selected) =>
+                                selected?.length > 0
+                                    ? viewProductsData
+                                        ?.filter(product => selected.includes(product?.productdetails?._id))
+                                        .map(product => product?.productdetails?.productName)
+                                        .join(', ')
+                                    : "Select Category"
+                            }
                         >
                             <MenuItem value="">Select</MenuItem>
-                            {/* {categoryData?.map((category) => (
-                                    <MenuItem key={category._id} value={category._id}>
-                                        {category.name}
-                                    </MenuItem>
-                                ))} */}
+                            {viewProductsData?.length > 0 && viewProductsData?.map((product) => (
+                                <MenuItem key={product?.productdetails?._id} value={product?.productdetails?._id}>
+                                    {/* <Checkbox checked={categoriesExportData.some(cat => cat._id === product._id)} /> */}
+                                    <ListItemText
+                                        primary={product?.productdetails?.productName}
+                                        primaryTypographyProps={{
+                                            fontSize: 12,
+                                            fontFamily: "Poppins",
+                                            fontWeight: 400,
+                                        }}
+                                    />
+                                </MenuItem>
+                            ))}
                         </Select>
                         {
-                            errors.category && touched.category && <p style={{ color: "red", fontSize: "12px" }}>{errors.category}</p>
+                            errors.products && touched.products && <p style={{ color: "red", fontSize: "12px" }}>{errors.products}</p>
                         }
                     </Box>
                     <Typography
@@ -151,11 +207,11 @@ export default function FeaturedProducts() {
                     >
                         You can select min 8 products
                     </Typography>
-                    <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center',gap:10,width:'100%'}}>
-                        {data?.map((item, index) => (
+                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
+                        {selectedProducts?.map((item, index) => (
                             <div className={appearancStyle.categoriesStyle} key={index}>
-                                <div className={appearancStyle.textStyle}>{item.name} </div>
-                                <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
+                                <div className={appearancStyle.textStyle}>{item?.productdetails?.productName} </div>
+                                <div style={{ marginTop: 5 }} onClick={() => handleRemoveProduct(item?.productdetails?._id)}><CancelCateIcon /></div>
                             </div>
                         ))}
                     </div>
@@ -169,8 +225,8 @@ export default function FeaturedProducts() {
                     alignItems: 'center',
                     gap: '10px'
                 }}>
-                    <Button sx={custom}>Cancel</Button>
-                    <Button sx={saveChanges}>Save Changes</Button>
+                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
+                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </CustomAccordion>
         </div >

@@ -17,10 +17,10 @@ const ProductViewDetails = () => {
     const dispatch = useDispatch();
     const productsDetail = useSelector((state) => state.products);
     const productById = productsDetail?.productsDetailsData?.data;
+    const getAllReview = productsDetail?.productsDetailsData?.allreviews;
     const location = useLocation()
     const path = location.pathname.split("/")[2]
     console.log('productsDetailBYID', productById);
-    // console.log('productsDetail', productsDetail);
 
 
     useEffect(() => {
@@ -28,8 +28,8 @@ const ProductViewDetails = () => {
     }, [id, dispatch])
 
     useEffect(() => {
-        if (productById?.featuredImage) {
-            setSelectedImage(productById?.featuredImage);
+        if (productById?.featurerdImage) {
+            setSelectedImage(productById?.featurerdImage);
         }
     }, [productById]);  // This will run every time productById changes
 
@@ -39,7 +39,7 @@ const ProductViewDetails = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [data, setData] = useState([]);
-    const [selectedImage, setSelectedImage] = useState(productById?.featuredImage);
+    const [selectedImage, setSelectedImage] = useState(productById?.featurerdImage);
 
     const changeID = (id) => {
         setSelected(id.id);
@@ -109,11 +109,11 @@ const ProductViewDetails = () => {
                     <div className={productStyle.home} style={{ marginTop: 10 }}>
                         Dashboard <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10, textTransform: "capitalize" }}>
-                            {path == "Product" ? "Product" : "Combo Product"}
+                            {path === "Product" ? "Product" : "Combo Product"}
                         </span>
                         <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10 }}>
-                            {productById?.name}
+                            {productById?.productName}
                         </span>
                     </div>
                 </div>
@@ -133,7 +133,7 @@ const ProductViewDetails = () => {
                         <EditBlackIcon />
                         Edit Product
                     </div>
-                    <div className={productStyle.buttonStyle} onClick={() => navigate(-1)}>
+                    <div className={productStyle.buttonStyle} onClick={() => navigate('/product/Product')}>
                         <p className={productStyle.addcategoryText}>Back to list</p>
                     </div>
                 </div>
@@ -209,7 +209,7 @@ const ProductViewDetails = () => {
                             </div>
                         </div>
                         <div className={productStyle.sliderContainer} style={{ marginTop: 20 }}>
-                            {productById?.medias?.map((item, index) => (
+                            {productById?.media?.photo?.map((item, index) => (
                                 <div className={productStyle.catStatusStyle} key={index}>
                                     <img
                                         src={item}
@@ -226,7 +226,7 @@ const ProductViewDetails = () => {
                     <div className={productStyle.productStockBox} style={{ padding: 20 }}>
                         <div className={productStyle.productIdRowStyle} >
                             <div className={productStyle.colorVariantStyle}>
-                                Product ID:<span style={{ color: '#1D1F2C', marginLeft: 5 }}>#{productById?.productId}</span>
+                                Product ID:<span style={{ color: '#1D1F2C', marginLeft: 5 }}>#{productById?.inventory?.sku}</span>
                             </div>
                             <div className={productStyle.colorVariantStyle}>
                                 Created:<span style={{ color: '#1D1F2C', marginLeft: 5 }}>{formatDate(productById?.createdAt)}</span>
@@ -234,8 +234,8 @@ const ProductViewDetails = () => {
                         </div>
                         <div className={productStyle.catStatusStyle} style={{ paddingTop: 20 }}>
                             <h4 className={productStyle.h4Style}>
-                                {/* {productById?.name} */}
-                                Product Name
+                                {productById?.productName}
+                                {/* Product Name */}
                             </h4>
                             <div style={{
                                 width: 87,
@@ -255,41 +255,33 @@ const ProductViewDetails = () => {
                                     textTransform: 'capitalize',
                                     color: productById?.status === 'DRAFT' ? "#4A4C56" : productById?.status === 'PUBLISHED' ? '#4DDB4D' : '#F92929',
                                 }}>
-                                    {productById?.status}
+                                    {productById?.status === 'DRAFT' ? 'Draft' : productById?.status === 'PUBLISHED' ? 'Published' : 'Out of stock'}
                                 </span>
                             </div>
                         </div>
-                        <div className={productStyle.width} style={{ marginTop: 15, }}>
+                        <div className={productStyle.categoryStyle} style={{ marginTop: 15, }}>
                             <div className={productStyle.textStyle}>
-                                Category: <span>{productById?.soldItems}</span>
+                                Category: <span>{productById?.category?.productCategory?.name}</span>
                             </div>
-                            <div>
                                 <LineIcon />
-                            </div>
                             <div className={productStyle.textStyle}>
                                 Sold: <span>{productById?.soldItems}</span>
                             </div>
-                            <div>
                                 <LineIcon />
-                            </div>
                             <div className={productStyle.textStyle}>
-                                Rating: <span style={{ marginTop: 15, marginLeft: 5, marginRight: 5 }}><RatingIcon /></span><span>4.5/5</span>
+                                Rating: <span style={{ }}><RatingIcon /></span><span>4.5/5</span>
                             </div>
-                            <div>
-                                <LineIcon />
-                            </div>
+                            <LineIcon />
                             <div className={productStyle.textStyle}>
-                                Stock: <span>{productById?.stockQuantity}</span>
+                                Stock: <span>{productById?.inventory?.totalstock}</span>
                             </div>
-                            <div>
-                                <LineIcon />
-                            </div>
+                            <LineIcon />
                             {/* <div className={productStyle.textStyle}>
                                 Message: <span>25</span>
                             </div> */}
                         </div>
                         <div className={productStyle.dollarSyle}>
-                            ₹{productById?.salePrice}
+                            ₹{productById?.pricing?.finalSalePrice?.value}
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Description:
@@ -305,41 +297,41 @@ const ProductViewDetails = () => {
                                 <div className={productStyle.featureBoxStyle} >
                                     <div className={productStyle.featureRowStyle}>
                                         <div className={productStyle.featuresHeading}>
-                                            Metal
+                                            Item Weight
                                             <br />
-                                            <div className={productStyle.featureValue}>22k gold</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.itemWeight}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
-                                            Gemstones
+                                            Stone Weight
                                             <br />
-                                            <div className={productStyle.featureValue}>Rassian Emerald</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.stoneWeight}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
-                                            Diamond
+                                            Stone Color/Type
                                             <br />
-                                            <div className={productStyle.featureValue}>N/A</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.stoneColor}</div>
                                         </div>
                                     </div>
                                     <div className={productStyle.middleBorder} />
                                     <div className={productStyle.featureRowStyle}>
                                         <div className={productStyle.featuresHeading}>
-                                            Metal
+                                            Product Width
                                             <br />
-                                            <div className={productStyle.featureValue}>22k gold</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.productWidth}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
-                                            Gemstones
+                                            Product Height
                                             <br />
-                                            <div className={productStyle.featureValue}>Rassian Emerald</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.productHeight}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
-                                            Diamond
+                                            Feature
                                             <br />
-                                            <div className={productStyle.featureValue}>N/A</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.feature}</div>
                                         </div>
                                     </div>
                                 </div>
@@ -351,7 +343,7 @@ const ProductViewDetails = () => {
 
                 </div>
             ) : (
-                <Reviews />
+                <Reviews data={getAllReview}/>
             )}
             <Modal
                 isOpen={isModalOpen}
@@ -360,7 +352,7 @@ const ProductViewDetails = () => {
                 className={productStyle.modal}
                 overlayClassName={productStyle.overlay}
             >
-                <img src={productById?.featuredImage} alt="Zoomed Product" className={productStyle.zoomedImage} />
+                <img src={productById?.featurerdImage} alt="Zoomed Product" className={productStyle.zoomedImage} />
                 <button onClick={closeModal} className={productStyle.closeButton}>Close</button>
             </Modal>
             <DeleteModal

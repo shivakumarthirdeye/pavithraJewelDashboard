@@ -13,6 +13,13 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { ImageIcon } from '../../svg';
 import api from '../../helper/Api';
+import { addAboutus } from '../../redux/appearanceSlice';
+import { useDispatch } from 'react-redux';
+import { unwrapResult } from '@reduxjs/toolkit';
+import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import Toastify from '../../helper/Toastify';
+import axios from 'axios';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -25,11 +32,13 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
     overflow: 'visible',
 }));
 export default function AboutUs() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const schema = yup.object().shape({
-        productName: yup.string().required("Product name is required"),
-        status: yup.string().required("Status is required"),
+        title: yup.string().required("Title is required"),
         description: yup.string().required("Description is required"),
-        featuredImage: yup.string().required("At least one image is required"),
+        image: yup.array().min(1, "At least one image is required"),
 
     });
 
@@ -42,41 +51,91 @@ export default function AboutUs() {
         handleChange,
         setFieldValue,
         handleBlur,
+        resetForm
     } = useFormik({
         initialValues: {
-            productName: "",
-            // medias: [],
+            title: "",
             description: "",
-            media: {
-                photo: [],
-                video: []
-            },
+            image1: '',
+            image2: ''
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleSubject(values)
+            handleSubject(values)
         }
 
     })
-    //Media Image
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const body = new FormData();
-            body.append('image', file);
 
-            try {
-                const { data, status } = await api.fileUpload(body);
-                if (status === 200) {
-                    const imageUrl = Array.isArray(data.data) ? data.data[0] : data.data;
-                    // Update medias array by spreading existing values and adding the new imageUrl
-                    setFieldValue('featuredImage', imageUrl);
-                } else {
-                    console.error(`Upload failed with status: ${status}`);
+    // console.log('valuessssssssssssssssssssss'.values);
+    
+    const handleSubject = async (value) => {
+        try {
+            const resultAction = await dispatch(addAboutus(value))
+
+            unwrapResult(resultAction)
+
+            navigate("/appearance/Appearance")
+        } catch (error) {
+            toast.error(error.message)
+        }
+
+    }
+    const handleImageChange = async (e, attribute, repo) => {
+
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
                 }
-            } catch (error) {
-                console.error('Error uploading file:', error.response ? error.response.data : error.message);
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
+
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
+
+                    setFieldValue('image1',  data?.data?.url)
+                }
             }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
+        }
+    };
+    const handleImage2Change = async (e, attribute, repo) => {
+
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
+
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                }
+
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
+
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
+
+                    setFieldValue('image2', data?.data?.url)
+                }
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
         }
     };
     return (
@@ -125,15 +184,15 @@ export default function AboutUs() {
                         <TextField
                             placeholder='Enter'
                             type={'text'}
-                            name="name"
-                            // value={values.name || ''}
-                            // onChange={handleChange}
-                            // onBlur={handleBlur}
+                            name="title"
+                            value={values.title || ''}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             sx={TextInput}
                         />
-                        {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
+                        {
+                            errors.title && touched.title && <p style={{ color: "red", fontSize: "12px" }}>{errors.title}</p>
+                        }
                     </Box>
                     <Box sx={{ marginBottom: '10px' }}>
                         <Typography
@@ -151,19 +210,19 @@ export default function AboutUs() {
                         <TextField
                             placeholder='Enter'
                             type={'text'}
-                            name="name"
-                            // value={values.name || ''}
-                            // onChange={handleChange}
-                            // onBlur={handleBlur}
+                            name="description"
+                            value={values.description || ''}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
                             sx={TextArea}
                             multiline
                             rows={4}
                         />
-                        {/* {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
-                    } */}
+                        {
+                            errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
+                        }
                     </Box>
-                    <Box sx={{ marginBottom: '10px',display:'flex',gap:'10px',alignItems:'center' }}>
+                    <Box sx={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
                         <Box>
                             <Typography
                                 sx={{
@@ -179,12 +238,12 @@ export default function AboutUs() {
                             </Typography>
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
-                                    {values?.featuredImage?.length > 0 ? (
+                                    {values?.image1?.length > 0 ? (
                                         <div>
                                             <img
-                                                src={values.featuredImage}
+                                                src={values.image1}
                                                 alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
+                                                style={{ maxWidth: '100%', marginTop: '0px',width:200,height:100,objectFit:'cover' }}
                                             />
                                             {/* <button onClick={handleUpload}>Upload</button> */}
                                         </div>
@@ -229,16 +288,16 @@ export default function AboutUs() {
                                     textAlign: 'left',
                                     color: '#777980'
                                 }}>
-                                 Image 2
+                                Image 2
                             </Typography>
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
-                                    {values?.featuredImage?.length > 0 ? (
+                                    {values?.image2?.length > 0 ? (
                                         <div>
                                             <img
-                                                src={values.featuredImage}
+                                                src={values.image2}
                                                 alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
+                                                style={{ maxWidth: '100%', marginTop: '0px',width:200,height:100,objectFit:'cover' }}
                                             />
                                             {/* <button onClick={handleUpload}>Upload</button> */}
                                         </div>
@@ -254,11 +313,11 @@ export default function AboutUs() {
                                                 <input
                                                     type="file"
                                                     accept="image/*"
-                                                    id="imageFile"
+                                                    id="imageTwoFile"
                                                     style={{ display: 'none' }}
-                                                    onChange={handleImageChange}
+                                                    onChange={handleImage2Change}
                                                 />
-                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
+                                                <label htmlFor="imageTwoFile" className={productStyle.uploadBox}>
                                                     Add Image
                                                 </label>
                                             </div>
@@ -268,9 +327,9 @@ export default function AboutUs() {
 
                                 </div>
                             </div>
-                            {/* {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
-                            } */}
+                            {
+                                errors.image && touched.image && <p style={{ color: "red", fontSize: "12px" }}>{errors.image}</p>
+                            }
                         </Box>
                     </Box>
                 </AccordionDetails>
@@ -283,8 +342,8 @@ export default function AboutUs() {
                     alignItems: 'center',
                     gap: '10px'
                 }}>
-                    <Button sx={custom}>Cancel</Button>
-                    <Button sx={saveChanges}>Save Changes</Button>
+                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
+                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
                 </Box>
             </CustomAccordion>
         </div >

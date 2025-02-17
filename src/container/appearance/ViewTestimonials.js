@@ -12,11 +12,8 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { AddIcon, CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
-import { unwrapResult } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { addCounters } from '../../redux/appearanceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getTestimonials } from '../../redux/appearanceSlice';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -28,62 +25,19 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
     width: '70%',
     overflow: 'visible',
 }));
-export default function Counters() {
+export default function ViewTestimonials() {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
-
-    const schema = yup.object().shape({
-        counters: yup.array().of(
-            yup.object().shape({
-                name: yup.string().required("Name is required"),
-                counts: yup.number().typeError("Count must be a number").min(1, "Count is required"),
-            })
-        ).min(1, "At least one counter is required"),
-    });
+    const { testimonialsData } = useSelector((state) => state.appearance);
+    const viewTestimonials = testimonialsData?.data?.testimonials;
+    console.log('viewTestimonials', viewTestimonials);
 
 
-    const {
-        handleSubmit,
-        errors,
-        values,
-        touched,
-        handleChange,
-        setFieldValue,
-        handleBlur,
-        resetForm
-    } = useFormik({
-        initialValues: {
-            counters: [
-                {
-                    name: '',
-                    counts: 0,
-                }
-            ]
-        },
-        validationSchema: schema,
-        onSubmit: async (values) => {
-            handleSubject(values)
-        }
 
-    })
-    const handleSubject = async (value) => {
-        try {
-            const resultAction = await dispatch(addCounters(value))
+    React.useEffect(() => {
+        dispatch(getTestimonials())
+    }, [dispatch])
 
-            unwrapResult(resultAction)
 
-            navigate("/appearance/Appearance")
-        } catch (error) {
-            toast.error(error.message)
-        }
-
-    }
-    const handleAddHeroBanner = () => {
-        setFieldValue('counters', [
-            ...values.counters,
-            { name: '', counts: 0, }
-        ]);
-    };
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -103,9 +57,9 @@ export default function Counters() {
                         letterSpacing: '0.005em',
                         textAlign: 'left'
 
-                    }}>Counters</Typography>
+                    }}>Testimonials</Typography>
                 </AccordionSummary>
-                {values?.counters?.map((count, index) => (
+                {viewTestimonials?.map((banners, index) => (
                     <AccordionDetails
                         sx={{
                             backgroundColor: '#F8F9FF',
@@ -115,6 +69,27 @@ export default function Counters() {
                             margin: "0px 20px 20px 19px"
                         }}
                     >
+                        <Box sx={{ marginBottom: '10px' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: '500',
+                                    fontFamily: 'Public Sans',
+                                    fontSize: '14px',
+                                    lineHeight: '28px',
+                                    letterSpacing: '0.005em',
+                                    textAlign: 'left',
+                                    color: '#777980'
+                                }}>
+                                Rating
+                            </Typography>
+                            <TextField
+                                placeholder='Enter'
+                                type={'text'}
+                                value={banners?.rating }
+                                sx={TextInput}
+                                disabled
+                            />
+                        </Box>
                         <Box sx={{
                             marginBottom: '10px',
                             display: 'flex',
@@ -134,20 +109,15 @@ export default function Counters() {
                                         textAlign: 'left',
                                         color: '#777980'
                                     }}>
-                                    Name
+                                    Customer Name
                                 </Typography>
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name={`counters[${index}].name`}
-                                    value={count.name || ''}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
+                                    value={banners?.customerName}
                                     sx={TextInput}
+                                    disabled
                                 />
-                                {errors.counters?.[index]?.name && touched.counters?.[index]?.name && (
-                                    <div style={{ color: "red" }}>{errors.counters[index].name}</div>
-                                )}
                             </div>
                             <div style={{ width: '50%' }}>
                                 <Typography
@@ -160,44 +130,43 @@ export default function Counters() {
                                         textAlign: 'left',
                                         color: '#777980'
                                     }}>
-                                    Counts
+                                    Customer Role
                                 </Typography>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'number'}
-                                    name={`counters[${index}].counts`}
-                                    value={count.counts || ''}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
+                                    type={'text'}
+                                    value={banners?.customerRole}
                                     sx={TextInput}
+                                    disabled
                                 />
-                                {errors.counters?.[index]?.counts && touched.counters?.[index]?.counts && (
-                                    <div style={{ color: "red" }}>{errors.counters[index].counts}</div>
-                                )}
-                            </div>
-                            <div
-                                className={appearancStyle.deleteBackgroundStyle}
-                                onClick={handleAddHeroBanner}
-                                style={{ marginTop: 30 }}
-                            >
-                                <AddIcon />
                             </div>
                         </Box>
+                        <Box sx={{ marginBottom: '10px' }}>
+                            <Typography
+                                sx={{
+                                    fontWeight: '500',
+                                    fontFamily: 'Public Sans',
+                                    fontSize: '14px',
+                                    lineHeight: '28px',
+                                    letterSpacing: '0.005em',
+                                    textAlign: 'left',
+                                    color: '#777980'
+                                }}>
+                                Their testimony
+                            </Typography>
+                            <TextField
+                                placeholder='Enter'
+                                type={'text'}
+                                value={banners.testimony}
+                                sx={TextArea}
+                                multiline
+                                rows={4}
+                                disabled
+                            />
 
+                        </Box>
                     </AccordionDetails>
                 ))}
-                <Box sx={{
-                    marginBottom: '20px',
-                    marginRight: '20px',
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    width: '100%',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}>
-                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
-                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
-                </Box>
             </CustomAccordion>
         </div >
     );

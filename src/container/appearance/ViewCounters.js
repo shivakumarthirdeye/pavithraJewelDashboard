@@ -12,11 +12,8 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { AddIcon, CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
-import { unwrapResult } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { addCounters } from '../../redux/appearanceSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { getCounters } from '../../redux/appearanceSlice';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -28,62 +25,15 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
     width: '70%',
     overflow: 'visible',
 }));
-export default function Counters() {
+export default function ViewCounters() {
     const dispatch = useDispatch();
-    const navigate = useNavigate();
+    const { countersData } = useSelector((state) => state.appearance);
+    const viewCounters = countersData?.data?.counters;
 
-    const schema = yup.object().shape({
-        counters: yup.array().of(
-            yup.object().shape({
-                name: yup.string().required("Name is required"),
-                counts: yup.number().typeError("Count must be a number").min(1, "Count is required"),
-            })
-        ).min(1, "At least one counter is required"),
-    });
+    React.useEffect(() => {
+        dispatch(getCounters())
+    }, [dispatch])
 
-
-    const {
-        handleSubmit,
-        errors,
-        values,
-        touched,
-        handleChange,
-        setFieldValue,
-        handleBlur,
-        resetForm
-    } = useFormik({
-        initialValues: {
-            counters: [
-                {
-                    name: '',
-                    counts: 0,
-                }
-            ]
-        },
-        validationSchema: schema,
-        onSubmit: async (values) => {
-            handleSubject(values)
-        }
-
-    })
-    const handleSubject = async (value) => {
-        try {
-            const resultAction = await dispatch(addCounters(value))
-
-            unwrapResult(resultAction)
-
-            navigate("/appearance/Appearance")
-        } catch (error) {
-            toast.error(error.message)
-        }
-
-    }
-    const handleAddHeroBanner = () => {
-        setFieldValue('counters', [
-            ...values.counters,
-            { name: '', counts: 0, }
-        ]);
-    };
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -105,7 +55,7 @@ export default function Counters() {
 
                     }}>Counters</Typography>
                 </AccordionSummary>
-                {values?.counters?.map((count, index) => (
+                {viewCounters?.map((counts, index) => (
                     <AccordionDetails
                         sx={{
                             backgroundColor: '#F8F9FF',
@@ -139,15 +89,10 @@ export default function Counters() {
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name={`counters[${index}].name`}
-                                    value={count.name || ''}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
+                                    value={counts.name}
                                     sx={TextInput}
+                                    disabled
                                 />
-                                {errors.counters?.[index]?.name && touched.counters?.[index]?.name && (
-                                    <div style={{ color: "red" }}>{errors.counters[index].name}</div>
-                                )}
                             </div>
                             <div style={{ width: '50%' }}>
                                 <Typography
@@ -164,40 +109,16 @@ export default function Counters() {
                                 </Typography>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'number'}
-                                    name={`counters[${index}].counts`}
-                                    value={count.counts || ''}
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
+                                    type={'text'}
+                                    value={counts.counts}
                                     sx={TextInput}
+                                    disabled
                                 />
-                                {errors.counters?.[index]?.counts && touched.counters?.[index]?.counts && (
-                                    <div style={{ color: "red" }}>{errors.counters[index].counts}</div>
-                                )}
-                            </div>
-                            <div
-                                className={appearancStyle.deleteBackgroundStyle}
-                                onClick={handleAddHeroBanner}
-                                style={{ marginTop: 30 }}
-                            >
-                                <AddIcon />
                             </div>
                         </Box>
 
                     </AccordionDetails>
                 ))}
-                <Box sx={{
-                    marginBottom: '20px',
-                    marginRight: '20px',
-                    display: 'flex',
-                    justifyContent: 'flex-end',
-                    width: '100%',
-                    alignItems: 'center',
-                    gap: '10px'
-                }}>
-                    <Button sx={custom} onClick={resetForm}>Cancel</Button>
-                    <Button sx={saveChanges} onClick={handleSubmit}>Save Changes</Button>
-                </Box>
             </CustomAccordion>
         </div >
     );

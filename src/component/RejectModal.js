@@ -3,10 +3,10 @@ import Styles from '../component/styles.module.css';
 import { Box, Button, Modal } from '@mui/material';
 import { CancelIcon } from '../svg';
 import orderStyle from '../container/orders/orders.module.css';
-import { cancle, save, saveData } from '../MaterialsUI';
-import { exchangeProduct } from '../redux/ordersSlice';
+import { cancle,  saveData } from '../MaterialsUI';
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { approveReject } from '../redux/ordersSlice';
 
 const RejectModal = ({ open, onClose,path,handleSubject,data }) => {
 
@@ -32,7 +32,7 @@ const RejectModal = ({ open, onClose,path,handleSubject,data }) => {
     }
 
     if(path === "exchange"){
-      dispatch(exchangeProduct({
+      dispatch(approveReject({
         orderId: id,
         reasonForRejection: reasonForRejection,
       }));

@@ -7,32 +7,29 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getOrdersDetails, getCustomerReviews } from '../../redux/ordersSlice';
 import PreviewModal from '../../component/PreviewModal';
 import EditPriceModal from './EditPriceModal';
+import { formselect } from '../../MaterialsUI';
+import { MenuItem, Select } from '@mui/material';
+import { useFormik } from 'formik';
+import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 
 export const MadeToOrderDetails = () => {
     const navigate = useNavigate()
     const { id } = useParams();
 
-
     const dispatch = useDispatch();
-    const orderDetail = useSelector((state) => state.orders);
-    const ordersById = orderDetail?.ordersDetailsData?.data;
-    console.log('ordersById', ordersById);
-
-    const isRefresh = useSelector((state) => state.orders.isRefresh);
+    const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
+    console.log('ordersDetailsData', ordersDetailsData);
 
 
     useEffect(() => {
         dispatch(getOrdersDetails(id))
-    }, [])
+    }, [dispatch, id, isRefresh])
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditPriceModalOpen, setIsEditPriceModalOpen] = useState(false);
-    const [isExchangeModalOpen, setIsExchangeModalOpen] = useState(false);
     const [datas, setData] = useState([]);
 
-    useEffect(() => {
-        dispatch(getCustomerReviews(id))
-    }, [isRefresh])
+
 
     const openModal = (data) => {
         setData(data);
@@ -48,53 +45,52 @@ export const MadeToOrderDetails = () => {
     const closeEditPriceModal = () => {
         setIsEditPriceModalOpen(false);
     };
-    // const openExchangeModal = (data) => {
-    //     setData(data);
-    //     setIsExchangeModalOpen(true);
-    // };
-    // const closeExchangeModal = () => {
-    //     setIsExchangeModalOpen(false);
-    // };
+    const formatDate = (date) => {
+        const dateFromMongoDB = new Date(date);
+        const formattedDate = dateFromMongoDB.toLocaleDateString('en-US', {
+            day: 'numeric',
+            month: 'long', // This will give full month names (e.g., January)
+            year: 'numeric',
+        });
+        const formattedTime = dateFromMongoDB.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false, // This will give a 24-hour format
+        });
+        return `${formattedDate}, ${formattedTime}`;
+    };
 
-    const Data = [
-        {
-            id: 0,
-            productId: {
-                featuredImage: '/jweleryImage.png'
-            },
-            name: 'Bangles',
-            type: 'Black stone',
-            sku: '23343',
-            units: '2',
-            selling_price: '34333'
+    const {
+        handleSubmit,
+        errors,
+        values,
+        touched,
+        handleChange,
+    } = useFormik({
+        initialValues: {
+            productName: "",
         },
-        {
-            id: 2,
-            productId: {
-                featuredImage: '/jweleryImage.png'
-            },
-            name: 'Bangles',
-            type: 'Black stone',
-            sku: '20343',
-            units: '3',
-            selling_price: '34333'
-        },
-    ]
+        onSubmit: async (values) => {
+            // handleSubject(values)
+        }
+
+    })
+
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
                 <div>
                     <div>
-                        <h2 className={productStyle.categoryText}>Order {ordersById?.order_id}</h2>
+                        <h2 className={productStyle.categoryText}>Order {ordersDetailsData?.data?._id}</h2>
                     </div>
                     <div className={productStyle.home} style={{ marginTop: 10 }}>
                         Orders <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10 }}>
-                            Orders
+                            {ordersDetailsData?.data?.orderType}
                         </span>
                         <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10 }}>
-                            Order #{ordersById?.order_id}
+                            Order #{ordersDetailsData?.data?._id}
                         </span>
                     </div>
                 </div>
@@ -102,32 +98,28 @@ export const MadeToOrderDetails = () => {
                     <div className={orderStyle.exportStyle}>
                         <ExportBlackIcon /> Export
                     </div>
-                    {/* {ordersById?.status === 'DELIVERED' && (
-                        <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersById?._id}`)}>
+                    {/* {ordersDetailsData?.status === 'DELIVERED' && (
+                        <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
                             Customer reviews
                         </div>
                     )} */}
-                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews`)}>
+                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
                         Customer reviews
                     </div>
-                    {/* {ordersById?.status === 'EXCHANGE REQUEST' && (
-                        <div className={orderStyle.exchangeStyle} onClick={() => openExchangeModal()}>
-                            Exchange request
-                        </div>
-                    )} */}
                     <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice')}>
                         <InvoiceIcon /><div className={productStyle.addcategoryText}> Invoice</div>
                     </div>
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
-                        onClick={() => navigate('/orders/ReadyToShipOrders')}
+                        onClick={() => navigate(-1)}
                     >
                         <span className={productStyle.addcategoryText}>Back To List</span>
                     </div>
                 </div>
             </div>
             <div className={orderStyle.cardWrap} style={{ marginBottom: 30 }}>
+                {/* Product info */}
                 <div>
                     <div className={orderStyle.productStockContainer} style={{ marginTop: 20, }}>
                         <div className={orderStyle.productStyle} style={{ padding: 20 }}>
@@ -135,41 +127,28 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.textStyle}>
                                     Products
                                 </div>
-                                <div style={{
-                                    marginLeft: 10,
-                                    width: 30,
-                                    height: 28,
-                                    borderRadius: 8,
-                                    backgroundColor: '#E9FAF7',
-                                    textAlign: 'center'
-                                }}>
-                                    <span style={{
-                                        color: '#1A9882',
-                                        fontSize: 14,
-                                        fontWeight: '600'
-                                    }}>
-                                        {/* {ordersById?.order_items?.length} */}
-                                        2
-                                    </span>
-                                </div>
                             </div>
-                            <div className={orderStyle.iconStyle}>
-                                <div className={orderStyle.cardWrap} style={{ marginTop: 5, }}>
+                            <div className={orderStyle.iconStyle} style={{ gap: 10, alignItems: 'flex-start' }}>
+                                <div className={orderStyle.cardWrap} style={{ gap: 8 }}>
                                     <DatePickerIcon />
                                     <div className={orderStyle.filterTextStyle}>
-                                        {/* {ordersById?.order_date} */}
-                                        13 January 2023, 14:00
+                                        {formatDate(ordersDetailsData?.data?.updatedAt)}
+                                        {/* 13 January 2023, 14:00 */}
                                     </div>
+                                </div>
+                                <div className={orderStyle.goldRateStyle}>
+                                    Gold rate 18k: <span> ₹{ordersDetailsData?.data?.goldRate18k}/g </span>
+                                    <br />
+                                    Gold rate 22k: <span> ₹{ordersDetailsData?.data?.goldRate22k}/g </span>
                                 </div>
                                 <div
                                     style={{
-                                        backgroundColor: ordersById?.status === 'NEW' ? "#c7c8ca"
-                                            : ordersById?.status === 'PROCESSING' ? '#F439391A'
-                                                : ordersById?.status === 'SHIPPED' ? '#EAF8FF'
-                                                    : ordersById?.status === "EXCHANGE REQUEST" ? "#E9FAF7"
-                                                        : ordersById?.status === "EXCHANGED" ? "#e7f9bb"
-                                                            : ordersById?.status === "EXCHANGE REJECTED" ? "#f7e5f9"
-                                                                : '#E9FAF7',
+                                        backgroundColor: ordersDetailsData?.singleProduct?.productId?.status === 'NEW' ? "#4A4C561A"
+                                            : ordersDetailsData?.singleProduct?.productId?.status === 'PROCESSING' ? '#F439391A'
+                                                : ordersDetailsData?.singleProduct?.productId?.status === 'SHIPPED' ? '#EAF8FF'
+                                                    : ordersDetailsData?.singleProduct?.productId?.status === "DELIVERED" ? "#E9FAF7"
+                                                        : ordersDetailsData?.singleProduct?.productId?.status === "CONFIRMED" ? "#e7f9bb"
+                                                            : '#B93ED71A',
                                         // width: '35%',
                                         borderRadius: 10,
                                         height: 30,
@@ -177,7 +156,7 @@ export const MadeToOrderDetails = () => {
                                         justifyContent: 'center',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        padding: 10,
+                                        padding: 5,
                                         alignSelf: 'center',
                                         marginLeft: 10
                                     }}
@@ -185,25 +164,23 @@ export const MadeToOrderDetails = () => {
                                     <span
                                         style={{
                                             fontFamily: 'DM Sans',
-                                            fontSize: 14,
-                                            fontWeight: '600',
-                                            letterSpacing: 0.5,
+                                            fontSize: 12,
+                                            fontWeight: '400',
+                                            letterSpacing: 0.1,
                                             textAlign: 'center',
-                                            color: ordersById?.status === 'NEW' ? "#4A4C56"
-                                                : ordersById?.status === 'PROCESSING' ? '#F86624'
-                                                    : ordersById?.status === 'SHIPPED' ? '#2BB2FE'
-                                                        : ordersById?.status === "EXCHANGE REQUEST" ? "#1A9882"
-                                                            : ordersById?.status === "EXCHANGED" ? "#97d30c"
-                                                                : ordersById?.status === "EXCHANGE REJECTED" ? "#c723ca"
-                                                                    : '#1A9882',
+                                            color: ordersDetailsData?.singleProduct?.productId?.status === 'NEW' ? "#4A4C56"
+                                                : ordersDetailsData?.singleProduct?.productId?.status === 'PROCESSING' ? '#F86624'
+                                                    : ordersDetailsData?.singleProduct?.productId?.status === 'SHIPPED' ? '#2BB2FE'
+                                                        : ordersDetailsData?.singleProduct?.productId?.status === "DELIVERED" ? "#1A9882"
+                                                            : ordersDetailsData?.singleProduct?.productId?.status === "CONFIRMED" ? "#97d30c"
+                                                                : "#c723ca",
                                         }}
-                                    >{ordersById?.status === 'NEW' ? "New"
-                                        : ordersById?.status === 'PROCESSING' ? 'Processing'
-                                            : ordersById?.status === 'SHIPPED' ? 'Shipped'
-                                                : ordersById?.status === "EXCHANGE REQUEST" ? "Delivered"
-                                                    : ordersById?.status === "EXCHANGED" ? "Exchanged"
-                                                        : ordersById?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
-                                                            : 'Delivered'
+                                    >{ordersDetailsData?.singleProduct?.productId?.status === 'NEW' ? "New"
+                                        : ordersDetailsData?.singleProduct?.productId?.status === 'PROCESSING' ? 'Processing'
+                                            : ordersDetailsData?.singleProduct?.productId?.status === 'SHIPPED' ? 'Shipped'
+                                                : ordersDetailsData?.singleProduct?.productId?.status === "DELIVERED" ? "Delivered"
+                                                    : ordersDetailsData?.singleProduct?.productId?.status === "CONFIRMED" ? "Confirmed"
+                                                        : 'Ready to ship'
                                         }</span>
                                 </div>
                             </div>
@@ -216,55 +193,53 @@ export const MadeToOrderDetails = () => {
                             <div className={orderStyle.totalAmountStyle}>Total </div>
                         </div>
                         <div>
-                            {Data?.map((item, index) => {
-                                return (
-                                    <>
-                                        <div className={orderStyle.info} key={index}>
-                                            <div style={{ width: '40%' }}>
-                                                <div className={orderStyle.productTextStyle}>
-                                                    <div>
-                                                        <img src={item?.productId?.featuredImage} width={40} height={40} style={{ borderRadius: 5 }} />
-                                                    </div>
-                                                    <div style={{ marginTop: 2, marginLeft: 5 }}>
-                                                        <p className={orderStyle.proNameText}>
-                                                            {item?.name}
-                                                        </p>
-                                                        <p className={orderStyle.categoryStyle}>
-                                                            {item?.type}
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                                {/* {ordersById?.exchange?.products[0]?._id === item?.productId?._id ? (
-                                                    <div className={orderStyle.exchangeStyle}>
-                                                        Exchange request
-                                                    </div>
-                                                ) : null} */}
-                                            </div>
-                                            <div className={orderStyle.skuText} >{item?.sku}</div>
-                                            <div className={orderStyle.qytText}>{item?.units} pcs <br /> 50gm</div>
-                                            <div className={orderStyle.pendingAmountStyle}>₹{(item?.selling_price - item?.selling_price * 18 / 100).toFixed(2)} </div>
-                                            <div className={orderStyle.totalAmountStyle}>₹{(item?.units * item?.selling_price - item?.selling_price * 18 / 100).toFixed(2)} </div>
 
+                            <div className={orderStyle.info}>
+                                <div style={{ width: '40%' }}>
+                                    <div className={orderStyle.productTextStyle}>
+                                        <div>
+                                            <img
+                                                // src={item?.productId?.featuredImage}
+                                                src='/jweleryImage.png'
+                                                width={40}
+                                                height={40}
+                                                style={{ borderRadius: 5 }}
+                                                alt='featuredImage'
+                                            />
                                         </div>
-                                        <div className={orderStyle.bottomLineStyle} />
-                                    </>
-                                )
-                            })}
+                                        <div style={{ marginTop: 2, marginLeft: 5 }}>
+                                            <p className={orderStyle.proNameText}>
+                                                {ordersDetailsData?.singleProduct?.productId?.productName}
+                                            </p>
+                                            <p className={orderStyle.categoryStyle}>
+                                                {ordersDetailsData?.singleProduct?.productId?.features?.stoneColor}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className={orderStyle.skuText} >{ordersDetailsData?.singleProduct?.productId?.inventory?.sku}</div>
+                                <div className={orderStyle.qytText}>{ordersDetailsData?.singleProduct?.quantity} pcs <br /> 50gm</div>
+                                <div className={orderStyle.pendingAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice} </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.quantity} </div>
+
+                            </div>
+                            <div className={orderStyle.bottomLineStyle} />
+
 
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.pendingAmountStyle}>Subtotal </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{(ordersById?.sub_total - ordersById?.sub_total * 18 / 100).toFixed(2)}</div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>GST (18%) </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersById?.sub_total * 18 / 100}</div>
+                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.data?.gst}%) </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal * ordersDetailsData?.data?.gst / 100}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -272,7 +247,7 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.pendingAmountStyle}>Shipping Rate</div>
-                                <div className={orderStyle.totalAmountStyle}>₹0 </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.shippingRate} </div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -280,32 +255,40 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 18 }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18 }}>₹{ordersById?.grandTotal}</div>
+                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18 }}>₹{ordersDetailsData?.data?.grandTotal}</div>
                             </div>
-                            <div className={orderStyle.bottomLineStyle} />
-                            <div className={orderStyle.info} >
-                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
-                                <div className={orderStyle.skuText} ></div>
-                                <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 14 }}>Advance paid</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 14, color: '#1DB41D' }}>₹5.00</div>
-                            </div>
-                            <div className={orderStyle.bottomLineStyle} />
-                            <div className={orderStyle.info} >
-                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
-                                <div className={orderStyle.skuText} ></div>
-                                <div className={orderStyle.qytText} style={{ width: '28%', }}>Extra weight:<span style={{ fontWeight: 600, }}>10g</span></div>
-                                <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 18, color: '#F92929' }}>Pending Amount</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18, }} onClick={() => openEditPriceModal()}>₹585.00 <EditIcon /></div>
-                            </div>
-                            <div className={orderStyle.bottomLineStyle} />
-                            <div className={orderStyle.info} >
-                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
-                                <div className={orderStyle.skuText} ></div>
-                                <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 18, color: '#1DB41D' }}>Paid</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18, color: '#1DB41D' }}>₹500.00</div>
-                            </div>
+                            {ordersDetailsData?.data?.status === 'NEW' || ordersDetailsData?.data?.status === 'PROCESSING' || ordersDetailsData?.data?.status === 'READY TO SHIP' ? (
+                                <>
+                                    <div className={orderStyle.bottomLineStyle} />
+                                    <div className={orderStyle.info} >
+                                        <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                        <div className={orderStyle.skuText} ></div>
+                                        <div className={orderStyle.qytText}></div>
+                                        <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 14 }}>Advance paid</div>
+                                        <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 14, color: '#1DB41D' }}>₹{ordersDetailsData?.data?.advancePaid}</div>
+                                    </div>
+                                    <div className={orderStyle.bottomLineStyle} />
+                                    <div className={orderStyle.info} >
+                                        <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                        <div className={orderStyle.skuText} ></div>
+                                        <div className={orderStyle.qytText} style={{ width: '28%', }}>Extra weight: <span style={{ fontWeight: 600, }}>{ordersDetailsData?.data?.extraWeight}g</span></div>
+                                        <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 16, color: '#F92929' }}>Pending Amount</div>
+                                        <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18, }} onClick={() => openEditPriceModal(ordersDetailsData)}>₹{ordersDetailsData?.data?.pendingAmount} <EditIcon /></div>
+                                    </div>
+                                </>
+                            ) : null}
+                            {ordersDetailsData?.status === 'DELIVERED' || ordersDetailsData?.status === 'SHIPPED' && (
+                                <>
+                                    <div className={orderStyle.bottomLineStyle} />
+                                    <div className={orderStyle.info} >
+                                        <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                        <div className={orderStyle.skuText} ></div>
+                                        <div className={orderStyle.qytText}></div>
+                                        <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 18, color: '#1DB41D' }}>Paid</div>
+                                        <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18, color: '#1DB41D' }}>₹{ordersDetailsData?.data?.grandTotal}</div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                     </div>
                     <div className={orderStyle.cardWrap}>
@@ -324,11 +307,12 @@ export const MadeToOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_customer_name}{" "}{ordersById?.billing_last_name}
-                                    {ordersById?.billing_address}{", "}{ordersById?.billing_city}{", "}{ordersById?.billing_state}
-                                    {' '}{ordersById?.billing_pincode}{","}{ordersById?.billing_country} */}
-                                    Jay Hadgunson
-                                    1833 Bel Meadow Drive, Fontana, California 92335, USA
+                                    {ordersDetailsData?.data?.shippingAddress?.firstName}{" "}{ordersDetailsData?.data?.shippingAddress?.lastName},
+                                    <br />
+                                    {ordersDetailsData?.data?.shippingAddress?.unit}{", "}{ordersDetailsData?.data?.shippingAddress?.streetAddress}{", "}{ordersDetailsData?.data?.shippingAddress?.city}
+                                    {' '}{ordersDetailsData?.data?.shippingAddress?.state} {ordersDetailsData?.data?.shippingAddress?.pincode}{","}{ordersDetailsData?.data?.shippingAddress?.country}
+                                    {/* Jay Hadgunson
+                                    1833 Bel Meadow Drive, Fontana, California 92335, USA */}
                                 </div>
                             </>
                         </div>
@@ -347,16 +331,16 @@ export const MadeToOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_customer_name}{" "}{ordersById?.billing_last_name}
-                                    {ordersById?.billing_address}{", "}{ordersById?.billing_city}{", "}{ordersById?.billing_state}
-                                    {' '}{ordersById?.billing_pincode}{","}{ordersById?.billing_country} */}
-                                    Jay Hadgunson
-                                    1833 Bel Meadow Drive, Fontana, California 92335, USA
+                                    {ordersDetailsData?.data?.billingAddress?.firstName}{" "}{ordersDetailsData?.data?.billingAddress?.lastName},
+                                    <br />
+                                    {ordersDetailsData?.data?.billingAddress?.unit}{", "}{ordersDetailsData?.data?.billingAddress?.streetAddress}{", "}{ordersDetailsData?.data?.billingAddress?.city}
+                                    {' '}{ordersDetailsData?.data?.billingAddress?.state} {ordersDetailsData?.data?.billingAddress?.pincode}{","}{ordersDetailsData?.data?.billingAddress?.country}
                                 </div>
                             </>
                         </div>
                     </div>
                 </div>
+                {/* General Information */}
                 <div>
                     <div className={orderStyle.viewCardStyle} style={{ marginTop: 20, padding: 20 }}>
                         <div className={orderStyle.generalInfoStyle}>
@@ -372,15 +356,34 @@ export const MadeToOrderDetails = () => {
                                 <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>Order Status</p>
 
                             </div>
-                            <div className={orderStyle.statusStyling} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {ordersById?.status === 'NEW' ? "New"
-                                    : ordersById?.status === 'PROCESSING' ? 'Processing'
-                                        : ordersById?.status === 'SHIPPED' ? 'Shipped'
-                                            : ordersById?.status === "EXCHANGE REQUEST" ? "Delivered"
-                                                : ordersById?.status === "EXCHANGED" ? "Exchanged"
-                                                    : ordersById?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
-                                                        : 'Delivered'}
-
+                            <div style={{ marginLeft: 30, marginTop: 10 }}>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    sx={{
+                                        ...formselect,
+                                        "& .MuiSelect-select": {
+                                            fontWeight: values.status ? "500" : "400",
+                                            color: values.status ? "#081735" : "#858D9D",
+                                        },
+                                    }}
+                                    IconComponent={(props) => (
+                                        <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
+                                    )}
+                                    displayEmpty
+                                    defaultValue=''
+                                    name='status'
+                                    value={values.status}
+                                    onChange={handleChange}
+                                >
+                                    <MenuItem value="">Select</MenuItem>
+                                    <MenuItem value="NEW">New</MenuItem>
+                                    <MenuItem value="PROCESSING">Processing</MenuItem>
+                                    <MenuItem value="SHIPPED">Shipped</MenuItem>
+                                    <MenuItem value="DELIVERED">Delivered</MenuItem>
+                                    <MenuItem value="CONFIRMED">Confirmed</MenuItem>
+                                    <MenuItem value="Ready to ship">Ready to ship</MenuItem>
+                                </Select>
                             </div>
                         </>
                         <>
@@ -390,8 +393,8 @@ export const MadeToOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {/* {ordersById?.billing_customer_name} {ordersById?.billing_last_name} */}
-                                Jay Hadgunson
+                                {ordersDetailsData?.data?.userId?.firstName} {ordersDetailsData?.data?.userId?.lastName}
+
                             </div>
                         </>
                         <div className={orderStyle.iconStyle}>
@@ -402,8 +405,7 @@ export const MadeToOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_email} */}
-                                    jay.hadgunson@mail.com
+                                    {ordersDetailsData?.data?.userId?.email}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -418,8 +420,7 @@ export const MadeToOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_phone} */}
-                                    050 414 8788
+                                    {ordersDetailsData?.data?.userId?.phone}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -443,15 +444,15 @@ export const MadeToOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    NDRC1245
+                                    {ordersDetailsData?.data?.panNumber}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 20 }}
-                                onClick={() => openModal()}
+                                onClick={() => openModal(ordersDetailsData?.data?.panImage)}
                             >
                                 <DownloadIcon />
                                 <div>
-                                    <img src='/panImg.png' alt='pancard' />
+                                    <img src={ordersDetailsData?.data?.panImage} alt='pancard' style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 5 }} />
                                 </div>
                             </div>
 
@@ -475,7 +476,7 @@ export const MadeToOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    490392238192
+                                    {ordersDetailsData?.payment?.id}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -489,8 +490,8 @@ export const MadeToOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {/* {ordersById?.payment_method} */}
-                                VISA
+                                {/* {ordersDetailsData?.payment?.type} */}
+                                Razorpay
                             </div>
                         </>
                     </div>
@@ -524,7 +525,7 @@ export const MadeToOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {ordersById?.shippingMode}
+                                {/* {ordersDetailsData?.shippingMode} */}
                                 Regular
                             </div>
                         </>
@@ -547,7 +548,7 @@ export const MadeToOrderDetails = () => {
                 // heading={"Delete Order"}
                 closeModal={closeExchangeModal}
                 open={isExchangeModalOpen}
-                data={ordersById?.exchange}
+                data={ordersDetailsData?.exchange}
             /> */}
 
         </div >

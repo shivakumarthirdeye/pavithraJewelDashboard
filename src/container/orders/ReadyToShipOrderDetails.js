@@ -6,6 +6,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOrdersDetails, getCustomerReviews } from '../../redux/ordersSlice';
 import PreviewModal from '../../component/PreviewModal';
+import { formatDate } from '../../helper/FormatDate';
 
 export const ReadyToShipOrderDetails = () => {
     const navigate = useNavigate()
@@ -13,11 +14,8 @@ export const ReadyToShipOrderDetails = () => {
 
 
     const dispatch = useDispatch();
-    const orderDetail = useSelector((state) => state.orders);
-    const ordersById = orderDetail?.ordersDetailsData?.data;
-    console.log('ordersById', ordersById);
-
-    const isRefresh = useSelector((state) => state.orders.isRefresh);
+    const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
+    console.log('ordersDetailsData', ordersDetailsData);
 
 
     useEffect(() => {
@@ -47,45 +45,22 @@ export const ReadyToShipOrderDetails = () => {
         setIsExchangeModalOpen(false);
     };
 
-    const Data = [
-        {
-            id: 0,
-            productId: {
-                featuredImage: '/jweleryImage.png'
-            },
-            name: 'Bangles',
-            type: 'Black stone',
-            sku: '23343',
-            units: '2',
-            selling_price: '34333'
-        },
-        {
-            id: 2,
-            productId: {
-                featuredImage: '/jweleryImage.png'
-            },
-            name: 'Bangles',
-            type: 'Black stone',
-            sku: '20343',
-            units: '3',
-            selling_price: '34333'
-        },
-    ]
+    
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
                 <div>
                     <div>
-                        <h2 className={productStyle.categoryText}>Order {ordersById?.order_id}</h2>
+                        <h2 className={productStyle.categoryText}>Order {ordersDetailsData?.order_id}</h2>
                     </div>
                     <div className={productStyle.home} style={{ marginTop: 10 }}>
                         Orders <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10 }}>
-                            Orders
+                            {ordersDetailsData?.data?.orderType}
                         </span>
                         <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10 }}>
-                            Order #{ordersById?.order_id}
+                            Order #{ordersDetailsData?.data?._id}
                         </span>
                     </div>
                 </div>
@@ -93,15 +68,15 @@ export const ReadyToShipOrderDetails = () => {
                     <div className={orderStyle.exportStyle}>
                         <ExportBlackIcon /> Export
                     </div>
-                    {/* {ordersById?.status === 'DELIVERED' && (
-                        <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersById?._id}`)}>
+                    {/* {ordersDetailsData?.status === 'DELIVERED' && (
+                        <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
                             Customer reviews
                         </div>
                     )} */}
                     <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews`)}>
-                            Customer reviews
-                        </div>
-                    {ordersById?.status === 'EXCHANGE REQUEST' && (
+                        Customer reviews
+                    </div>
+                    {ordersDetailsData?.status === 'EXCHANGE REQUEST' && (
                         <div className={orderStyle.exchangeStyle} onClick={() => openExchangeModal()}>
                             Exchange request
                         </div>
@@ -139,27 +114,32 @@ export const ReadyToShipOrderDetails = () => {
                                         fontSize: 14,
                                         fontWeight: '600'
                                     }}>
-                                        {/* {ordersById?.order_items?.length} */}
-                                        2
+                                        {ordersDetailsData?.data?.products?.length}
+
                                     </span>
                                 </div>
                             </div>
-                            <div className={orderStyle.iconStyle}>
+                            <div className={orderStyle.iconStyle}style={{ gap: 10, alignItems: 'flex-start' }}>
                                 <div className={orderStyle.cardWrap} style={{ marginTop: 5, }}>
                                     <DatePickerIcon />
                                     <div className={orderStyle.filterTextStyle}>
-                                        {/* {ordersById?.order_date} */}
-                                        13 January 2023, 14:00
+                                        {formatDate(ordersDetailsData?.data?.updatedAt)}
+                                        {/* 13 January 2023, 14:00 */}
                                     </div>
+                                </div>
+                                <div className={orderStyle.goldRateStyle}>
+                                    Gold rate 18k: <span> ₹{ordersDetailsData?.data?.goldRate18k}/g </span>
+                                    <br/>
+                                    Gold rate 22k: <span> ₹{ordersDetailsData?.data?.goldRate22k}/g </span>
                                 </div>
                                 <div
                                     style={{
-                                        backgroundColor: ordersById?.status === 'NEW' ? "#c7c8ca"
-                                            : ordersById?.status === 'PROCESSING' ? '#F439391A'
-                                                : ordersById?.status === 'SHIPPED' ? '#EAF8FF'
-                                                    : ordersById?.status === "EXCHANGE REQUEST" ? "#E9FAF7"
-                                                        : ordersById?.status === "EXCHANGED" ? "#e7f9bb"
-                                                            : ordersById?.status === "EXCHANGE REJECTED" ? "#f7e5f9"
+                                        backgroundColor: ordersDetailsData?.data?.status === 'NEW' ? "#c7c8ca"
+                                            : ordersDetailsData?.data?.status === 'PROCESSING' ? '#F439391A'
+                                                : ordersDetailsData?.data?.status === 'SHIPPED' ? '#EAF8FF'
+                                                    : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "#E9FAF7"
+                                                        : ordersDetailsData?.data?.status === "EXCHANGED" ? "#e7f9bb"
+                                                            : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "#f7e5f9"
                                                                 : '#E9FAF7',
                                         // width: '35%',
                                         borderRadius: 10,
@@ -180,20 +160,20 @@ export const ReadyToShipOrderDetails = () => {
                                             fontWeight: '600',
                                             letterSpacing: 0.5,
                                             textAlign: 'center',
-                                            color: ordersById?.status === 'NEW' ? "#4A4C56"
-                                                : ordersById?.status === 'PROCESSING' ? '#F86624'
-                                                    : ordersById?.status === 'SHIPPED' ? '#2BB2FE'
-                                                        : ordersById?.status === "EXCHANGE REQUEST" ? "#1A9882"
-                                                            : ordersById?.status === "EXCHANGED" ? "#97d30c"
-                                                                : ordersById?.status === "EXCHANGE REJECTED" ? "#c723ca"
+                                            color: ordersDetailsData?.data?.status === 'NEW' ? "#4A4C56"
+                                                : ordersDetailsData?.data?.status === 'PROCESSING' ? '#F86624'
+                                                    : ordersDetailsData?.data?.status === 'SHIPPED' ? '#2BB2FE'
+                                                        : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "#1A9882"
+                                                            : ordersDetailsData?.data?.status === "EXCHANGED" ? "#97d30c"
+                                                                : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "#c723ca"
                                                                     : '#1A9882',
                                         }}
-                                    >{ordersById?.status === 'NEW' ? "New"
-                                        : ordersById?.status === 'PROCESSING' ? 'Processing'
-                                            : ordersById?.status === 'SHIPPED' ? 'Shipped'
-                                                : ordersById?.status === "EXCHANGE REQUEST" ? "Delivered"
-                                                    : ordersById?.status === "EXCHANGED" ? "Exchanged"
-                                                        : ordersById?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
+                                    >{ordersDetailsData?.data?.status === 'NEW' ? "New"
+                                        : ordersDetailsData?.data?.status === 'PROCESSING' ? 'Processing'
+                                            : ordersDetailsData?.data?.status === 'SHIPPED' ? 'Shipped'
+                                                : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "Delivered"
+                                                    : ordersDetailsData?.data?.status === "EXCHANGED" ? "Exchanged"
+                                                        : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
                                                             : 'Delivered'
                                         }</span>
                                 </div>
@@ -207,34 +187,34 @@ export const ReadyToShipOrderDetails = () => {
                             <div className={orderStyle.totalAmountStyle}>Total </div>
                         </div>
                         <div>
-                            {Data?.map((item, index) => {
+                            {ordersDetailsData?.data?.products?.map((item, index) => {
                                 return (
                                     <>
                                         <div className={orderStyle.info} key={index}>
                                             <div style={{ width: '40%' }}>
                                                 <div className={orderStyle.productTextStyle}>
                                                     <div>
-                                                        <img src={item?.productId?.featuredImage} width={40} height={40} style={{ borderRadius: 5 }} />
+                                                        <img src={item?.productId?.featurerdImage} width={40} height={40} style={{ borderRadius: 5, objectFit: 'cover' }} />
                                                     </div>
                                                     <div style={{ marginTop: 2, marginLeft: 5 }}>
                                                         <p className={orderStyle.proNameText}>
-                                                            {item?.name}
+                                                            {item?.productId?.productName}
                                                         </p>
                                                         <p className={orderStyle.categoryStyle}>
                                                             {item?.type}
                                                         </p>
                                                     </div>
                                                 </div>
-                                                {/* {ordersById?.exchange?.products[0]?._id === item?.productId?._id ? (
+                                                {/* {ordersDetailsData?.exchange?.products[0]?._id === item?.productId?._id ? (
                                                     <div className={orderStyle.exchangeStyle}>
                                                         Exchange request
                                                     </div>
                                                 ) : null} */}
                                             </div>
-                                            <div className={orderStyle.skuText} >{item?.sku}</div>
-                                            <div className={orderStyle.qytText}>{item?.units} pcs</div>
-                                            <div className={orderStyle.priceStyle}>₹{(item?.selling_price - item?.selling_price * 18 / 100).toFixed(2)} </div>
-                                            <div className={orderStyle.totalAmountStyle}>₹{(item?.units * item?.selling_price - item?.selling_price * 18 / 100).toFixed(2)} </div>
+                                            <div className={orderStyle.skuText} >{item?.productId?.inventory?.sku}</div>
+                                            <div className={orderStyle.qytText}>{item?.quantity} pcs</div>
+                                            <div className={orderStyle.priceStyle}>₹{item?.sellingPrice} </div>
+                                            <div className={orderStyle.totalAmountStyle}>₹{item?.quantity * item?.sellingPrice?.toFixed(2)} </div>
 
                                         </div>
                                         <div className={orderStyle.bottomLineStyle} />
@@ -247,15 +227,15 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.priceStyle}>Subtotal </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{(ordersById?.sub_total - ordersById?.sub_total * 18 / 100).toFixed(2)}</div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal?.toFixed(2)}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.priceStyle}>GST (18%) </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersById?.sub_total * 18 / 100}</div>
+                                <div className={orderStyle.priceStyle}>GST ({ordersDetailsData?.data?.gst}%) </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.gst}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -271,7 +251,7 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.priceStyle} style={{ fontWeight: '500', fontSize: 18 }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: '500', fontSize: 18 }}>₹{ordersById?.grandTotal}</div>
+                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: '500', fontSize: 18 }}>₹{ordersDetailsData?.data?.grandTotal}</div>
                             </div>
                         </div>
                     </div>
@@ -291,11 +271,10 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_customer_name}{" "}{ordersById?.billing_last_name}
-                                    {ordersById?.billing_address}{", "}{ordersById?.billing_city}{", "}{ordersById?.billing_state}
-                                    {' '}{ordersById?.billing_pincode}{","}{ordersById?.billing_country} */}
-                                    Jay Hadgunson
-                                    1833 Bel Meadow Drive, Fontana, California 92335, USA
+                                    {ordersDetailsData?.data?.shippingAddress?.firstName}{" "}{ordersDetailsData?.data?.shippingAddress?.lastName},
+                                    <br />
+                                    {ordersDetailsData?.data?.shippingAddress?.unit}{", "}{ordersDetailsData?.data?.shippingAddress?.streetAddress}{", "}{ordersDetailsData?.data?.shippingAddress?.city}
+                                    {' '}{ordersDetailsData?.data?.shippingAddress?.state} {ordersDetailsData?.data?.shippingAddress?.pincode}{","}{ordersDetailsData?.data?.shippingAddress?.country}
                                 </div>
                             </>
                         </div>
@@ -314,11 +293,10 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_customer_name}{" "}{ordersById?.billing_last_name}
-                                    {ordersById?.billing_address}{", "}{ordersById?.billing_city}{", "}{ordersById?.billing_state}
-                                    {' '}{ordersById?.billing_pincode}{","}{ordersById?.billing_country} */}
-                                    Jay Hadgunson
-                                    1833 Bel Meadow Drive, Fontana, California 92335, USA
+                                    {ordersDetailsData?.data?.billingAddress?.firstName}{" "}{ordersDetailsData?.data?.billingAddress?.lastName},
+                                    <br />
+                                    {ordersDetailsData?.data?.billingAddress?.unit}{", "}{ordersDetailsData?.data?.billingAddress?.streetAddress}{", "}{ordersDetailsData?.data?.billingAddress?.city}
+                                    {' '}{ordersDetailsData?.data?.billingAddress?.state} {ordersDetailsData?.data?.billingAddress?.pincode}{","}{ordersDetailsData?.data?.billingAddress?.country}
                                 </div>
                             </>
                         </div>
@@ -340,12 +318,12 @@ export const ReadyToShipOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.statusStyling} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {ordersById?.status === 'NEW' ? "New"
-                                    : ordersById?.status === 'PROCESSING' ? 'Processing'
-                                        : ordersById?.status === 'SHIPPED' ? 'Shipped'
-                                            : ordersById?.status === "EXCHANGE REQUEST" ? "Delivered"
-                                                : ordersById?.status === "EXCHANGED" ? "Exchanged"
-                                                    : ordersById?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
+                                {ordersDetailsData?.data?.status === 'NEW' ? "New"
+                                    : ordersDetailsData?.data?.status === 'PROCESSING' ? 'Processing'
+                                        : ordersDetailsData?.data?.status === 'SHIPPED' ? 'Shipped'
+                                            : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "Delivered"
+                                                : ordersDetailsData?.data?.status === "EXCHANGED" ? "Exchanged"
+                                                    : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
                                                         : 'Delivered'}
 
                             </div>
@@ -357,8 +335,8 @@ export const ReadyToShipOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {/* {ordersById?.billing_customer_name} {ordersById?.billing_last_name} */}
-                                Jay Hadgunson
+                                {ordersDetailsData?.data?.userId?.firstName} {ordersDetailsData?.data?.userId?.lastName}
+
                             </div>
                         </>
                         <div className={orderStyle.iconStyle}>
@@ -369,8 +347,7 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_email} */}
-                                    jay.hadgunson@mail.com
+                                    {ordersDetailsData?.data?.userId?.email}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -385,8 +362,7 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersById?.billing_phone} */}
-                                    050 414 8788
+                                    {ordersDetailsData?.data?.userId?.phone}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -410,15 +386,15 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    NDRC1245
+                                    {ordersDetailsData?.data?.panNumber}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20, display: 'flex', justifyContent: 'flex-start', alignItems: 'flex-start', gap: 20 }}
-                                onClick={() => openModal()}
+                                onClick={() => openModal(ordersDetailsData?.data?.panImage)}
                             >
                                 <DownloadIcon />
                                 <div>
-                                    <img src='/panImg.png' alt='pancard' />
+                                    <img src={ordersDetailsData?.data?.panImage} alt='pancard' style={{ width: 50, height: 50, objectFit: 'cover', borderRadius: 5 }} />
                                 </div>
                             </div>
 
@@ -442,7 +418,7 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    490392238192
+                                    {ordersDetailsData?.data?.payment?.id}
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -456,8 +432,8 @@ export const ReadyToShipOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {/* {ordersById?.payment_method} */}
-                                VISA
+                                {/* {ordersDetailsData?.payment_method} */}
+                                Razorpay
                             </div>
                         </>
                     </div>
@@ -477,7 +453,7 @@ export const ReadyToShipOrderDetails = () => {
 
                                 </div>
                                 <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    SHP1092311
+                                    {/* SHP1092311 */}NA
                                 </div>
                             </div>
                             <div style={{ marginTop: 20 }}>
@@ -491,7 +467,7 @@ export const ReadyToShipOrderDetails = () => {
 
                             </div>
                             <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {ordersById?.shippingMode}
+                                {/* {ordersDetailsData?.shippingMode} */}
                                 Regular
                             </div>
                         </>
@@ -508,7 +484,7 @@ export const ReadyToShipOrderDetails = () => {
                 // heading={"Delete Order"}
                 closeModal={closeExchangeModal}
                 open={isExchangeModalOpen}
-                data={ordersById?.exchange}
+                data={ordersDetailsData?.exchange}
             /> */}
 
         </div >

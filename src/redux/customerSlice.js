@@ -7,31 +7,38 @@ const initialState = {
     isLoading: false,
     isRefresh: false,
     customerData:{},
-    searchCustomerData:{},
+    exportCustomersData:{},
     customersDetailData:{},
     deleteCustomersData:{},
+    filterOptions: {
+        search: "",
+        page: 1,
+        order: '',
+        sortBy: '',
+        limit: 10,
+    },
     errorMsg: "",
     isError: false
 }
 
 export const getAllCustomers = createAsyncThunk("getAllCustomers" ,async (body, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.getAllCustomers(body);
+        const queryParams = new URLSearchParams(body).toString();
+        const { data, status } = await api.getAllCustomers(queryParams);
         if (status === 200) {
-                //get categories data
-                dispatch(setCustomers(data.data))
-                
+                //get customer data
+                dispatch(setCustomers(data))
             } 
-            return data.data
+            return data
         } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
 })
-export const getAllCustomersList = createAsyncThunk("getAllCustomersList" ,async (body, { rejectWithValue, dispatch }) => {
+export const getExportsCustomers = createAsyncThunk("getExportsCustomers" ,async (body, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.getAllCustomersList(body);
+        const { data, status } = await api.getExportsCustomers();
         if (status === 200) {
-            
+            dispatch(setExportCustomers(data.data))
                 
             } 
             return data.data
@@ -39,28 +46,16 @@ export const getAllCustomersList = createAsyncThunk("getAllCustomersList" ,async
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
 })
-export const searchCustomers = createAsyncThunk("searchCustomers" ,async (body, { rejectWithValue, dispatch }) => {
-    try {
-        const { data, status } = await api.searchCustomers(body);
-        if (status === 200) {
-                //get categories data
-                dispatch(setSearchCustomers(data.data))
-                
-            } 
-            return data.data
-        } catch (err) {
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
-    }
-})
+
 export const getCustomersDetail = createAsyncThunk("getCustomersDetail" ,async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.getCustomersDetail(body);
         if (status === 200) {
                 //get categories data
-                dispatch(setCustomersDetail(data.data))
+                dispatch(setCustomersDetail(data))
                 
             } 
-            return data.data
+            return data
         } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
@@ -91,14 +86,17 @@ export const customerSlice = createSlice({
         setCustomers: (state,action) => {
             state.customerData = action.payload
         },
-        setSearchCustomers: (state,action) => {
-            state.searchCustomerData = action.payload
-        },
-        setCustomersDetail: (state,action) => {
+         setCustomersDetail: (state,action) => {
             state.customersDetailData = action.payload
         },
         setDeleteCustomer: (state,action) => {
             state.deleteCustomersData = action.payload
+        },
+        setExportCustomers: (state,action) => {
+            state.exportCustomersData = action.payload
+        },
+        setFilterValues: (state, action) => {
+            state.filterOptions = { ...state.filterOptions, ...action.payload }
         },
         setRefresh: (state,action) => {
             state.isRefresh = !state.isRefresh
@@ -120,20 +118,6 @@ export const customerSlice = createSlice({
             state.errorMsg = action.payload
         })
 
-        // searchCustomers
-        builder.addCase(searchCustomers.pending, (state) => {
-            state.isLoading = true
-            state.isError = false
-        })
-        builder.addCase(searchCustomers.fulfilled, (state, action) => {
-            state.isLoading = false
-            state.searchCustomerData = action.payload
-        })
-        builder.addCase(searchCustomers.rejected, (state, action) => {
-            state.isLoading = false
-            state.errorMsg = action.payload
-        })
-
         // getProductsDetails
         builder.addCase(getCustomersDetail.pending, (state) => {
             state.isLoading = true
@@ -146,21 +130,7 @@ export const customerSlice = createSlice({
         builder.addCase(getCustomersDetail.rejected, (state, action) => {
             state.isLoading = false
             state.errorMsg = action.payload
-        })
-        // getProductsDetails
-        builder.addCase(deleteCustomers.pending, (state) => {
-            state.isLoading = true
-            state.isError = false
-        })
-        builder.addCase(deleteCustomers.fulfilled, (state, action) => {
-            state.isLoading = false
-            state.deleteCustomersData = action.payload
-        })
-        builder.addCase(deleteCustomers.rejected, (state, action) => {
-            state.isLoading = false
-            state.errorMsg = action.payload
-        })
-        
+        })        
     }
 })
 
@@ -170,6 +140,8 @@ export const {
     setCustomersDetail,
     setSearchCustomers,
     setDeleteCustomer,
+    setFilterValues,
+    setExportCustomers,
     setRefresh
 } = customerSlice.actions;
 

@@ -8,6 +8,10 @@ import notificationSlice from "./notificationSlice";
 import categoriesSlice from "./categoriesSlice";
 import subCategoriesSlice from "./subCategoriesSlice";
 import dashboardSlice from "./dashboardSlice";
+import couponSlice from "./couponSlice";
+import countrySlice from "./countrySlice";
+import settingSlice from "./settingSlice";
+import appearanceSlice from "./appearanceSlice";
 
 
 export const store = configureStore({
@@ -20,6 +24,10 @@ export const store = configureStore({
         notification:notificationSlice,
         categories:categoriesSlice,
         subCategories:subCategoriesSlice,
-        dashboard: dashboardSlice
+        dashboard: dashboardSlice,
+        coupons: couponSlice,
+        country: countrySlice,
+        settings: settingSlice,
+        appearance:appearanceSlice
     }
 })

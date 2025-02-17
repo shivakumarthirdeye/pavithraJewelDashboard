@@ -40,7 +40,6 @@ const AddProduct = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    const { goldRateData, } = useSelector((state) => state.dashboard);
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
@@ -50,10 +49,8 @@ const AddProduct = () => {
 
     //State
     const [filteredSubcategory, setFilteredSubcategories] = useState([]);
-
-    useEffect(() => {
-        dispatch(getGoldRate())
-    }, [dispatch,])
+    const [tagInput, setTagInput] = useState('');
+    const [goldRates, setGoldRates] = useState({});
 
     useEffect(() => {
         dispatch(getCategoriesExport())
@@ -67,16 +64,25 @@ const AddProduct = () => {
         productName: yup.string().required("Product name is required"),
         status: yup.string().required("Status is required"),
         description: yup.string().required("Description is required"),
-        tags: yup.string().required("Tags are required"),
-        discountType: yup.string().required("Discount Type is required"),
-        discountValue: yup.number().typeError("Discount Value be a number").min(1, "Discount Value is required"),
-        // medias: yup.array().min(1, "At least one image is required"),
-        featurerdImage: yup.string().required("At least one image is required"),
-
-        GST: yup.number().typeError("GST must be a number").min(1, "GST is required"),
-        productId: yup.string().required("Product ID is required"),
-        stockQuantity: yup.number().typeError("Stock Quantity must be a number").min(1, "Stock Quantity is required"),
-        productDimensions: yup.object().shape({
+        tags: yup
+            .string()
+            .required("Tags are required")
+            .matches(
+                /^(\s*[a-zA-Z0-9]+\s*)(,\s*[a-zA-Z0-9]+\s*)*$/,
+                "Tags must be comma-separated words"
+            ),
+        // featurerdImage: yup.array().min(1, "At least one image is required"),
+        featurerdImage: yup.string().required("Image is required"),
+        media: yup.object().shape({
+            photo: yup.array().min(1, "At least one image is required"),
+            video: yup.array().min(1, "At least one video is required")
+        }),
+        discount: yup.object().shape({
+            discountValue: yup.number().typeError("Discount Value must be a number").min(1, "Discount Value is required"),
+            discountStartdate: yup.date().required("Start Date is required"),
+            discountEnddate: yup.date().required("End Date is required"),
+        }),
+        shipping: yup.object().shape({
             weight: yup.number().typeError("Weight must be a number").min(1, "Weight is required"),
             height: yup.number().typeError("Height must be a number").min(1, "Height is required"),
             length: yup.number().typeError("Length must be a number").min(1, "Length is required"),
@@ -90,101 +96,105 @@ const AddProduct = () => {
             productWidth: yup.number().typeError("Product width must be a number").min(1, "Product width is required"),
             productHeight: yup.number().typeError("Product height must be a number").min(1, "Product height is required"),
         }),
-        metalType: yup.array().of(yup.string()).required("At least one metal type is required"),
+        metalType: yup
+            .array()
+            .of(
+                yup
+                    .string()
+                    .oneOf(["GOLD", "DIAMOND", "POLKI"], "Invalid metal type selected")
+            )
+            .min(1, "At least one metal type is required")
+            .required("Metal type is required"),
         pricing: yup.object().shape({
             totalWeight: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Total weight must be a number")
                     .min(1, "Total weight is required")
-                    .when("status", {
-                        is: true,
-                        then: yup.number().required("Total weight is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("status", (status, schema) =>
+                        status === "active" ? schema.required("Total weight is required") : schema
+                    ),
             }),
             goldWeight: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Gold weight must be a number")
-                    .when("status", {
-                        is: true,
-                        then: yup.number().min(1, "Gold weight is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("metalType", (type, schema) =>
+                        type === "GOLD" ? schema.min(1, "Gold weight is required") : schema
+                    ),
             }),
             goldRate: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Gold rate must be a number")
-                    .when(["metalType"], {
-                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Gold"),
-                        then: yup.number().min(1, "Gold rate is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("metalType", (type, schema) =>
+                        type === "GOLD" ? schema.min(1, "Gold rate is required") : schema
+                    ),
             }),
             diamondCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Diamond carat must be a number")
-                    .when(["metalType"], {
-                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Diamond"),
-                        then: yup.number().min(1, "Diamond carat is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("metalType", (type, schema) =>
+                        type === "DIAMOND" ? schema.min(1, "Diamond carat is required") : schema
+                    ),
             }),
             diamondPerCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Diamond per carat must be a number")
-                    .when(["metalType"], {
-                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Diamond"),
-                        then: yup.number().min(1, "Diamond per carat is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("metalType", (type, schema) =>
+                        type === "DIAMOND" ? schema.min(1, "Diamond per carat is required") : schema
+                    ),
             }),
             polkiCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Polki carat must be a number")
-                    .when(["metalType"], {
-                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Polki"),
-                        then: yup.number().min(1, "Polki carat is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("metalType", (type, schema) =>
+                        type === "POLKI" ? schema.min(1, "Polki carat is required") : schema
+                    ),
             }),
-            polkiCost: yup.object().shape({
+            polkiPerCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Polki cost must be a number")
-                    .when(["metalType"], {
-                        is: (metalType) => Array.isArray(metalType) && metalType?.includes("Polki"),
-                        then: yup.number().min(1, "Polki cost is required"),
-                        otherwise: yup.number(),
-                    }),
+                    .when("metalType", (type, schema) =>
+                        type === "POLKI" ? schema.min(1, "Polki per carat is required") : schema
+                    ),
             }),
             gst: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("GST must be a number")
-                    .min(1, "GST is required"),
+                    .when("status", (status, schema) =>
+                        status === "active" ? schema.required("GST is required") : schema
+                    ),
             }),
             finalSalePrice: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Final sale price must be a number")
-                    .min(1, "Final sale price is required"),
+                    .when("status", (status, schema) =>
+                        status === "active" ? schema.required("Final sale price is required") : schema
+                    ),
             }),
             makingCharges: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Making charges must be a number")
-                    .min(1, "Making charges is required"),
+                    .when("status", (status, schema) =>
+                        status === "active" ? schema.required("Making charges is required") : schema
+                    ),
             }),
         }),
         category: yup.object().shape({
             productCategory: yup.string().required("Category is required"),
             productSubcategory: yup.string().required("Subcategory is required"),
+        }),
+        inventory: yup.object().shape({
+            sku: yup.string().required("Sku is required"),
+            totalstock: yup.number().typeError("Total stock must be a number").min(1, "Total stock is required"),
         }),
         gold: yup.object().shape({
             type: yup.string().required("Gold type is required"),
@@ -203,7 +213,6 @@ const AddProduct = () => {
     } = useFormik({
         initialValues: {
             productName: "",
-            // medias: [],
             description: "",
             tags: "",
             features: {
@@ -283,15 +292,10 @@ const AddProduct = () => {
                 discountEnddate: null,
             },
             inventory: {
+                sku: '',
                 totalstock: 0,
             },
             status: "",
-            // variations:
-            //     [{
-            //         type: '',
-            //         value: [],
-            //         name: ''
-            //     }],
             shipping: {
                 weight: 0,
                 height: 0,
@@ -309,13 +313,16 @@ const AddProduct = () => {
             featurerdImage: "",
         },
         validationSchema: schema,
+
+
         onSubmit: async (values) => {
+            const tagsArray = values.tags.split(",").map((tag) => tag.trim());
+            console.log("Tags Array:", tagsArray);
+            console.log("Submitted Values:", { ...values, tags: tagsArray });
             handleSubject(values)
         }
 
     })
-
-    console.log('valuessssssssssssssssssssssssssss', values);
 
     const handleSubject = async (value) => {
         try {
@@ -355,49 +362,93 @@ const AddProduct = () => {
 
     //Media Image
     const handleImageChange = async (e, index) => {
-        console.log('e====================', e);
-
         const files = e.target?.files; // Get all selected files
-        if (!files) return;
+        // if (!files) return;
 
         try {
-            const uploadedImages = []; // Temporary array to store image URLs
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const body = {
-                    key: `${Date.now()}_${file.name}`,
-                    fileName: file.name,
-                };
+            if (files) {
+                const uploadedImages = []; // Temporary array to store image URLs
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const body = {
+                        key: `${Date.now()}_${file.name}`,
+                        fileName: file.name,
+                    };
 
-                const { data, status } = await api.getPutSignedUrl(body);
-                if (status === 200) {
-                    await axios.put(data.data?.preSigned, file, {
-                        headers: {
-                            "Content-Type": file.type,
-                        },
-                    });
+                    const { data, status } = await api.getPutSignedUrl(body);
+                    if (status === 200) {
+                        await axios.put(data.data?.preSigned, file, {
+                            headers: {
+                                "Content-Type": file.type,
+                            },
+                        });
 
-                    const imageUrl = data?.data?.url;
-                    uploadedImages[index].push(imageUrl); // Add uploaded image URL to the array
+                        const imageUrl = data?.data?.url;
+                        uploadedImages.push(imageUrl); // Add uploaded image URL to the array
+                    }
                 }
-            }
 
-            // Update medias.photo by appending new images
-            setFieldValue(`media[${index}].photo`, [...(values.media.photo || []), ...uploadedImages]);
+                // Update medias.photo by appending new images
+                setFieldValue('media.photo', [...(values.media.photo || []), ...uploadedImages]);
+                // setTimeout(() => {
+                //     e.target.value = null; // Reset input value
+                //   }, 100);
+            }   // Reset input value to allow selecting more images
 
-            // Reset input value to allow selecting more images
-            // e.target.value = null;
         } catch (err) {
             console.error(err);
             Toastify.error("Error uploading images");
         }
     };
+    // const handleImageChange = async (e, index, values) => {
+    //     const files = e.target?.files; // Get all selected files
+    //     if (!files || files.length === 0) return;
+
+    //     try {
+    //         const uploadedImages = []; // Temporary array to store uploaded image URLs
+
+    //         for (const file of files) {
+    //             const body = {
+    //                 key: `${Date.now()}_${file.name}`,
+    //                 fileType: file.type,
+    //                 fileName: file.name,
+    //             };
+
+    //             const { data, status } = await api.getPutSignedUrl(body);
+
+    //             if (status === 200) {
+    //                 await axios.put(data.data?.preSigned, file, {
+    //                     headers: { "Content-Type": file.type },
+    //                 });
+
+    //                 uploadedImages.push(data?.data?.url); // Add the uploaded image URL to the array
+    //             }
+    //         }
+
+    //         // Add the uploaded images to the product at the specified index
+    //         const updatedProducts = values?.map((product, idx) =>
+    //             index === idx
+    //                 ? {
+    //                       ...product,
+    //                       images: [...(product.images || []), ...uploadedImages], // Append new images
+    //                   }
+    //                 : product
+    //         );
+
+    //         setFieldValue("media.photo", updatedProducts);
+
+    //         console.log("Uploaded Images:", uploadedImages);
+    //     } catch (err) {
+    //         console.error("Error uploading files", err);
+    //         toast.error("Error uploading files");
+    //     }
+    // };
 
 
     // Media Video
     const handleVideoChange = async (e, attribute, repo) => {
 
-        const file = e.target?.files?.[0] || e.target?.files?.[0];
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
         try {
             if (file) {
 
@@ -428,9 +479,13 @@ const AddProduct = () => {
     //Metal Type
     const handleGold = (e, name) => {
         const isChecked = e.target.checked;
-        setFieldValue("metalType", isChecked
-            ? [...values.metalType, name] // Add the name if checked
-            : values.metalType?.filter((type) => type !== name) // Remove the name if unchecked
+
+        // Update metalType array in Formik's state
+        setFieldValue(
+            "metalType",
+            isChecked
+                ? [...values.metalType, name] // Add the selected metal
+                : values.metalType.filter((type) => type !== name) // Remove the unselected metal
         );
     };
 
@@ -609,7 +664,7 @@ const AddProduct = () => {
                         }
                     })
 
-                    setFieldValue('featurerdImage', data?.data?.url)
+                    setFieldValue('featurerdImage',  data?.data?.url)
                 }
             }
         } catch (err) {
@@ -627,17 +682,106 @@ const AddProduct = () => {
     const metalTypeData = [
         {
             id: 0,
-            name: 'Gold',
+            name: 'GOLD',
+            label:'Gold'
         },
         {
             id: 1,
-            name: 'Diamond',
+            name: 'DIAMOND',
+            label:'Diamond'
         },
         {
             id: 2,
-            name: 'Polki',
+            name: 'POLKI',
+            label:'Polki'
         },
     ]
+    
+
+    // Assuming you fetch the gold rates from your API and update the state
+    const fetchGoldRates = async () => {
+        try {
+            const response = await dispatch(getGoldRate()); // Replace with your API endpoint
+            const data = response.payload.data;
+            console.log('data==================', data);
+
+            setGoldRates({
+                k22: data.k22,
+                k18: data.k18,
+            });
+        } catch (error) {
+            console.error("Error fetching gold rates:", error);
+        }
+    };
+
+    // Call this function on component mount or when required
+    useEffect(() => {
+        fetchGoldRates();
+    }, []);
+
+    // Function to calculate gold cost
+    const calculateGoldCost = (goldType, goldWeight) => {
+        console.log('goldType,goldWeight', goldType, goldWeight);
+
+        const rate = goldRates[goldType] || 0; // Use the appropriate gold rate (k22 or k18)
+        return goldWeight ? goldWeight * rate : 0;
+    };
+
+    // // // Example: Update gold cost whenever `goldType` or `goldWeight` changes
+    useEffect(() => {
+        // Only calculate if we have valid gold rates and weight
+        if (values.gold.type && values.pricing.goldWeight.value) {
+            const goldCost = calculateGoldCost(values.gold.type, values.pricing.goldWeight.value);
+            setFieldValue("pricing.goldRate.value", goldCost);
+        }
+    }, [values.gold.type, values.pricing.goldWeight.value, goldRates, setFieldValue]);
+
+    // // // Example: Update gold cost whenever `diamond` or `diamond cost` changes
+    useEffect(() => {
+        if (values.pricing.diamondCarat.value && values.pricing.diamondPerCarat.value) {
+            const diamondCost = values.pricing.diamondCarat.value * values.pricing.diamondPerCarat.value;
+            setFieldValue("pricing.diamondCost.value", diamondCost); // Set calculated cost
+        }
+    }, [values.pricing.diamondCarat.value, values.pricing.diamondPerCarat.value, setFieldValue]);
+
+    useEffect(() => {
+        if (values.pricing.polkiCarat.value && values.pricing.polkiPerCarat.value) {
+            const polkiCost = values.pricing.polkiCarat.value * values.pricing.polkiPerCarat.value;
+            setFieldValue("pricing.polkiCost.value", polkiCost); // Set calculated cost
+        }
+    }, [values.pricing.polkiCarat.value, values.pricing.polkiPerCarat.value, setFieldValue]);
+
+    useEffect(() => {
+        if (
+            values?.pricing?.goldRate?.value ||
+            values?.pricing?.diamondCost?.value ||
+            values?.pricing?.polkiCost?.value ||
+            values?.pricing?.makingCharges?.value ||
+            values?.pricing?.stoneCharges?.value
+        ) {
+            const totalCost =
+                (values?.pricing?.goldRate?.value || 0) +
+                (values?.pricing?.diamondCost?.value || 0) +
+                (values?.pricing?.polkiCost?.value || 0) +
+                (values?.pricing?.makingCharges?.value || 0) +
+                (values?.pricing?.stoneCharges?.value || 0);
+    
+            const gstMultiplier = 1 + (values?.pricing?.gst?.value || 0) / 100;
+    
+            const finalSalePrice = totalCost * gstMultiplier;
+    
+            setFieldValue('pricing.finalSalePrice.value', finalSalePrice); // Formatting to 2 decimal places
+        }
+    }, [
+        values?.pricing?.goldRate?.value,
+        values?.pricing?.diamondCost?.value,
+        values?.pricing?.polkiCost?.value,
+        values?.pricing?.makingCharges?.value,
+        values?.pricing?.stoneCharges?.value,
+        values?.pricing?.gst?.value,
+        setFieldValue
+    ]);
+    
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={productStyle.container}>
@@ -666,7 +810,7 @@ const AddProduct = () => {
                                 placeholder='Type product name here. . .'
                                 type={'text'}
                                 name="productName"
-                                value={values.productName || ''}
+                                value={values.productName}
                                 onChange={handleChange}
                                 onBlur={handleBlur}
                                 sx={fieldText}
@@ -699,9 +843,9 @@ const AddProduct = () => {
                             <TextField
                                 placeholder='Type and add'
                                 type={'text'}
-                                name="tags"
-                                value={values.tags || ''}
-                                onChange={handleChange}
+                                value={values.tags || ""} // Temporary tag input value
+                                onChange={(e) => setFieldValue("tags", e.target.value)} // Update currentTag value
+
                                 onBlur={handleBlur}
                                 sx={fieldText}
                             />
@@ -721,7 +865,7 @@ const AddProduct = () => {
                                 <label className={productStyle.label}>Item weight</label>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
+                                    type={'number'}
                                     name="features.itemWeight"
                                     value={values.features.itemWeight || ''}
                                     onChange={handleChange}
@@ -766,7 +910,7 @@ const AddProduct = () => {
                                 <label className={productStyle.label}>Stone Weight</label>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
+                                    type={'number'}
                                     name="features.stoneWeight"
                                     value={values.features.stoneWeight || ''}
                                     onChange={handleChange}
@@ -827,7 +971,7 @@ const AddProduct = () => {
                                 <label className={productStyle.label}>Product Width</label>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
+                                    type={'number'}
                                     name="features.productWidth"
                                     value={values.features.productWidth || ''}
                                     onChange={handleChange}
@@ -871,7 +1015,7 @@ const AddProduct = () => {
                                 <label className={productStyle.label}>Product Height</label>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
+                                    type={'number'}
                                     name="features.productHeight"
                                     value={values.features.productHeight || ''}
                                     onChange={handleChange}
@@ -951,16 +1095,7 @@ const AddProduct = () => {
                                                             <CrossIcon />  {/* This is the delete icon */}
                                                         </div>
                                                         <img src={image} alt="Uploaded" className={productStyle.inventoryImage} />
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            id="imageFile"
-                                                            style={{ display: 'none' }}
-                                                            onChange={(e) => handleImageChange(e, imgIndex)}
-                                                            // value={values.imageFile}
-                                                            // ref={imageRef}
-                                                            multiple
-                                                        />
+
                                                     </div>
                                                 ))}
                                                 {/* <img
@@ -973,30 +1108,29 @@ const AddProduct = () => {
                                         ) : (
                                             <>
                                                 <ImageIcon />
-
+                                                <div>
+                                                    <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                        Drag and drop image here, or click add image
+                                                    </p>
+                                                </div>
+                                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        id="imageFile"
+                                                        style={{ display: 'none' }}
+                                                        onChange={handleImageChange}
+                                                        // value={values.imageFile}
+                                                        multiple
+                                                    />
+                                                    <label htmlFor="imageFile" className={productStyle.uploadBox}>
+                                                        Add Image
+                                                    </label>
+                                                </div>
                                             </>
                                         )}
                                     </>
-                                    <div>
-                                        <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
-                                            Drag and drop image here, or click add image
-                                        </p>
-                                    </div>
-                                    <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                        {/* <input
-                                            type="file"
-                                            accept="image/*"
-                                            id="imageFile"
-                                            style={{ display: 'none' }}
-                                            onChange={(e) => handleImageChange(e)}
-                                            // value={values.imageFile}
-                                            ref={imageRef}
-                                            multiple
-                                        /> */}
-                                        <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                            Add Image
-                                        </label>
-                                    </div>
+
                                 </div>
                             </div>
                             {
@@ -1064,7 +1198,7 @@ const AddProduct = () => {
                                         handleCheck={(e) => handleGold(e, item?.name)}
                                         checked={values.metalType?.includes(item?.name)}
                                     />
-                                    <span>{item.name}</span>
+                                    <span style={{ textTransform: 'capitalize' }}>{item.label}</span>
                                 </div>
 
                             ))}
@@ -1111,8 +1245,8 @@ const AddProduct = () => {
                                                         fontSize: '14px',
                                                         fontWeight: '400',
                                                         fontFamily: 'Public Sans',
-                                                        marginRight: '-10px'
-                                                        // marginBottom: '20px'
+                                                        marginRight: '-10px',
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1158,8 +1292,8 @@ const AddProduct = () => {
                                                         fontSize: '14px',
                                                         fontWeight: '400',
                                                         fontFamily: 'Public Sans',
-                                                        marginRight: '-10px'
-                                                        // marginBottom: '20px'
+                                                        marginRight: '-10px',
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1187,6 +1321,7 @@ const AddProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                     InputProps={{
+                                        readOnly: true,
                                         startAdornment: (
                                             <InputAdornment position="flex-start" sx={{
                                                 backgroundColor: 'transparent',
@@ -1206,7 +1341,7 @@ const AddProduct = () => {
                                                         color: '#000000',
                                                         marginLeft: '-10px',
                                                         marginRight: '-15px',
-                                                        // marginBottom: '20px'
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1284,9 +1419,7 @@ const AddProduct = () => {
                                     sx={fieldText}
                                     fullWidth
                                 />
-                                {/* {
-                                    errors?.pricing?.stoneType?.value && touched?.pricing?.stoneType?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.stoneType?.value}</p>
-                                } */}
+
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
@@ -1331,9 +1464,7 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
-                                    errors?.pricing?.stoneCharges?.value && touched?.pricing?.stoneCharges?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.stoneCharges?.value}</p>
-                                } */}
+
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
@@ -1388,7 +1519,7 @@ const AddProduct = () => {
                                                         color: '#000000',
                                                         marginLeft: '-10px',
                                                         marginRight: '-15px',
-                                                        // marginBottom: '20px'
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1416,6 +1547,7 @@ const AddProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                     InputProps={{
+                                        readOnly: true,
                                         startAdornment: (
                                             <InputAdornment position="flex-start" sx={{
                                                 backgroundColor: 'transparent',
@@ -1435,7 +1567,7 @@ const AddProduct = () => {
                                                         color: '#000000',
                                                         marginLeft: '-10px',
                                                         marginRight: '-15px',
-                                                        // marginBottom: '20px'
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1500,7 +1632,7 @@ const AddProduct = () => {
                                                         color: '#000000',
                                                         marginLeft: '-10px',
                                                         marginRight: '-15px',
-                                                        // marginBottom: '20px'
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1528,6 +1660,7 @@ const AddProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                     InputProps={{
+                                        readOnly: true,
                                         startAdornment: (
                                             <InputAdornment position="flex-start" sx={{
                                                 backgroundColor: 'transparent',
@@ -1547,7 +1680,7 @@ const AddProduct = () => {
                                                         color: '#000000',
                                                         marginLeft: '-10px',
                                                         marginRight: '-15px',
-                                                        // marginBottom: '20px'
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1584,8 +1717,8 @@ const AddProduct = () => {
                                     <CustomizedCheckbox handleCheck={handleCheckFinalSalePrice} checked={values.pricing.finalSalePrice.status} /> <span>Final sale price</span>
                                 </div>
                                 <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
+                                    placeholder='auto'
+                                    type={'number'}
                                     name="pricing.finalSalePrice.value"
                                     value={values.pricing.finalSalePrice.value || ''}
                                     onChange={handleChange}
@@ -1612,7 +1745,7 @@ const AddProduct = () => {
                                                         color: '#000000',
                                                         marginLeft: '-10px',
                                                         marginRight: '-15px',
-                                                        // marginBottom: '20px'
+                                                        marginBottom: '2px'
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
@@ -1642,17 +1775,17 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="discount.discountValue"
+                                    value={values.discount.discountValue || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
 
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.discount?.discountValue && touched?.discount?.discountValue && <p style={{ color: "red", fontSize: "12px" }}>{errors?.discount?.discountValue}</p>
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} >
@@ -1661,7 +1794,7 @@ const AddProduct = () => {
                                 <div className={productStyle.calendarBox}>
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
-                                            onChange={(val) => setFieldValue("discountStartDate", val.$d)}
+                                            onChange={(val) => setFieldValue("discount.discountStartdate", val.$d)}
                                             // placeholder={'discountStartDate'}
                                             sx={{
                                                 width: '100%',
@@ -1709,7 +1842,7 @@ const AddProduct = () => {
                                     <LocalizationProvider dateAdapter={AdapterDayjs}>
                                         <DatePicker
                                             // sx={{ width: 330, borderRadius: 8 }}
-                                            onChange={(val) => setFieldValue("discountEndDate", val.$d)}
+                                            onChange={(val) => setFieldValue("discount.discountEnddate", val.$d)}
                                             sx={{
                                                 width: '100%',
                                                 // borderRadius: 8,
@@ -1764,16 +1897,16 @@ const AddProduct = () => {
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    name="inventory.sku"
+                                    value={values.inventory.sku || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
 
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.inventory?.sku && touched?.inventory?.sku && <p style={{ color: "red", fontSize: "12px" }}>{errors?.inventory?.sku}</p>
+                                }
                             </div>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >
@@ -1781,17 +1914,17 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="inventory.totalstock"
+                                    value={values.inventory.totalstock || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                     fullWidth
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.inventory?.totalstock && touched?.inventory?.totalstock && <p style={{ color: "red", fontSize: "12px" }}>{errors?.inventory?.totalstock}</p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -1808,16 +1941,16 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Product weight...'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="shipping.weight"
+                                    value={values.shipping.weight || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {/* {
-                                    errors.weight && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.shipping?.weight && touched?.shipping?.weight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.weight}</p>
+                                }
                             </div>
                             <div style={{ width: '25%' }}>
                                 <div className={productStyle.checkBoxStyle} >
@@ -1825,16 +1958,16 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Height(cm)...'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="shipping.height"
+                                    value={values.shipping.height || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.shipping?.height && touched?.shipping?.height && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.height}</p>
+                                }
                             </div>
                             <div style={{ width: '25%' }}>
                                 <div className={productStyle.checkBoxStyle}>
@@ -1842,16 +1975,16 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Length(cm)...'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="shipping.length"
+                                    value={values.shipping.length || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.shipping?.length && touched?.shipping?.length && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.length}</p>
+                                }
                             </div>
                             <div style={{ width: '25%' }}>
                                 <div className={productStyle.checkBoxStyle}>
@@ -1859,16 +1992,16 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Width(cm)...'
-                                    type={'text'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    type={'number'}
+                                    name="shipping.width"
+                                    value={values.shipping.width || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {/* {
-                                    errors.features.productWidth && touched.features.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors.features.productWidth}</p>
-                                } */}
+                                {
+                                    errors?.shipping?.width && touched?.shipping?.width && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.width}</p>
+                                }
                             </div>
                         </div>
                     </div>
@@ -1978,6 +2111,7 @@ const AddProduct = () => {
                                 <MenuItem value="">Select</MenuItem>
                                 <MenuItem value="k22">22k</MenuItem>
                                 <MenuItem value="k18">18k</MenuItem>
+
                             </Select>
                         </div>
                         {
@@ -2024,7 +2158,7 @@ const AddProduct = () => {
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
-                                    {values?.featurerdImage ? (
+                                    {values?.featurerdImage?.length > 0 ? (
                                         <div>
                                             <img
                                                 src={values.featurerdImage}
@@ -2097,7 +2231,7 @@ const AddProduct = () => {
                             >
                                 <MenuItem value="">Select</MenuItem>
                                 <MenuItem value="PUBLISHED">Published</MenuItem>
-                                <MenuItem value="STOCKOUT">Out of Stock</MenuItem>
+                                <MenuItem value="OUT OF STOCK">Out of Stock</MenuItem>
                                 <MenuItem value="DRAFT">Draft</MenuItem>
                             </Select>
                         </div>

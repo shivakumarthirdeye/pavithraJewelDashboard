@@ -11,6 +11,9 @@ import { setUserData } from '../../redux/userSlice';
 import Toastify from '../../helper/Toastify';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
 import { fieldText } from '../../MaterialsUI';
+import { editProfile } from '../../redux/settingSlice';
+import axios from 'axios';
+import ChangePassword from '../../component/ChangePassword';
 
 
 
@@ -55,7 +58,8 @@ const EditProfile = () => {
             name: "",
             email: "",
             phone: '',
-            profileImg: []
+            profileImg: [],
+            recoveryEmail: ''
         },
         validationSchema: schema,
         onSubmit: (values) => {
@@ -66,31 +70,7 @@ const EditProfile = () => {
 
 
     const updateSubject = async (values) => {
-        try {
-            setLoading(true)
-
-            // await dispatch(updateProfile(values))
-
-            const { data, status } = await api.updateProfile(values)
-
-            console.log(data, "respose data");
-
-            if (data?.data?.message === "Update Successfull") {
-                dispatch(setUserData(data?.data?.data))
-                Toastify.success("Profile Updated Successfully")
-            } else {
-                //modal open
-                setShowModal(true)
-            }
-
-
-
-        } catch (error) {
-            console.log("error uploading details", error)
-            Toastify.error(error.response.data.message || `something went wrong`)
-        } finally {
-            setLoading(false)
-        }
+        dispatch(editProfile(values))
     }
 
     useEffect(() => {
@@ -116,27 +96,35 @@ const EditProfile = () => {
         fetchProfile()
     }, [dispatch, user, setValues])
 
+    const handleImageChange = async (e, attribute, repo) => {
 
+        const file = e.target?.files?.[0] || e.dataTransfer?.files?.[0];
+        try {
+            if (file) {
 
+                const body = {
+                    key: `${Date.now()}_${file.name}`,
+                    fileName: file.name,
+                }
 
-    const handleImageChange = async (e) => {
-        const file = e.target.files[0];
-        if (file) {
+                const { data, status } = await api.getPutSignedUrl(body);
+                console.log(data);
 
-            const body = new FormData();
-            body.set("image", file);
-            const { data, status } = await api.fileUpload(body);
-            console.log(data, "data");
+                if (status === 200) {
+                    await axios.put(data.data?.preSigned, file, {
+                        headers: {
+                            "Content-Type": file.type
+                        }
+                    })
 
-            if (status === 200) {
-
-                console.log("imageeeeeee", data.data)
-                setFieldValue("profileImg", data.data); // replace the current image with the new one
+                    setFieldValue('profileImg', data?.data?.url)
+                }
             }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error uploading file")
         }
     };
-
-
     //function to show two letters of email
 
     const maskEmail = (email) => {
@@ -160,7 +148,7 @@ const EditProfile = () => {
                 <div className={settingStyle.accountCard}>
                     <h3>General Info</h3>
                     <div className={settingStyle.cardContainer} style={{ paddingTop: 20 }}>
-                        <div style={{width:'50%'}}>
+                        <div style={{ width: '50%' }}>
                             <label className={settingStyle.labelStyle}>Full name</label>
                             <TextField
                                 type='text'
@@ -175,7 +163,7 @@ const EditProfile = () => {
                                 errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
                             }
                         </div>
-                        <div style={{width:'50%'}}>
+                        <div style={{ width: '50%' }}>
                             <label className={settingStyle.labelStyle}>Email Id</label>
                             <TextField
                                 type='text'
@@ -192,9 +180,9 @@ const EditProfile = () => {
                         </div>
                     </div>
                     <div className={settingStyle.cardContainer} style={{ paddingTop: 20 }}>
-                    <div style={{ width:'50%' }}>
-                        <label className={settingStyle.labelStyle}>Phone number</label>
-                        <TextField
+                        <div style={{ width: '50%' }}>
+                            <label className={settingStyle.labelStyle}>Phone number</label>
+                            <TextField
                                 type='text'
                                 onBlur={handleBlur}
                                 value={values.phone}
@@ -203,184 +191,38 @@ const EditProfile = () => {
                                 onChange={handleChange}
                                 sx={fieldText}
                             />
-                        {
-                            errors.phone && touched.phone && <p style={{ color: "red", fontSize: "12px" }}>{errors.phone}</p>
-                        }
-                    </div>
-                    <div style={{ width:'50%'}}>
-                        <label className={settingStyle.labelStyle}>Recovery email id</label>
-                        <TextField
+                            {
+                                errors.phone && touched.phone && <p style={{ color: "red", fontSize: "12px" }}>{errors.phone}</p>
+                            }
+                        </div>
+                        <div style={{ width: '50%' }}>
+                            <label className={settingStyle.labelStyle}>Recovery email id</label>
+                            <TextField
                                 type='text'
                                 onBlur={handleBlur}
-                                value={values.email}
+                                value={values.recoveryEmail}
                                 placeholder='Enter'
-                                name="email"
+                                name="recoveryEmail"
                                 onChange={handleChange}
                                 sx={fieldText}
                             />
-                        {
-                            errors.email && touched.email && <p style={{ color: "red", fontSize: "12px" }}>{errors.email}</p>
-                        }
-                    </div>
+                            {
+                                errors.recoveryEmail && touched.recoveryEmail && <p style={{ color: "red", fontSize: "12px" }}>{errors.recoveryEmail}</p>
+                            }
+                        </div>
                     </div>
                     <div className={settingStyle.saveButton} onClick={handleSubmit}>
                         <p> {loading ? <CircularProgress size="30px" color="inherit" /> : `Edit details`} </p>
                     </div>
-                    <div className={settingStyle.bottomLine}/>
-                    <div className={settingStyle.updatePassword}>Update Password</div>
-                    <div style={{width:'50%',paddingTop:20}}>
-                        <label className={settingStyle.labelStyle}>Old password</label>
-                        <div>
-                            <TextField
-                                placeholder='Password'
-                                id="password"
-                                // label="Password"
-                                variant="outlined"
-                                type={showPassword ? 'text' : 'password'}
-                                name="password"
-                                value={values.password}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.password && Boolean(errors.password)}
-                                // helperText={touched.password && errors.password}
-                                fullWidth
-                                sx={fieldText}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="flex-end" sx={{
-                                            backgroundColor: 'transparent',
-                                            '&:hover': {
-                                                backgroundColor: 'transparent'
-                                            }
-                                        }}>
-                                            <IconButton
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                // edge="end"
-                                                style={{
-                                                    backgroundColor: 'transparent',
-                                                    // padding: '8px',
-                                                    border: "none",
-                                                    display: 'flex',
-                                                    justifyContent: "flex-end",
-                                                    // marginBottom: '20px'
-                                                }}
-                                                disableRipple // disables ripple effect for a cleaner loo
-                                            >
-                                                {showPassword ? <PasswordVisible /> : < HidePassword />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                    
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div className={settingStyle.cardContainer}>
-                    <div style={{width:'50%',paddingTop:20}}>
-                        <label className={settingStyle.labelStyle}>New password</label>
-                        <div>
-                            <TextField
-                                placeholder='Password'
-                                id="password"
-                                // label="Password"
-                                variant="outlined"
-                                type={showNewPassword ? 'text' : 'password'}
-                                name="password"
-                                value={values.password}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.password && Boolean(errors.password)}
-                                // helperText={touched.password && errors.password}
-                                fullWidth
-                                sx={fieldText}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="flex-end" sx={{
-                                            backgroundColor: 'transparent',
-                                            '&:hover': {
-                                                backgroundColor: 'transparent'
-                                            }
-                                        }}>
-                                            <IconButton
-                                                onClick={() => setShowNewPassword(!showNewPassword)}
-                                                // edge="end"
-                                                style={{
-                                                    backgroundColor: 'transparent',
-                                                    // padding: '8px',
-                                                    border: "none",
-                                                    display: 'flex',
-                                                    justifyContent: "flex-end",
-                                                    // marginBottom: '20px'
-                                                }}
-                                                disableRipple // disables ripple effect for a cleaner loo
-                                            >
-                                                {showNewPassword ? <PasswordVisible /> : < HidePassword />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                    
-                                }}
-                            />
-                        </div>
-                    </div>
-                    <div style={{width:'50%',paddingTop:20}}>
-                        <label className={settingStyle.labelStyle}>Confirm new password</label>
-                        <div>
-                            <TextField
-                                placeholder='Password'
-                                id="password"
-                                // label="Password"
-                                variant="outlined"
-                                type={showConfirmPassword ? 'text' : 'password'}
-                                name="password"
-                                value={values.password}
-                                onChange={handleChange}
-                                onBlur={handleBlur}
-                                error={touched.password && Boolean(errors.password)}
-                                // helperText={touched.password && errors.password}
-                                fullWidth
-                                sx={fieldText}
-                                InputProps={{
-                                    endAdornment: (
-                                        <InputAdornment position="flex-end" sx={{
-                                            backgroundColor: 'transparent',
-                                            '&:hover': {
-                                                backgroundColor: 'transparent'
-                                            }
-                                        }}>
-                                            <IconButton
-                                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                                // edge="end"
-                                                style={{
-                                                    backgroundColor: 'transparent',
-                                                    // padding: '8px',
-                                                    border: "none",
-                                                    display: 'flex',
-                                                    justifyContent: "flex-end",
-                                                    // marginBottom: '20px'
-                                                }}
-                                                disableRipple // disables ripple effect for a cleaner loo
-                                            >
-                                                {showConfirmPassword ? <PasswordVisible /> : < HidePassword />}
-                                            </IconButton>
-                                        </InputAdornment>
-                                    ),
-                                    
-                                }}
-                            />
-                        </div>
-                    </div>
-                    </div>
-                    <div className={settingStyle.saveButton} >
-                        <p> Save Password</p>
-                    </div>
+                    <div className={settingStyle.bottomLine} />
+                    <ChangePassword />
                 </div>
                 <div className={settingStyle.imageCard}>
                     <label htmlFor="upload-photo" className={settingStyle.uploadOverlay}>
-                        {console.log(values.profileImg[0], "pImage")
+                        {console.log(values.profileImg, "pImage")
                         }
-                        {values.profileImg[0] ? (
-                            <img src={values.profileImg[0] ? values.profileImg[0] : '/ProfilePhoto.png'} alt="Profile" className={settingStyle.uploadedImage} />
+                        {values.profileImg ? (
+                            <img src={values.profileImg ? values.profileImg : '/ProfilePhoto.png'} alt="Profile" className={settingStyle.uploadedImage} />
                         ) : (
                             <div className={settingStyle.uploadPlaceholder}>Upload Photo</div>
                         )}

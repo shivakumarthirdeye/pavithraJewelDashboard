@@ -14,7 +14,7 @@ class Api {
     constructor() {
         this.client = null;
         this.api_url = process.env.NODE_ENV === "development" ? "https://pavitra-jewels-backend.onrender.com/api" : `https://pavitra-jewels-backend.onrender.com/api`;
-        // this.api_url = process.env.NODE_ENV === "development" ? "http://localhost:5000/api" : `http://localhost:5000/api`;
+        // this.api_url = process.env.NODE_ENV === "development" ? "http://localhost:4000/api" : `http://localhost:4000/api`;
         
     }
 
@@ -126,52 +126,177 @@ class Api {
     getGoldRate = (data) => {
         return this.init().get('/admin/goldrate', data)
     }
-    
+
     // get Products
     getProducts = (data) => {
         return this.init().get(`/admin/product?${data}`, data)
+    }
+    getExportProducts = (data) => {
+        return this.init().get('/admin/exportproduct', data)
     }
     getProductsWithoutParams = () => {
         return this.init().get(`/admin/product/get-all-products`)
     }
     getProductsDetails = (data) => {
-        return this.init().get(`/admin/product/get-single-product/${data}`, data)
+        return this.init().get(`/admin/product/${data}`, data)
     }
     addProduct = (data) => {
-        return this.init().post("/admin/product/new-product", data)
+        return this.init().post("/admin/product", data)
     }
     editProduct = (data) => {
-        return this.init().put(`/admin/product/edit-product/${data?._id}`, data)
+        return this.init().put(`/admin/product/${data?._id}`, data)
     }
     deleteProduct = (data) => {
-        return this.init().delete(`/admin/product/delete-product/${data}`, data)
+        return this.init().delete(`/admin/product/${data}`, data)
     }
-    getAttributes = (data) => {
-        return this.init().get(`/admin/attributes/get-all-attributes`, data)
-    }
-    getSubCat = (data) => {
-        return this.init().get(`/admin/subcategory/get-subcategory-without-pagination`, data)
-    }
-    getSearchProduct = (data) => {
-        return this.init().get(`/admin/product/search-by-name-or-sku${data}`, data)
-    }
-    getSupplierName = () => {
-        return this.init().get('/admin/supplier/get-all-suppliers')
-    }
-    filterProducts = (date,status,category,productType,page) => {
-        return this.init().get(`/admin/product/filter-product?date=${date}&status=${status}&category=${category}&productType=${productType}&page=${page}`)
-    }
-    getReviewsForProducts = (data) => {
-        return this.init().get(`/admin/product/get-reviews/${data}`)
-    }
-    getAllSingleProductList = () => {
-        return this.init().get(`/admin/product/get-all-single-products-list`)
-    }
-    getAllComboProductList = () => {
-        return this.init().get(`/admin/product/get-all-combo-products-list`)
-    }
-     
     
+    
+    // Order
+    orderStatistics = (data) => {
+        return this.init().get(`/admin/getOrderStatistics${data}`, data)
+    }
+    getOrders = (data) => {
+        return this.init().get(`/admin/orders?${data}`, data)
+    }
+    getTrashOrders = (data) => {
+        return this.init().get(`/admin/trashorder?${data}`, data)
+    }
+    getOrdersDetails = (data) => {
+        return this.init().get(`/admin/orders/${data}`, data)
+    }
+    deleteOrders = (data) => {        
+        return this.init().put(`/admin/trashorder/${data.value}`, data)
+    }
+    getCustomerReviews = (data) => {
+        console.log('data=============================',data);
+        
+        return this.init().get(`/admin/reviews/${data}`, data)
+    }
+    editPendingPrice = ({url,val}) => {
+        return this.init().put(`/admin/updatePendingOrder/${url}`, val)
+    } 
+    editReviews = ({url,val}) => {
+        return this.init().put(`/admin/reviews/${url}`, val)
+    }
+    approveReject = ({url, val}) => {
+        return this.init().put(`/admin/rejectorapprove/${val}`, url);  
+    } 
+
+    // Customer 
+    getAllCustomers = (data) => {
+        return this.init().get(`/admin/customer?${data}`, data)
+    }
+    getCustomersDetail = (data) => {
+        return this.init().get(`/admin/customer/${data}`, data)
+    }
+    getExportsCustomers = (data) => {
+        return this.init().get(`/admin/exportCustomer`, data)
+    }
+    deleteCustomers = (data) => {
+        return this.init().delete(`/admin/customer/${data}`, data)
+    }
+    // Coupons 
+    getAllCoupons = (data) => {
+        return this.init().get(`/admin/coupons?${data}`, data)
+    }
+    addCoupons = (data) => {
+        return this.init().post('/admin/coupons', data)
+    }
+    editCoupons = (data) => {
+        return this.init().put(`/admin/coupons/${data?._id}`, data)
+    }
+    deleteCoupons = (data) => {
+        return this.init().delete(`/admin/coupons/${data}`, data)
+    }
+    // Country 
+    getAllCountry = (data) => {
+        return this.init().get(`/admin/country?${data}`, data)
+    }
+    addCountry = (data) => {
+        return this.init().post('/admin/country', data)
+    }
+    editCountry = (data) => {
+        return this.init().put(`/admin/country/${data?._id}`, data)
+    }
+    deleteCountry = (data) => {
+        return this.init().delete(`/admin/country/${data}`, data)
+    }
+    getExportCountry = (data) => {
+        return this.init().get(`/admin/exportCountries`, data)
+    }
+    // Country 
+    editProfile = (data) => {
+        return this.init().put('/admin/updateAdminProfile', data)
+    }
+    changePassword = (data) => {
+        return this.init().put('/admin/changePassword', data)
+    }
+    // Appearances 
+    getSliders = () => {
+        return this.init().get('/admin/appearance/slider')
+    }
+    addSliders = (data) => {
+        return this.init().post('/admin/appearance/slider', data)
+    }
+    getHeroBanner = () => {
+        return this.init().get('/admin/appearance/herobanner')
+    }
+    addHeroBanner = (data) => {
+        return this.init().post('/admin/appearance/herobanner', data)
+    }
+    getAppearanceCategories = () => {
+        return this.init().get('/admin/appearance/category')
+    }
+    addAppearanceCategories = (data) => {
+        return this.init().post('/admin/appearance/category', data)
+    }
+    getAboutus = () => {
+        return this.init().get('/admin/appearance/aboutus')
+    }
+    addAboutus = (data) => {
+        return this.init().post('/admin/appearance/aboutus', data)
+    }
+    getBrandSlider = () => {
+        return this.init().get('/admin/appearance/brandslider')
+    }
+    addBrandSlider = (data) => {
+        return this.init().post('/admin/appearance/brandslider', data)
+    }
+    getFeaturerdProducts = () => {
+        return this.init().get('/admin/appearance/featurerdProducts')
+    }
+    addFeaturerdProducts = (data) => {
+        return this.init().post('/admin/appearance/featurerdProducts', data)
+    }
+    getOfferbanner = () => {
+        return this.init().get('/admin/appearance/offerbanner')
+    }
+    addOfferbanner = (data) => {
+        return this.init().post('/admin/appearance/offerbanner', data)
+    }
+    getTestimonials = () => {
+        return this.init().get('/admin/appearance/testimonials')
+    }
+    addTestimonials = (data) => {
+        return this.init().post('/admin/appearance/testimonials', data)
+    }
+    getCounters = () => {
+        return this.init().get('/admin/appearance/counters')
+    }
+    addCounters = (data) => {
+        return this.init().post('/admin/appearance/counters', data)
+    }
+    getInstagram = () => {
+        return this.init().get('/admin/appearance/instagram')
+    }
+    addInstagram = (data) => {
+        return this.init().post('/admin/appearance/instagram', data)
+    }
+
+    //getNotification
+    getNotification = () => {
+        return this.init().get('/admin/getAllNotifications')
+    }
 
 }
 

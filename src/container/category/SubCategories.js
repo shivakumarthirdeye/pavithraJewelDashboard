@@ -290,7 +290,7 @@ const Subcategories = () => {
                                             >
 
                                                 <div className={catStyle.categoryHeadStyle}>
-                                                    <img src={item.thumbnailPhoto ? item?.thumbnailPhoto : '/jweleryImage.png'} height={50} width={50} alt="img" />
+                                                    <img src={item.thumbnailPhoto ? item?.thumbnailPhoto : '/jweleryImage.png'} style={{height:50,width:50,objectFit:'cover'}} alt="img" />
                                                     <div>
                                                         <div style={{ marginLeft: 5, color: "#1D1F2C" }}>
                                                             {item?.name && item?.name?.length > 30 ? `${item?.name?.substring(0, 30)}...` : item?.name}

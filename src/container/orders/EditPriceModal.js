@@ -9,13 +9,18 @@ import { useDispatch } from 'react-redux';
 import productStyle from '../../container/product/product.module.css';
 import orderStyle from './orders.module.css'
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
+import { editPendingPrice } from '../../redux/ordersSlice';
 
 const EditPriceModal = ({ open, onClose, data }) => {
     const dispatch = useDispatch()
+    console.log('dastas===============',data);
+    
 
     const schema = yup.object().shape({
-        comment: yup.string().required("Comment is required"),
-        rating: yup.string().required("Rating is required"),
+        weigthStatus: yup.string().required("Weigth status is required"),
+        extraWeight: yup.string().required("Extra weight is required"),
+        pendingAmount: yup.string().required("Pending amount is required"),
+        customerNote: yup.string().required("Description is required"),
     })
 
     const {
@@ -30,12 +35,14 @@ const EditPriceModal = ({ open, onClose, data }) => {
         setValues
     } = useFormik({
         initialValues: {
-            comment: "",
-            rating: 0,
+            weigthStatus: "",
+            extraWeight: "",
+            pendingAmount: "",
+            customerNote: "",
         },
         validationSchema: schema,
         onSubmit: async (values) => {
-            // handleEdit(values)
+            handleEdit(values)
             onClose()
         }
 
@@ -44,13 +51,15 @@ const EditPriceModal = ({ open, onClose, data }) => {
 
     useEffect(() => {
         if (data) {
-            setValues(data)
+            setValues({
+                pendingAmount:data?.data?.pendingAmount
+            })
         }
     }, [data, setValues])
 
-    // const handleEdit = (val) => {
-    //     dispatch(editReviews({ url: `${data._id}`, val }))
-    // }
+    const handleEdit = (val) => {
+        dispatch(editPendingPrice({ url: `${data?.data?._id}`, val }))
+    }
 
 
     const style = {
@@ -90,10 +99,10 @@ const EditPriceModal = ({ open, onClose, data }) => {
                     </div>
                 </div>
                 <div className={orderStyle.jwelleryDetails}>
-                    <img src='/necklash.png' alt='Jwellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                    <img src={data?.singleProduct?.productId?.featurerdImage} alt='Jwellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
                     <div>
-                        <p className={orderStyle.jwelleryText}>Jumka</p>
-                        <p className={orderStyle.priceText}>₹585.00</p>
+                        <p className={orderStyle.jwelleryText}>{data?.singleProduct?.productId?.productName}</p>
+                        <p className={orderStyle.priceText}>₹{data?.singleProduct?.sellingPrice}</p>
                     </div>
                 </div>
                 <div style={{ marginTop: 10 }}>
@@ -108,16 +117,16 @@ const EditPriceModal = ({ open, onClose, data }) => {
                         )}
                         displayEmpty
                         defaultValue=''
-                        name='category'
-                        value={values.category}
-                    // onChange={handleCategoryChange}
+                        name='weigthStatus'
+                        value={values.weigthStatus || ''}
+                        onChange={handleChange}
                     >
                         <MenuItem value="">Select</MenuItem>
-                        <MenuItem value="PUBLISHED">Increased</MenuItem>
-                        <MenuItem value="STOCKOUT">Decreased</MenuItem>
+                        <MenuItem value="INCREASED">Increased</MenuItem>
+                        <MenuItem value="DECREASED">Decreased</MenuItem>
                     </Select>
                     {
-                        errors.category && touched.category && <p style={{ color: "red", fontSize: "12px" }}>{errors.category}</p>
+                        errors.weigthStatus && touched.weigthStatus && <p style={{ color: "red", fontSize: "12px" }}>{errors.weigthStatus}</p>
                     }
                 </div>
                 <div style={{ marginTop: 10 }}>
@@ -125,14 +134,14 @@ const EditPriceModal = ({ open, onClose, data }) => {
                     <TextField
                         placeholder='Enter'
                         type={'text'}
-                        name="name"
-                        value={values.name || ''}
+                        name="extraWeight"
+                        value={values.extraWeight || ''}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         sx={fieldText}
                     />
                     {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
+                        errors.extraWeight && touched.extraWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors.extraWeight}</p>
                     }
                 </div>
                 <div style={{ marginTop: 10 }}>
@@ -140,14 +149,14 @@ const EditPriceModal = ({ open, onClose, data }) => {
                     <TextField
                         placeholder='Enter'
                         type={'text'}
-                        name="name"
-                        value={values.name || ''}
+                        name="pendingAmount"
+                        value={values.pendingAmount || ''}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         sx={fieldText}
                     />
                     {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
+                        errors.pendingAmount && touched.pendingAmount && <p style={{ color: "red", fontSize: "12px" }}>{errors.pendingAmount}</p>
                     }
                 </div>
                 <div style={{ marginTop: 10 }}>
@@ -155,20 +164,20 @@ const EditPriceModal = ({ open, onClose, data }) => {
                     <TextField
                         placeholder='Enter'
                         type={'text'}
-                        name="name"
-                        value={values.name || ''}
+                        name="customerNote"
+                        value={values.customerNote || ''}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         sx={fieldText}
                     />
                     {
-                        errors.name && touched.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>
+                        errors.customerNote && touched.customerNote && <p style={{ color: "red", fontSize: "12px" }}>{errors.customerNote}</p>
                     }
                 </div>
                 <div className={orderStyle.buttonStyle} style={{ marginTop: 10 }}>
-                        <Button sx={cancle} variant="contained" onClick={resetForm} disableElevation={true}>Clear</Button>
-                    
-                        <Button sx={saveData} variant="contained" onClick={handleSubmit} disableElevation={true}>Update</Button>
+                    <Button sx={cancle} variant="contained" onClick={resetForm} disableElevation={true}>Clear</Button>
+
+                    <Button sx={saveData} variant="contained" onClick={handleSubmit} disableElevation={true}>Update</Button>
                 </div>
             </Box>
         </Modal>

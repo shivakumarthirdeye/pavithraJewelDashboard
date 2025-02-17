@@ -12,8 +12,8 @@
 
 .product-card {
     width: 32%;
-    height: 256px;
-    padding: 14px 20px 14px 20px;
+    height: fit-content;
+    padding:  20px;
     background: #FFFFFF;
     border-radius: 10px;
 }

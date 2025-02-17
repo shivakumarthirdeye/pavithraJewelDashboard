@@ -18,9 +18,7 @@ export const getProfile = createAsyncThunk('getProfile', async (body, { rejectWi
         console.log('data', data);
 
         if (status === 200) {
-            if (status === 200) {
                 return data.data
-            }
         }
     } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")

@@ -286,7 +286,7 @@ const Categories = () => {
                                             >
 
                                                 <div className={catStyle.categoryHeadStyle}>
-                                                    <img src={item.thumbnailPhoto ? item?.thumbnailPhoto : '/jweleryImage.png'} height={50} width={50} alt="thumbnail" />
+                                                    <img src={item.thumbnailPhoto ? item?.thumbnailPhoto : '/jweleryImage.png'} alt="thumbnail" style={{height:50,width:50,objectFit:'cover'}}/>
                                                     <div>
                                                         <div style={{ marginLeft: 5, color: "#1D1F2C" }}>
                                                             {item?.name && item?.name?.length > 30 ? `${item?.name?.substring(0, 30)}...` : item?.name}

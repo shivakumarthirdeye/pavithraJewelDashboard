@@ -143,3 +143,15 @@
     font-weight: 400;
     /* background-color: #FFFFFF; */
 }
+.profileStyle{
+    background-color: #DCDEE3;
+    width: 40px;
+    height: 40px;
+    border-radius: 20px;
+    color: #000;
+    font-size: 14px;
+    font-family: Public Sans;
+    font-weight: 400;
+    align-content: center;
+    text-align: center;
+}

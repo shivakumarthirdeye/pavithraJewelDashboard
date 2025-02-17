@@ -41,16 +41,10 @@ export const CustomersDetails = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
 
-
-    const handleSubject = (value) => {
-        dispatch(deleteOrders(value))
-        dispatch(getCustomersDetail(id))
-    }
-
-    const customersDetailData = useSelector((state) => state.customers);
-    const customerDetails = customersDetailData?.customersDetailData?.data;
+    const { customersDetailData } = useSelector((state) => state.customers);
+    const customerDetails = customersDetailData?.data;
     const customerDetailOrders =
-        customersDetailData?.customersDetailData?.data?.orders;
+        customersDetailData?.orders;
 
     console.log("customerDetailOrders", customerDetailOrders);
     console.log("customerDetails", customerDetails);
@@ -67,6 +61,14 @@ export const CustomersDetails = () => {
 
     const itemsPerPage = 10; // Adjust based on your requirements
 
+    useEffect(() => {
+        dispatch(getCustomersDetail(id))
+    }, [dispatch, id])
+
+    const handleSubject = (value) => {
+        dispatch(deleteOrders(value))
+    }
+
     const indexOfLastProduct = currentPage * itemsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
     let currentProducts = customerDetailOrders?.slice(
@@ -75,6 +77,8 @@ export const CustomersDetails = () => {
     );
 
     const totalPages = Math.ceil(customerDetailOrders?.length / itemsPerPage);
+
+
 
     const handleDateChange = (date) => {
         setSelectedDate((prevFilter) =>
@@ -233,7 +237,7 @@ export const CustomersDetails = () => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    padding: "8px 0px",                    
+                    padding: "8px 0px",
                     cursor: "pointer",
                     borderBottom: '1px solid #E0E2E7',
                     borderBottomWidth: '100%',
@@ -470,10 +474,9 @@ export const CustomersDetails = () => {
                             className={orderStyle.proNameText}
                             style={{ marginLeft: 45, marginTop: 10 }}
                         >
-                            {/* {customerDetails?.name} */}
-                            Supriya Raj
-                        </div>
-                    </>
+                            {customerDetails?.firstName}{" "}
+                            {customerDetails?.lastName}
+                        </div>                    </>
                 </div>
                 <div className={customerStyle.infoCardStyle}>
                     <div
@@ -512,8 +515,7 @@ export const CustomersDetails = () => {
                                 className={orderStyle.proNameText}
                                 style={{ marginLeft: 30, marginTop: 10 }}
                             >
-                                {/* {customerDetails?.email} */}
-                                elikraj86028@gmail.com
+                                {customerDetails?.email}
                             </div>
                         </div>
                         <div style={{ marginTop: 20 }}>
@@ -538,8 +540,7 @@ export const CustomersDetails = () => {
                                 className={orderStyle.proNameText}
                                 style={{ marginLeft: 30, marginTop: 10 }}
                             >
-                                {/* {customerDetails?.phone} */}
-                                +91-7089422258
+                                {customerDetails?.phone}
                             </div>
                         </div>
                         <div style={{ marginTop: 20 }}>
@@ -578,27 +579,28 @@ export const CustomersDetails = () => {
                                 Billing Address
                             </p>
                         </div>
-                        {/* {customerDetails?.addresses?.map((item) => (
+                        {customerDetails?.billingAddress?.map((item) => (
                             <div
                                 className={orderStyle.proNameText}
                                 style={{ marginLeft: 50, marginTop: 10 }}
                             >
                                 {item?.firstName} {item?.lastName}
                                 {","}
-                                {item?.streetAddress}, {item?.city}, {item?.state} {item?.zip},{" "}
+                                <br />
+                                {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
                                 {item?.country}
-                                Supriya Raj
-                                1833 Bel Meadow Drive, Fontana, California 92335, USA
+                                {/* Supriya Raj
+                                1833 Bel Meadow Drive, Fontana, California 92335, USA */}
                             </div>
-                        ))} */}
-                        <div
+                        ))}
+                        {/* <div
                             className={orderStyle.proNameText}
                             style={{ marginLeft: 50, marginTop: 10 }}
                         >
                             Supriya Raj
                             <br />
                             1833 Bel Meadow Drive, Fontana, California 92335, USA
-                        </div>
+                        </div> */}
                     </>
                 </div>
                 <div className={customerStyle.infoCardStyle}>
@@ -630,25 +632,26 @@ export const CustomersDetails = () => {
                                 Shipping Address
                             </p>
                         </div>
-                        {/* {customerDetails?.addresses?.map((item) => (
+                        {customerDetails?.shippingAddress?.map((item) => (
                             <div
                                 className={orderStyle.proNameText}
                                 style={{ marginLeft: 50, marginTop: 10 }}
                             >
-                                {item?.firstName} {item?.lastName}
+                                {item?.companyName} {item?.lastName}
                                 {","}
-                                {item?.streetAddress}, {item?.city}, {item?.state} {item?.zip},{" "}
+                                <br />
+                                {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
                                 {item?.country}
                             </div>
-                        ))} */}
-                        <div
+                        ))}
+                        {/* <div
                             className={orderStyle.proNameText}
                             style={{ marginLeft: 50, marginTop: 10 }}
                         >
                             Supriya Raj
                             <br />
                             1833 Bel Meadow Drive, Fontana, California 92335, USA
-                        </div>
+                        </div> */}
                     </>
                 </div>
             </div>
@@ -744,10 +747,10 @@ export const CustomersDetails = () => {
                     </div>
                     <div className={customerStyle.actionStyle}>Action</div>
                 </div>
-                {Data && Data?.length > 0 ? (
+                {customerDetailOrders && customerDetailOrders?.length > 0 ? (
                     <>
                         <div>
-                            {Data?.map((item, index) => {
+                            {customerDetailOrders?.map((item, index) => {
                                 return (
                                     <div
                                         className={productStyle.info}
@@ -758,26 +761,26 @@ export const CustomersDetails = () => {
                                             className={orderStyle.orderMainStyle}
                                             style={{ color: "#1D1F2C" }}
                                         >
-                                            {item?.order_id}
+                                            {item?._id}
                                         </div>
                                         <div className={customerStyle.productMainStyle}>
                                             <img
                                                 width={40}
                                                 height={40}
-                                                src={item.order_items?.productDetails[0]?.featuredImage}
+                                                src={item?.productDetails[0]?.featuredImage}
                                                 alt="Featured"
                                             />
                                             <div>
                                                 <span style={{ marginLeft: 5, color: "#1D1F2C" }}>
-                                                    {item.order_items?.productDetails[0]?.name}
+                                                    {item?.productDetails[0]?.productName}
                                                 </span>
                                                 <br />
-                                                {item.order_items?.productDetails.length > 1 ? (
+                                                {item?.productDetails?.length > 1 ? (
                                                     <p
                                                         style={{ marginLeft: 5 }}
                                                         className={productStyle.description}
                                                     >
-                                                        +{item.order_items?.productDetails.length - 1} Other
+                                                        +{item?.productDetails?.length - 1} Other
                                                         Products
                                                     </p>
                                                 ) : null}
@@ -788,7 +791,7 @@ export const CustomersDetails = () => {
                                             className={orderStyle.dateStyle}
                                             style={{ color: "#667085" }}
                                         >
-                                            {formatDate(item?.order_date)}
+                                            {formatDate(item?.createdAt)}
                                         </div>
                                         <div
                                             className={productStyle.dropdownStyle}
@@ -802,7 +805,7 @@ export const CustomersDetails = () => {
                                             className={orderStyle.paymentStyle}
                                             style={{ color: "#667085", }}
                                         >
-                                            {item?.payment_method}
+                                            {item?.payment?.type}
                                         </div>
                                         <div className={productStyle.dropdownStyle} />
                                         <div
@@ -846,18 +849,28 @@ export const CustomersDetails = () => {
                                                                     : "#1A9882",
                                                 }}
                                             >
-                                                {item?.status}
+                                                {item?.status === 'NEW' ? 'New' : item?.status === 'PROCCESSING' ? 'Processing' : 'Shipped'}
                                             </span>
                                         </div>
                                         <div className={productStyle.dropdownStyle} />
                                         <div className={customerStyle.actionStyle}>
-                                            <div
-                                                onClick={() =>
-                                                    navigate(`/orders/Orders/OrdersDetails/${item?._id}`)
-                                                }
-                                            >
-                                                <ViewIcon />
-                                            </div>
+                                            {item?.orderType === 'Made to orders' ? (
+                                                <div
+                                                    onClick={() =>
+                                                        navigate(`/orders/MadeToOrders/MadeToOrderDetails/${item?._id}`)
+                                                    }
+                                                >
+                                                    <ViewIcon />
+                                                </div>
+                                            ) : (
+                                                <div
+                                                    onClick={() =>
+                                                        navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/${item?._id}`)
+                                                    }
+                                                >
+                                                    <ViewIcon />
+                                                </div>
+                                            )}
                                             <div
                                                 style={{ marginLeft: 12 }}
                                                 onClick={() => openDeleteModal(item?._id)}
