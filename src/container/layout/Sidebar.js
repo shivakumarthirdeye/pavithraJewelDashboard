@@ -2,18 +2,26 @@ import React, { useEffect, useState } from 'react';
 import Styles from './layout.module.css'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CategoryInActive, DashboardActive, SettingIcon, Drop, ProductInActive, OrdersInActive, CustomersInActive, AppearanceInActive, Notification, CouponIcon, CountryIcon } from '../../svg';
+import { useDispatch, useSelector } from 'react-redux';
+import { getNotification } from '../../redux/notificationSlice';
 
 
 const Sidebar = ({ children }) => {
+    const dispatch = useDispatch()
     const navigate = useNavigate();
     const location = useLocation();
     const [path, setPath] = useState('');
     const [subpath, setSubpath] = useState('');
     const pathname = location.pathname.split('/')[1];
     const subpathname = location.pathname.split('/')[2];
+    const { notificationData } = useSelector((state) => state.notification)
 
+    const notificationCount = notificationData?.data?.unReadedNotifications || 0
 
+    useEffect(() => {
+        dispatch(getNotification())
 
+    }, [dispatch])
 
     useEffect(() => {
         setPath(pathname)
@@ -252,16 +260,61 @@ const Sidebar = ({ children }) => {
                         }
                     </div>
                 </div>
-                <div onClick={() => navigate('/notification/Notifications')} className={path === 'notification' ? `${Styles.width} ${Styles.active}` : Styles.width}>
+                <div
+                    onClick={() => navigate('/notification/Notifications')}
+                    className={path === 'notification' ? `${Styles.width} ${Styles.active}` : Styles.width}
+                >
                     <div>
                         {path === 'notification' ?
                             (
-                                <div style={{ width: 30, marginTop: 5 }}>
+                                <div style={{ width: 30, marginTop: 5, position: 'relative' }}>
+                                    {notificationCount > 0 &&
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: -5,
+                                            right: -2,
+                                            background: '#fff',
+                                            color: '#161515',
+                                            fontSize: 10,
+                                            borderRadius: '50%',
+                                            minWidth: 15,
+                                            minHeight: 15,
+                                            textAlign: 'center',
+                                            zIndex: 1,
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            // padding:5
+                                        }}
+                                        >{notificationCount}
+                                        </div>
+                                    }
                                     <Notification color='#fff' outline='#fff' />
                                 </div>
                             )
                             :
-                            <div style={{ width: 30, marginTop: 5 }}>
+                            <div style={{ width: 30, marginTop: 5, position: 'relative' }}>
+                                {notificationCount > 0 &&
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: -5,
+                                        right: -2,
+                                        background: 'red',
+                                        color: 'white',
+                                        fontSize: 10,
+                                        borderRadius: '50%',
+                                        minWidth: 15,
+                                        minHeight: 15,
+                                        textAlign: 'center',
+                                        zIndex: 1,
+                                        display: 'flex',
+                                        justifyContent: 'center',
+                                        alignItems: 'center',
+                                        // padding:5
+                                    }}
+                                    >{notificationCount}
+                                    </div>
+                                }
                                 <Notification outline='#858D9D' color='#858D9D' />
                             </div>
                         }

@@ -80,7 +80,7 @@ export const CustomerReview = () => {
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
-                    <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/Orders/OrdersDetails/:id')}>
+                    <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders')}>
                         <div className={productStyle.addcategoryText}>Back to details</div>
                     </div>
                 </div>
@@ -101,10 +101,10 @@ export const CustomerReview = () => {
                                 {customerReviewsData?.map((item, index) => (
                                     <div className={orderStyle.productCard}>
                                         <div className={orderStyle.productsInfo} key={index}>
-                                            <img src={item?.productId?.featurerdImage[0]} alt='' className={orderStyle.productImage} />
+                                            <img src={item?.productId?.featurerdImage} alt='' className={orderStyle.productImage} />
                                             <div style={{ marginLeft: 20 }}>
                                                 <h3 className={orderStyle.productHeading}>{item?.productId?.productName}</h3>
-                                                <p className={orderStyle.productPrice}>₹{item?.productId?.basePrice}</p>
+                                                {/* <p className={orderStyle.productPrice}>₹{item?.productId?.basePrice}</p> */}
                                             </div>
                                         </div>
                                         <div className={orderStyle.reviewLine} />

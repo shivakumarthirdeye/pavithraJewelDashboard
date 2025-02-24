@@ -17,8 +17,8 @@ import Toastify from '../../helper/Toastify';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { unwrapResult } from '@reduxjs/toolkit';
-import { addOfferbanner } from '../../redux/appearanceSlice';
-import { useDispatch } from 'react-redux';
+import { addOfferbanner, getOfferbanner } from '../../redux/appearanceSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
@@ -35,6 +35,12 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function OffersBanner() {
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const { offerBannerData } = useSelector((state) => state.appearance);
+    const viewOfferBanner = offerBannerData?.data;
+
+    React.useEffect(() => {
+        dispatch(getOfferbanner())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         title: yup.string().required("Title is required"),
@@ -53,7 +59,8 @@ export default function OffersBanner() {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             title: '',
@@ -68,6 +75,19 @@ export default function OffersBanner() {
         }
 
     })
+
+    React.useEffect(() => {
+        if (viewOfferBanner) {
+            setValues({
+                title: viewOfferBanner?.title,
+                subtitle: viewOfferBanner?.subtitle,
+                image: viewOfferBanner?.image,
+                buttonText: viewOfferBanner?.buttonText,
+                buttonLink: viewOfferBanner?.buttonLink,
+            })
+        }
+    }, [viewOfferBanner, setValues])
+
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addOfferbanner(value))
@@ -221,22 +241,22 @@ export default function OffersBanner() {
                                                 Drag and drop image here, or click add image
                                             </p>
                                         </div>
-                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                            <input
-                                                type="file"
-                                                accept="image/*"
-                                                id="imageFile"
-                                                style={{ display: 'none' }}
-                                                onChange={handleImageChange}
-                                            />
-                                            <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                Add Image
-                                            </label>
-                                        </div>
+
                                     </>
                                 )
                                 }
-
+                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        id="bannerImageFile"
+                                        style={{ display: 'none' }}
+                                        onChange={handleImageChange}
+                                    />
+                                    <label htmlFor="bannerImageFile" className={productStyle.uploadBox}>
+                                        Add Image
+                                    </label>
+                                </div>
                             </div>
                         </div>
                         {

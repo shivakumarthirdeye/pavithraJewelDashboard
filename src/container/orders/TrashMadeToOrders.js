@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import orderStyle from './orders.module.css';
 import productStyle from '../../container/product/product.module.css'
-import { DatePickerIcon, Drop, ExportIcon,  RevertBackIcon, SearchIcon,  } from '../../svg';
+import { DatePickerIcon, Drop, ExportIcon, RevertBackIcon, SearchIcon, } from '../../svg';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteOrders, getAllOrdersList, setFilterValues, getTrashOrders } from '../../redux/ordersSlice';
+import { deleteOrders, getAllOrdersList, setFilterValues, getTrashOrders, revertOrders, getAllOrderExport } from '../../redux/ordersSlice';
 import { Box, CircularProgress, Pagination } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
 import * as XLSX from 'xlsx';
@@ -22,15 +22,15 @@ export const TrashMadeToOrders = () => {
     const dispatch = useDispatch();
     const { trashOrdersData, filterOptions, isLoading, isRefresh, } = useSelector((state) => state.orders);
 
-    console.log('trashOrdersData',trashOrdersData);
-    
+    console.log('trashOrdersData', trashOrdersData);
+
     const [search, setSearch] = useState('');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [datas, setData] = useState([]);
     const [selectedDate, setSelectedDate] = useState(null);
     const [order, setOrder] = useState('asc')
 
-    
+
     const calculateShowingRange = () => {
         const start = (trashOrdersData?.currentPage - 1) * trashOrdersData.limit + 1;
         const end = Math.min(
@@ -66,14 +66,11 @@ export const TrashMadeToOrders = () => {
         setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
         dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
     };
-    useEffect(() => {
-        dispatch(setFilterValues({ orderType: 'Made to orders' }))
-    }, [dispatch])
 
     useEffect(() => {
         const getAllCategories = async () => {
             try {
-                await dispatch(getTrashOrders(filterOptions));
+                await dispatch(getTrashOrders({ ...filterOptions, orderType: 'Made to orders' }));
             } catch (error) {
                 console.log(error);
             }
@@ -82,17 +79,9 @@ export const TrashMadeToOrders = () => {
     }, [dispatch, filterOptions, isRefresh]);
 
 
-    //Delete User
-    const openDeleteModal = (data) => {
-        setData(data);
-        setIsDeleteModalOpen(true);
-    };
-    const closeDeleteModal = () => {
-        setIsDeleteModalOpen(false);
-    };
 
-    const deletedData = (value) => {
-        dispatch(deleteOrders(value));
+    const RevertBackOrders = (value) => {
+        dispatch(revertOrders(value));
     };
 
 
@@ -108,23 +97,28 @@ export const TrashMadeToOrders = () => {
 
     const exportToExcel = async () => {
         // console.log(transaction)
+        const data = 'orderType=Made to orders&isTrashed=true'
+        const result = await dispatch(getAllOrderExport(data)).unwrap()
+        console.log('result', result);
 
-        const result = await dispatch(getAllOrdersList()).unwrap()
         const excelData = result?.data?.map((item) => ({
-            Order_id: item?.order_id || '_',
-            OrderItem_Name: item?.order_items[0]?.name || '_',
-            OrderItem_Quantity: item?.order_items[0]?.units || '_',
-            Customer: item?.customer?.name || '-',
+            Order_id: item?._id || '_',
+            OrderItem_Name: item?.productDetails[0]?.productName || '_',
+            // OrderItem_Quantity: item?.productDetails[0]?.units || '_',
+            Customer: item?.customer?.firstName || '-',
             Email: item?.customer?.email || '-',
             Grand_Total: item?.grandTotal || '-',
-            Payment_Mode: item?.payment_method || '-',
-            Date: moment(item?.order_date).format('MMM DD,YYYY, HH:MMA'),
-            Status: item?.status || '-',
+            Advance_Paid: item?.advancePaid || '-',
+            Payment_id: item?.payment?.id || '-',
+            Payment_status: item?.payment?.status || '-',
+            Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
+            Status: 'Delivered',
+            Order_type: item?.orderType || '-',
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-        XLSX.writeFile(workbook, 'orders.xlsx');
+        XLSX.writeFile(workbook, 'TrashMadeToOrders.xlsx');
     };
     //Filtered the data from maindata and search data
     const dateContent = (
@@ -195,7 +189,7 @@ export const TrashMadeToOrders = () => {
                     <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "createdAt" } })}> <Drop color="#858D9D" /> </div>
                     <div className={orderStyle.customerStyle}>Customer</div>
                     <div className={orderStyle.totalStyle}>Total </div>
-                    <div className={productStyle.dropdownStyle}onClick={(e) => handleOpenMenu({ target: { value: "price" } })}> <Drop color="#858D9D" /> </div>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "price" } })}> <Drop color="#858D9D" /> </div>
                     <div className={orderStyle.paymentStyle}>Payment</div>
                     <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "payment" } })}> <Drop color="#858D9D" /> </div>
                     <div className={orderStyle.status} style={{ width: '14%' }}>Status</div>
@@ -222,7 +216,7 @@ export const TrashMadeToOrders = () => {
                                                         <span >{item?.productDetails[0]?.productName && item.productDetails[0]?.productName.length > 10 ? `${item?.productDetails[0]?.productName.substring(0, 10)}...` : item?.productDetails[0]?.productName}</span>
                                                         {/* <span style={{ marginLeft: 5, color: '#1D1F2C' }}>{item?.order_items[0]?.name}</span> */}
                                                         <br />
-                                                        <p className={productStyle.description}>+{item?.productDetails?.length-1} Other Products</p>
+                                                        <p className={productStyle.description}>+{item?.productDetails?.length - 1} Other Products</p>
                                                     </div>
                                                 </div>
                                                 {/* <div className={productStyle.dropdownStyle}/> */}
@@ -237,11 +231,13 @@ export const TrashMadeToOrders = () => {
                                                     <span className={productStyle.description} style={{ color: '#667085' }}>{item?.customer?.email && item?.customer?.email?.length > 15 ? `${item?.customer?.email.substring(0, 15)}...` : item?.customer?.email}</span>
                                                 </div>
                                                 <div className={orderStyle.totalStyle} >
-                                                    {item?.grandTotal}
+                                                    ₹{item?.grandTotal}
+                                                    <br />
+                                                    <span className={orderStyle.adPayment}>Ad: ₹{item?.advancePaid}  </span>
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={orderStyle.paymentStyle} style={{ color: '#667085' }}>
-                                                    {item?.payment?.type}
+                                                    {item?.payment?.status}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div
@@ -277,8 +273,8 @@ export const TrashMadeToOrders = () => {
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={orderStyle.action}>
                                                     <div
-                                                    // onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails`)}
-                                                    // onClick={() => navigate(`/orders/Orders/OrdersDetails/${item._id}`)}
+                                                        // onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails`)}
+                                                        onClick={() => RevertBackOrders(item?._id)}
                                                     >
                                                         <RevertBackIcon />
                                                     </div>
@@ -334,14 +330,7 @@ export const TrashMadeToOrders = () => {
                 )}
 
             </div >
-            <DeleteModal
-                heading={"Delete Order"}
-                closeModal={closeDeleteModal}
-                open={isDeleteModalOpen}
-                data={datas}
-                description={'Do you want to delete this order? '}
-            // handleSubject={handleSubject}
-            />
+
         </div >
     )
 }

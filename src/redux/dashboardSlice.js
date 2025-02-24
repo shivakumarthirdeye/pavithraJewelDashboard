@@ -6,13 +6,10 @@ const initialState = {
     isLoading: false,
     isRefresh: false,
     updateGoldRateData: {},
+    statisticsData: {},
     filterOptions: {
-        search: "",
-        page: 1,
-        status: '',
-        order: '',
-        sortBy: '',
-        limit: 10
+        filter: "",
+        
     },
     goldRateData: {},
     errorMsg: "",
@@ -49,6 +46,22 @@ export const getGoldRate = createAsyncThunk('getGoldRate', async (body, { reject
     }
 }
 )
+export const getStatistics = createAsyncThunk('getStatistics', async (body, { rejectWithValue, dispatch }) => {
+    try {
+        const queryParams = new URLSearchParams(body).toString();
+        const { data, status } = await api.getStatistics(queryParams);
+        if (status === 200) {
+            //get categories data
+            dispatch(setStatistics(data))
+            // dispatch(setRefresh())
+        }
+        return data
+    } catch (err) {
+        // Toastify.error(err.response.data.message)
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
 
 export const dashboardSlice = createSlice({
     name: "dashboard",
@@ -60,6 +73,9 @@ export const dashboardSlice = createSlice({
         setUpdateGoldRate: (state, action) => {
             state.updateGoldRateData = action.payload
         },
+        setStatistics: (state, action) => {
+            state.statisticsData = action.payload
+        },
         setRefresh: (state) => {
             state.isRefresh = !state.isRefresh
         },
@@ -69,7 +85,7 @@ export const dashboardSlice = createSlice({
     },
     extraReducers: (builder) => {
 
-        // Categories
+        // Gold Rate
         builder.addCase(getGoldRate.pending, (state) => {
             state.isLoading = true
             state.isError = false
@@ -83,6 +99,20 @@ export const dashboardSlice = createSlice({
             state.errorMsg = action.payload
         })
 
+        //Statistics
+        builder.addCase(getStatistics.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getStatistics.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.statisticsData = action.payload
+        })
+        builder.addCase(getStatistics.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+
     }
 })
 
@@ -91,6 +121,7 @@ export const {
     setGoldRate,
     setRefresh,
     setFilterValues,
+    setStatistics
 } = dashboardSlice.actions
 
 export default dashboardSlice.reducer;

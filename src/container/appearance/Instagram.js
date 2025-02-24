@@ -15,10 +15,10 @@ import { AddIcon, ImageIcon } from '../../svg';
 import api from '../../helper/Api';
 import Toastify from '../../helper/Toastify';
 import axios from 'axios';
-import { addInstagram } from '../../redux/appearanceSlice';
+import { addInstagram, getInstagram } from '../../redux/appearanceSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
@@ -34,6 +34,13 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function Instagram() {
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const { instagramData } = useSelector((state) => state.appearance);
+    const viewInsta = instagramData?.data?.instagram;
+
+
+    React.useEffect(() => {
+        dispatch(getInstagram())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         instagram: yup.array().of(
@@ -53,7 +60,8 @@ export default function Instagram() {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             instagram: [
@@ -71,7 +79,17 @@ export default function Instagram() {
 
     })
 
-    console.log('values----------------------', values);
+    React.useEffect(() => {
+        if (viewInsta) {
+            setValues({
+                instagram: viewInsta.map(item => ({
+                    image1: item?.image1 || '',
+                    image2: item?.image2 || '',
+                    buttonLink: item?.buttonLink || '', 
+                }))
+            });
+        }
+    }, [viewInsta, setValues]);
 
     const handleSubject = async (value) => {
         try {

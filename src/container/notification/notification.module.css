@@ -119,10 +119,36 @@
 
 .notificationList {
     max-height: 500px;
-    overflow-y: hidden;
-
+    overflow: hidden;
+    scrollbar-gutter: stable;
+    /* position: fixed; */
+    overflow-y: auto;
 }
 
+.notificationList::-webkit-scrollbar {
+    background-color: transparent;
+    width: 0px;
+    position: absolute;
+    top: 0;
+    right: 0;
+}
+
+.notificationList:hover {
+    &::-webkit-scrollbar {
+        width: 5px;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background-color: #1D1F2C;
+        border-radius: 2px;
+        position: absolute;
+        top: 0;
+        right: 0;
+    }
+}
 .notificationItem {
     display: flex;
     padding: 10px;

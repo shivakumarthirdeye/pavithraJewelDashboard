@@ -6,13 +6,21 @@ import { Drop, Dropdown, Notification } from '../../svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { setLogOut } from '../../redux/userSlice';
 import customerStyle from '../customer/customer.module.css'
+import { getNotification } from '../../redux/notificationSlice';
 
 
 const Header = ({ children }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const { user } = useSelector((state) => state.user)
-    console.log('user', user);
+    const {notificationData} = useSelector((state) => state.notification)
+
+    const notificationCount = notificationData?.data?.unReadedNotifications || 0
+
+    useEffect(() => {
+        dispatch(getNotification())
+
+    }, [dispatch])
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -73,7 +81,28 @@ const Header = ({ children }) => {
             <div className={layoutStyles.headermenu}>
 
                 <div className={layoutStyles.menuStyle}>
-                    <div>
+                    <div onClick={() => navigate('/notification/Notifications')} style={{position:'relative'}}>
+                    {notificationCount > 0 &&
+                                        <div style={{
+                                            position: 'absolute',
+                                            top: -5,
+                                            right: -2,
+                                            background: 'red',
+                                            color: 'white',
+                                            fontSize: 10,
+                                            borderRadius: '50%',
+                                            minWidth: 15,
+                                            minHeight: 15,
+                                            textAlign: 'center',
+                                            zIndex: 1,
+                                            display: 'flex',
+                                            justifyContent: 'center',
+                                            alignItems: 'center',
+                                            // padding:5
+                                        }}
+                                        >{notificationCount}
+                                        </div>
+                                    }
                         <Notification outline='#858D9D' color='#858D9D' />
                     </div>
                     <Divider orientation="vertical" variant="middle" flexItem sx={{ marginLeft: '10px', marginRight: '10px' }} />

@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import orderStyle from './orders.module.css';
 import productStyle from '../../container/product/product.module.css'
 import SwitchTab from '../../component/SwicthTab';
-import { DatePickerIcon, DeleteIcon, DeliveredIcon, Drop, Dropdown, ExportIcon, FilterIcon, ForwardIcon, NewIcon, ProcessingIcon, SearchIcon, ShippingIcon, ViewIcon } from '../../svg';
+import { DatePickerIcon, DeleteIcon, DeliveredIcon, Drop, ExportIcon, FilterIcon, NewIcon, ProcessingIcon, SearchIcon, ShippingIcon, ViewIcon } from '../../svg';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteOrders, getOrders, searchOrders, orderStatistics, getAllOrdersList, filterOrder, setFilterValues } from '../../redux/ordersSlice';
+import { deleteOrders, getOrders, orderStatistics, setFilterValues, getAllOrderExport } from '../../redux/ordersSlice';
 import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
-import Calendar from 'react-calendar';
 import * as XLSX from 'xlsx';
 import moment from 'moment'
 import ErrorPage from '../../component/ErrorPage';
@@ -27,10 +26,6 @@ export const ReadyToShipOrders = () => {
 
     //Main data
     console.log('ordersData==================', ordersData);
-    console.log('ordersorderStatisticsDataData==================', orderStatisticsData);
-
-
-
 
     const [value, setValue] = useState([
         { val: "All Date", id: 0 },
@@ -57,10 +52,6 @@ export const ReadyToShipOrders = () => {
         setSelected(id.val);
     };
 
-
-    const handleSubject = (value) => {
-        dispatch(deleteOrders(value))
-    }
 
     const calculateShowingRange = () => {
         const start = (ordersData?.currentPage - 1) * ordersData.limit + 1;
@@ -101,15 +92,13 @@ export const ReadyToShipOrders = () => {
         setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
         dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
     };
-    useEffect(() => {
-        dispatch(setFilterValues({ orderType: 'Ready to ship orders'}))
-    }, [])
+    
 
     useEffect(() => {
         const getAllCategories = async () => {
             try {
                 
-                await dispatch(getOrders(filterOptions));
+                await dispatch(getOrders({ ...filterOptions, orderType: 'Ready to ship orders',}));
             } catch (error) {
                 console.log(error);
             }
@@ -139,28 +128,7 @@ export const ReadyToShipOrders = () => {
 
 
 
-    //Export Functionality
-    // const exportToExcel = async () => {
-    //     // console.log(transaction)
-
-    //     const result = await dispatch(getAllSingleProductList()).unwrap()
-    //     const excelData = result?.data?.map((item) => ({
-    //         Product: item?.name || '_',
-    //         Variations: item?.variations?.length || '_',
-    //         Product_ID: item?.productId || '_',
-    //         Category: item?.category?.name || '-',
-    //         Stock: item?.stockQuantity || '-',
-    //         Sale_Price: item?.salePrice || '-',
-    //         Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
-    //         Status: item?.status || '-',
-    //     }));
-    //     const worksheet = XLSX.utils.json_to_sheet(excelData);
-    //     const workbook = XLSX.utils.book_new();
-    //     XLSX.utils.book_append_sheet(workbook, worksheet, 'Products');
-    //     XLSX.writeFile(workbook, 'products.xlsx');
-    // };
-
-
+    
     const dateContent = (
         <div style={{ width: "300px" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -376,26 +344,31 @@ export const ReadyToShipOrders = () => {
 
     const exportToExcel = async () => {
         // console.log(transaction)
-
-        const result = await dispatch(getAllOrdersList()).unwrap()
+        const data = 'orderType=Ready to ship orders&isTrashed=false'
+        const result = await dispatch(getAllOrderExport(data)).unwrap()
+        console.log('result',result);
+        
         const excelData = result?.data?.map((item) => ({
-            Order_id: item?.order_id || '_',
-            OrderItem_Name: item?.order_items[0]?.name || '_',
-            OrderItem_Quantity: item?.order_items[0]?.units || '_',
-            Customer: item?.customer?.name || '-',
+            Order_id: item?._id || '_',
+            OrderItem_Name: item?.productDetails[0]?.productName || '_',
+            // OrderItem_Quantity: item?.productDetails[0]?.units || '_',
+            Customer: item?.customer?.firstName || '-',
             Email: item?.customer?.email || '-',
             Grand_Total: item?.grandTotal || '-',
-            Payment_Mode: item?.payment_method || '-',
-            Date: moment(item?.order_date).format('MMM DD,YYYY, HH:MMA'),
+            Payment_id: item?.payment?.id || '-',
+            Payment_status: item?.payment?.status || '-',
+            Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
             Status: item?.status || '-',
+            Order_type: item?.orderType || '-',
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-        XLSX.writeFile(workbook, 'orders.xlsx');
+        XLSX.writeFile(workbook, 'readyToShipOrders.xlsx');
     };
 
-
+    
+    
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
@@ -498,6 +471,8 @@ export const ReadyToShipOrders = () => {
                             <>
                                 <div>
                                     {ordersData?.data?.map((item, index) => {
+                                        const arr = item?.status;
+                                        let lastValue = arr?.at(-1); 
                                         return (
                                             <div className={productStyle.info} key={index}>
                                                 <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
@@ -529,7 +504,7 @@ export const ReadyToShipOrders = () => {
                                                     {item?.customer?.firstName}{" "}{item?.customer?.lastName}
                                                     <br />
                                                     {/* <span className={productStyle.description} style={{ color: '#667085' }}>{item?.customer?.email}</span> */}
-                                                    <span className={productStyle.description} style={{ color: '#667085' }}>{item?.customer?.email && item?.customer?.email?.length > 15 ? `${item?.customer?.email.substring(0, 15)}...` : item?.customer?.email}</span>
+                                                    <span className={productStyle.description} style={{ color: '#667085',textTransform:'none' }}>{item?.customer?.email && item?.customer?.email?.length > 15 ? `${item?.customer?.email.substring(0, 15)}...` : item?.customer?.email}</span>
                                                 </div>
                                                 <div className={orderStyle.totalStyle} >
                                                     <div>
@@ -547,9 +522,9 @@ export const ReadyToShipOrders = () => {
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div
                                                     style={{
-                                                        backgroundColor: item?.status === 'NEW'
-                                                            ? "#4A4C561A" : item.status === 'PROCESSING'
-                                                                ? '#F439391A' : item.status === 'DELIVERED'
+                                                        backgroundColor: lastValue?.name === 'NEW'
+                                                            ? "#4A4C561A" : lastValue?.name === 'PROCESSING'
+                                                                ? '#F439391A' : lastValue?.name === 'DELIVERED'
                                                                     ? '#EAF8FF' : '#3250FF1A',
                                                         width: '15%',
                                                         borderRadius: 10,
@@ -573,14 +548,14 @@ export const ReadyToShipOrders = () => {
                                                             letterSpacing: 0.1,
                                                             textAlign: 'center',
                                                             // textTransform: 'capitalize',
-                                                            color: item?.status === 'NEW'
-                                                                ? "#4A4C56" : item.status === 'PROCESSING'
-                                                                    ? '#F86624' : item.status === 'DELIVERED'
+                                                            color: lastValue?.name === 'NEW'
+                                                                ? "#4A4C56" : lastValue?.name === 'PROCESSING'
+                                                                    ? '#F86624' : lastValue?.name === 'DELIVERED'
                                                                         ? '#2BB2FE' : '#3250FF',
                                                         }}
-                                                    >{item?.status === 'NEW'
-                                                        ? "New" : item.status === 'PROCESSING'
-                                                            ? 'Processing' : item.status === 'DELIVERED'
+                                                    >{lastValue?.name === 'NEW'
+                                                        ? "New" : lastValue?.name === 'PROCESSING'
+                                                            ? 'Processing' : lastValue?.name === 'DELIVERED'
                                                                 ? 'Delivered' : 'Shipped'}
                                                     </span>
                                                 </div>

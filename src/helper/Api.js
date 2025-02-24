@@ -126,6 +126,9 @@ class Api {
     getGoldRate = (data) => {
         return this.init().get('/admin/goldrate', data)
     }
+    getStatistics = (data) => {
+        return this.init().get(`/admin/dashboard/get-statistics?${data}`, data)
+    }
 
     // get Products
     getProducts = (data) => {
@@ -161,14 +164,20 @@ class Api {
     getTrashOrders = (data) => {
         return this.init().get(`/admin/trashorder?${data}`, data)
     }
+    getAllOrderExport = (data) => {
+        return this.init().get(`/admin/getAllOrderExport?${data}`, data)
+    }
     getOrdersDetails = (data) => {
         return this.init().get(`/admin/orders/${data}`, data)
     }
     deleteOrders = (data) => {        
         return this.init().put(`/admin/trashorder/${data.value}`, data)
     }
+    revertOrders = (data) => {        
+        return this.init().put(`/admin/revert-deleted-order/${data}`, data)
+    }
     getCustomerReviews = (data) => {
-        console.log('data=============================',data);
+        // console.log('data=============================',data);
         
         return this.init().get(`/admin/reviews/${data}`, data)
     }
@@ -178,8 +187,13 @@ class Api {
     editReviews = ({url,val}) => {
         return this.init().put(`/admin/reviews/${url}`, val)
     }
-    approveReject = ({url, val}) => {
-        return this.init().put(`/admin/rejectorapprove/${val}`, url);  
+    approveReject = (url) => {
+        return this.init().put(`/admin/rejectorapprove/${url?.val}`, url?.url);  
+    } 
+    updateStatus = (data) => {
+        console.log('url',data);
+        
+        return this.init().put(`/admin/updateOrderstatus/${data?.id}`, data?.val);  
     } 
 
     // Customer 
@@ -296,6 +310,9 @@ class Api {
     //getNotification
     getNotification = () => {
         return this.init().get('/admin/getAllNotifications')
+    }
+    markAsRead = (data) => {
+        return this.init().put(`/admin/readedNotification/${data}`)
     }
 
 }

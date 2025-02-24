@@ -15,6 +15,8 @@ const initialState = {
     approveRejectData: {},
     orderStatisticsData: {},
     editPendingPriceData: {},
+    orderExportData: {},
+    updateStatusData: {},
     filterOptions: {
         status: "",
         search: "",
@@ -36,7 +38,6 @@ const initialState = {
 export const orderStatistics = createAsyncThunk('orderStatistics', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.orderStatistics(body);
-        // console.log('dasta=======>',body);
         
         if (status === 200) {
                 //get categories data
@@ -197,14 +198,30 @@ export const editPendingPrice = createAsyncThunk('editPendingPrice', async ({url
 }
 )
 export const approveReject = createAsyncThunk('approveReject', async ({ url, val }, { rejectWithValue, dispatch }) => {
-    console.log('url:', url);  // Check if URL is properly constructed
-    console.log('value:', val);  // Ensure the value is correct
+    
     try {
-        const { data, status } = await api.approveReject(url, val);  // Make sure url and val are passed correctly
+        const { data, status } = await api.approveReject({url, val});  // Make sure url and val are passed correctly
 
         if (status === 200) {
             dispatch(setApproveReject({ url, val }));
-            Toastify.success(data.data);
+            Toastify.success('Status updated successfully');
+            dispatch(setRefresh());
+        }
+        return data.data;
+    } catch (err) {
+        Toastify.error(err.response?.data?.message || "Something went wrong.");
+        return rejectWithValue(err.response?.data?.message || "Something went wrong.");
+    }
+});
+export const updateStatus = createAsyncThunk('updateStatus', async ({ id, val }, { rejectWithValue, dispatch }) => {
+    console.log('valuessssssssss=======:', val);  // Check if URL is properly constructed
+    console.log('idsssssssssssssssss=========:', id);  // Ensure the value is correct
+    try {
+        const { data, status } = await api.updateStatus({val, id});  // Make sure url and val are passed correctly
+
+        if (status === 200) {
+            dispatch(setUpdateStatus(data.data));
+            Toastify.success('Status updated successfully');
             dispatch(setRefresh());
         }
         return data.data;
@@ -221,6 +238,21 @@ export const getTrashOrders = createAsyncThunk('getTrashOrders', async (body, { 
         if (status === 200) {
                 //get categories data
                 dispatch(setTrashOrders(data))
+                
+            } 
+            return data
+        } catch (err) {
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
+export const getAllOrderExport = createAsyncThunk('getAllOrderExport', async (body, { rejectWithValue, dispatch }) => {
+    try {
+        const queryParams = new URLSearchParams(body).toString();
+        const { data, status } = await api.getAllOrderExport(queryParams);
+        if (status === 200) {
+                //get categories data
+                dispatch(setAllOrderExport(data))
                 
             } 
             return data
@@ -269,6 +301,12 @@ export const ordersSlice = createSlice({
         },
         setTrashOrders: (state, action) => {
             state.trashOrdersData = action.payload
+        },
+        setAllOrderExport: (state, action) => {
+            state.orderExportData = action.payload
+        },
+        setUpdateStatus: (state, action) => {
+            state.updateStatusData = action.payload
         },
     },
     extraReducers: (builder) => {
@@ -344,7 +382,9 @@ export const {
     setStatistics,
     setFilterValues,
     setEditPendingPrice,
-    setTrashOrders
+    setTrashOrders,
+    setAllOrderExport,
+    setUpdateStatus
  } = ordersSlice.actions
 
 export default ordersSlice.reducer;

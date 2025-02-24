@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import orderStyle from './orders.module.css';
 import productStyle from '../../container/product/product.module.css'
-import { CopyIcon, Customer, DatePickerIcon, DownloadIcon, EditIcon, EditReviewIcon, EmailIcon, ExportBlackIcon, ForwardIcon, HomeIcon, IDIcon, IncomeIcon, InfoIcon, InfoReviewIcon, InvoiceIcon, LocationIcon, Orders, PayIcon, PaymentIcon, PhoneIcon, ShipingIcon, ShipMethodIcon } from '../../svg';
+import { CopyIcon, Customer, DatePickerIcon, DownloadIcon, EditBlackIcon, EditIcon, EditReviewIcon, EmailIcon, ExportBlackIcon, ForwardIcon, HomeIcon, IDIcon, IncomeIcon, InfoIcon, InfoReviewIcon, InvoiceIcon, LocationIcon, Orders, PayIcon, PaymentIcon, PhoneIcon, ShipingIcon, ShipMethodIcon } from '../../svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrdersDetails, getCustomerReviews } from '../../redux/ordersSlice';
+import { getOrdersDetails, getCustomerReviews, updateStatus } from '../../redux/ordersSlice';
 import PreviewModal from '../../component/PreviewModal';
 import EditPriceModal from './EditPriceModal';
 import { formselect } from '../../MaterialsUI';
@@ -17,8 +17,9 @@ export const MadeToOrderDetails = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
-    const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
+    const { ordersDetailsData, isRefresh,updateStatusData } = useSelector((state) => state.orders);
     console.log('ordersDetailsData', ordersDetailsData);
+    // console.log('updateStatusData', updateStatusData);
 
 
     useEffect(() => {
@@ -28,7 +29,10 @@ export const MadeToOrderDetails = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditPriceModalOpen, setIsEditPriceModalOpen] = useState(false);
     const [datas, setData] = useState([]);
-
+    const [copied, setCopied] = useState(false);
+    const [copiedPhone, setCopiedPhone] = useState(false);
+    const [copiedPaymentid, setCopiedPaymentId] = useState(false);
+    const [copiedShippingId, setCopiedShippingId] = useState(false);
 
 
     const openModal = (data) => {
@@ -61,20 +65,73 @@ export const MadeToOrderDetails = () => {
     };
 
     const {
-        handleSubmit,
-        errors,
-        values,
-        touched,
-        handleChange,
+        setFieldValue,
+        values
     } = useFormik({
         initialValues: {
-            productName: "",
+            status: "",
         },
         onSubmit: async (values) => {
-            // handleSubject(values)
+            // dispatch(updateStatus({ values, id }));
         }
+    });
 
-    })
+    const handleStatusChange = (event) => {
+        const selectedStatus = event.target.value;
+        if (selectedStatus) {
+            setFieldValue("status", selectedStatus); // Update Formik state
+            dispatch(updateStatus({ val: { status: selectedStatus } , id: id, })); // Trigger API call
+        }
+    };
+
+
+
+    const handleCopyEmail = () => {
+        const email = ordersDetailsData?.data?.userId?.email;
+        if (email) {
+            navigator.clipboard.writeText(email)
+                .then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const handleCopyPhone = () => {
+        const phone = ordersDetailsData?.data?.userId?.phone
+        if (phone) {
+            navigator.clipboard.writeText(phone)
+                .then(() => {
+                    setCopiedPhone(true);
+                    setTimeout(() => setCopiedPhone(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const handleCopyPaymentId = () => {
+        const paymentId = ordersDetailsData?.data?.payment?.id
+        if (paymentId) {
+            navigator.clipboard.writeText(paymentId)
+                .then(() => {
+                    setCopiedPaymentId(true);
+                    setTimeout(() => setCopiedPaymentId(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const handleCopyShippingId = () => {
+        const shippingId = ordersDetailsData?.data?.payment?.id
+        if (shippingId) {
+            navigator.clipboard.writeText(shippingId)
+                .then(() => {
+                    setCopiedShippingId(true);
+                    setTimeout(() => setCopiedShippingId(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const arr = ordersDetailsData?.data?.status;
+    const lastValue = arr?.at(-1); 
 
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
@@ -103,7 +160,7 @@ export const MadeToOrderDetails = () => {
                             Customer reviews
                         </div>
                     )} */}
-                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
+                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
                     <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice')}>
@@ -143,11 +200,11 @@ export const MadeToOrderDetails = () => {
                                 </div>
                                 <div
                                     style={{
-                                        backgroundColor: ordersDetailsData?.singleProduct?.productId?.status === 'NEW' ? "#4A4C561A"
-                                            : ordersDetailsData?.singleProduct?.productId?.status === 'PROCESSING' ? '#F439391A'
-                                                : ordersDetailsData?.singleProduct?.productId?.status === 'SHIPPED' ? '#EAF8FF'
-                                                    : ordersDetailsData?.singleProduct?.productId?.status === "DELIVERED" ? "#E9FAF7"
-                                                        : ordersDetailsData?.singleProduct?.productId?.status === "CONFIRMED" ? "#e7f9bb"
+                                        backgroundColor: lastValue?.name === 'NEW' ? "#4A4C561A"
+                                            : lastValue?.name === 'PROCESSING' ? '#F439391A'
+                                                : lastValue?.name === 'SHIPPED' ? '#EAF8FF'
+                                                    : lastValue?.name === "DELIVERED" ? "#E9FAF7"
+                                                        : lastValue?.name === "CONFIRMED" ? "#e7f9bb"
                                                             : '#B93ED71A',
                                         // width: '35%',
                                         borderRadius: 10,
@@ -168,18 +225,16 @@ export const MadeToOrderDetails = () => {
                                             fontWeight: '400',
                                             letterSpacing: 0.1,
                                             textAlign: 'center',
-                                            color: ordersDetailsData?.singleProduct?.productId?.status === 'NEW' ? "#4A4C56"
-                                                : ordersDetailsData?.singleProduct?.productId?.status === 'PROCESSING' ? '#F86624'
-                                                    : ordersDetailsData?.singleProduct?.productId?.status === 'SHIPPED' ? '#2BB2FE'
-                                                        : ordersDetailsData?.singleProduct?.productId?.status === "DELIVERED" ? "#1A9882"
-                                                            : ordersDetailsData?.singleProduct?.productId?.status === "CONFIRMED" ? "#97d30c"
+                                            color: lastValue?.name === 'NEW' ? "#4A4C56"
+                                                : lastValue?.name === 'PROCESSING' ? '#F86624'
+                                                    : lastValue?.name === 'SHIPPED' ? '#2BB2FE'
+                                                        : lastValue?.name === "DELIVERED" ? "#1A9882"
                                                                 : "#c723ca",
                                         }}
-                                    >{ordersDetailsData?.singleProduct?.productId?.status === 'NEW' ? "New"
-                                        : ordersDetailsData?.singleProduct?.productId?.status === 'PROCESSING' ? 'Processing'
-                                            : ordersDetailsData?.singleProduct?.productId?.status === 'SHIPPED' ? 'Shipped'
-                                                : ordersDetailsData?.singleProduct?.productId?.status === "DELIVERED" ? "Delivered"
-                                                    : ordersDetailsData?.singleProduct?.productId?.status === "CONFIRMED" ? "Confirmed"
+                                    >{lastValue?.name === 'NEW' ? "New"
+                                        : lastValue?.name === 'PROCESSING' ? 'Processing'
+                                            : lastValue?.name === 'SHIPPED' ? 'Shipped'
+                                                : lastValue?.name === "DELIVERED" ? "Delivered"
                                                         : 'Ready to ship'
                                         }</span>
                                 </div>
@@ -218,7 +273,7 @@ export const MadeToOrderDetails = () => {
                                     </div>
                                 </div>
                                 <div className={orderStyle.skuText} >{ordersDetailsData?.singleProduct?.productId?.inventory?.sku}</div>
-                                <div className={orderStyle.qytText}>{ordersDetailsData?.singleProduct?.quantity} pcs <br /> 50gm</div>
+                                <div className={orderStyle.qytText}>{ordersDetailsData?.singleProduct?.quantity} pcs <br /><p> {ordersDetailsData?.singleProduct?.totalWeight}gm</p></div>
                                 <div className={orderStyle.pendingAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice} </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.quantity} </div>
 
@@ -238,8 +293,24 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.data?.gst}%) </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal * ordersDetailsData?.data?.gst / 100}</div>
+                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
+                            </div>
+                            <div className={orderStyle.bottomLineStyle} />
+                            <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.pendingAmountStyle}>Stone charges </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.stoneCharges}</div>
+                            </div>
+                            <div className={orderStyle.bottomLineStyle} />
+                            <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.pendingAmountStyle}>Making charges </div>
+                                <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.makingCharges}%</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -254,10 +325,10 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 18 }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18 }}>₹{ordersDetailsData?.data?.grandTotal}</div>
+                                <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
+                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹{ordersDetailsData?.data?.grandTotal}</div>
                             </div>
-                            {ordersDetailsData?.data?.status === 'NEW' || ordersDetailsData?.data?.status === 'PROCESSING' || ordersDetailsData?.data?.status === 'READY TO SHIP' ? (
+                            {lastValue?.name === 'NEW' || lastValue?.name === 'PROCESSING' || lastValue?.name === 'READY TO SHIP' ? (
                                 <>
                                     <div className={orderStyle.bottomLineStyle} />
                                     <div className={orderStyle.info} >
@@ -272,12 +343,12 @@ export const MadeToOrderDetails = () => {
                                         <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                         <div className={orderStyle.skuText} ></div>
                                         <div className={orderStyle.qytText} style={{ width: '28%', }}>Extra weight: <span style={{ fontWeight: 600, }}>{ordersDetailsData?.data?.extraWeight}g</span></div>
-                                        <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, fontSize: 16, color: '#F92929' }}>Pending Amount</div>
-                                        <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18, }} onClick={() => openEditPriceModal(ordersDetailsData)}>₹{ordersDetailsData?.data?.pendingAmount} <EditIcon /></div>
+                                        <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, color: '#F92929' }}>Pending Amount</div>
+                                        <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }} onClick={() => openEditPriceModal(ordersDetailsData)}>₹{ordersDetailsData?.data?.pendingAmount} <EditBlackIcon /></div>
                                     </div>
                                 </>
                             ) : null}
-                            {ordersDetailsData?.status === 'DELIVERED' || ordersDetailsData?.status === 'SHIPPED' && (
+                            {lastValue?.name === 'DELIVERED' || lastValue?.name === 'SHIPPED' ? (
                                 <>
                                     <div className={orderStyle.bottomLineStyle} />
                                     <div className={orderStyle.info} >
@@ -288,7 +359,7 @@ export const MadeToOrderDetails = () => {
                                         <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, fontSize: 18, color: '#1DB41D' }}>₹{ordersDetailsData?.data?.grandTotal}</div>
                                     </div>
                                 </>
-                            )}
+                            ) : null}
                         </div>
                     </div>
                     <div className={orderStyle.cardWrap}>
@@ -371,10 +442,10 @@ export const MadeToOrderDetails = () => {
                                         <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                     )}
                                     displayEmpty
-                                    defaultValue=''
-                                    name='status'
+                                    defaultValue=""
+                                    name="status"
                                     value={values.status}
-                                    onChange={handleChange}
+                                    onChange={handleStatusChange} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>
                                     <MenuItem value="NEW">New</MenuItem>
@@ -382,7 +453,7 @@ export const MadeToOrderDetails = () => {
                                     <MenuItem value="SHIPPED">Shipped</MenuItem>
                                     <MenuItem value="DELIVERED">Delivered</MenuItem>
                                     <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-                                    <MenuItem value="Ready to ship">Ready to ship</MenuItem>
+                                    <MenuItem value="READY TO SHIP">Ready to ship</MenuItem>
                                 </Select>
                             </div>
                         </>
@@ -404,12 +475,13 @@ export const MadeToOrderDetails = () => {
                                     <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>Email</p>
 
                                 </div>
-                                <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10, textTransform: 'none' }}>
                                     {ordersDetailsData?.data?.userId?.email}
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyEmail}>
                                 <CopyIcon />
+                                {copied && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                         <div className={orderStyle.iconStyle}>
@@ -423,8 +495,9 @@ export const MadeToOrderDetails = () => {
                                     {ordersDetailsData?.data?.userId?.phone}
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPhone}>
                                 <CopyIcon />
+                                {copiedPhone && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                     </div>
@@ -479,8 +552,9 @@ export const MadeToOrderDetails = () => {
                                     {ordersDetailsData?.payment?.id}
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPaymentId}>
                                 <CopyIcon />
+                                {copiedPaymentid && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                         <>
@@ -514,8 +588,9 @@ export const MadeToOrderDetails = () => {
                                     SHP1092311
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20 }} onClick={handleCopyShippingId}>
                                 <CopyIcon />
+                                {copiedShippingId && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                         <>

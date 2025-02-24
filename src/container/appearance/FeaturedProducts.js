@@ -14,7 +14,7 @@ import { CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { addFeaturerdProducts } from '../../redux/appearanceSlice';
+import { addFeaturerdProducts, getFeaturerdProducts } from '../../redux/appearanceSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { getExportProducts, getProducts } from '../../redux/productSlice';
 import { toast } from 'react-toastify';
@@ -32,6 +32,16 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function FeaturedProducts() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { featurerdProductsData } = useSelector(
+        (state) => state.appearance);
+    
+    const viewFeaturedproduct = featurerdProductsData?.data?.products;
+    console.log('viewFeaturedproduct', viewFeaturedproduct);
+    
+    
+    React.useEffect(() => {
+        dispatch(getFeaturerdProducts())
+    }, [dispatch])
 
     const { exportProductsData } = useSelector(
         (state) => state.products);
@@ -66,6 +76,15 @@ export default function FeaturedProducts() {
         }
 
     })
+
+    React.useEffect(() => {
+        if (viewFeaturedproduct && viewFeaturedproduct.length > 0) {
+            const selectedIds = viewFeaturedproduct.map(product => product._id);
+            setSelectedProduct(viewFeaturedproduct); // Store full product objects
+            setFieldValue('products', selectedIds, true); // Update Formik field
+        }
+    }, [viewFeaturedproduct, setFieldValue]);
+
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addFeaturerdProducts(value))
@@ -88,7 +107,7 @@ export default function FeaturedProducts() {
         const selectedProductIds = event.target.value; // Get selected product IDs
         // Find the full product objects based on selected IDs
         const selectedProductData = viewProductsData?.filter((product) =>
-            selectedProductIds.includes(product?.productdetails?._id)
+            selectedProductIds?.includes(product?.productdetails?._id)
         );
 
         setSelectedProduct(selectedProductData);
@@ -96,7 +115,7 @@ export default function FeaturedProducts() {
     };
     const handleRemoveProduct = (productId) => {
         // Filter out the removed product
-        const updatedProducts = selectedProducts.filter(
+        const updatedProducts = selectedProducts?.filter(
             (product) => product?.productdetails?._id !== productId
         );
     

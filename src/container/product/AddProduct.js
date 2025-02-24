@@ -759,28 +759,36 @@ const AddProduct = () => {
             values?.pricing?.makingCharges?.value ||
             values?.pricing?.stoneCharges?.value
         ) {
+            // Calculate making charges as a percentage of gold rate
+            const goldRate = values?.pricing?.goldRate?.value || 0;
+            const makingChargesPercentage = values?.pricing?.makingCharges?.value || 0;
+            const makingCharges = (goldRate * makingChargesPercentage) / 100;
+    
+            // Calculate total cost
             const totalCost =
-                (values?.pricing?.goldRate?.value || 0) +
+                goldRate +
                 (values?.pricing?.diamondCost?.value || 0) +
                 (values?.pricing?.polkiCost?.value || 0) +
-                (values?.pricing?.makingCharges?.value || 0) +
+                makingCharges +
                 (values?.pricing?.stoneCharges?.value || 0);
     
+            // Apply GST
             const gstMultiplier = 1 + (values?.pricing?.gst?.value || 0) / 100;
-    
             const finalSalePrice = totalCost * gstMultiplier;
     
-            setFieldValue('pricing.finalSalePrice.value', finalSalePrice); // Formatting to 2 decimal places
+            // Update form values
+            setFieldValue('pricing.finalSalePrice.value', finalSalePrice.toFixed(2)); 
         }
     }, [
         values?.pricing?.goldRate?.value,
         values?.pricing?.diamondCost?.value,
         values?.pricing?.polkiCost?.value,
-        values?.pricing?.makingCharges?.value,
+        values?.pricing?.makingCharges?.value, // Making charges as percentage
         values?.pricing?.stoneCharges?.value,
         values?.pricing?.gst?.value,
         setFieldValue
     ]);
+    
     
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
@@ -1012,7 +1020,7 @@ const AddProduct = () => {
                                 }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Product Height</label>
+                                <label className={productStyle.label}>Product Length </label>
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
@@ -1358,7 +1366,7 @@ const AddProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckMakingCharges} checked={values.pricing.makingCharges.status} /> <span>Making charges*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckMakingCharges} checked={values.pricing.makingCharges.status} /> <span>Making charges in %*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1394,7 +1402,7 @@ const AddProduct = () => {
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
-                                                    Rs.
+                                                    %
                                                 </IconButton>
                                             </InputAdornment>
                                         ),
@@ -1696,7 +1704,7 @@ const AddProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckGst} checked={values.pricing.gst.status} /> <span>GST</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckGst} checked={values.pricing.gst.status} /> <span>GST in %</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'

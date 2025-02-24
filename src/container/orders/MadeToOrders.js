@@ -2,13 +2,12 @@ import React, { useEffect, useState } from 'react';
 import orderStyle from './orders.module.css';
 import productStyle from '../../container/product/product.module.css'
 import SwitchTab from '../../component/SwicthTab';
-import { DatePickerIcon, DeleteIcon, DeliveredIcon, Drop, Dropdown, ExportIcon, FilterIcon, ForwardIcon, NewIcon, ProcessingIcon, SearchIcon, ShippingIcon, ViewIcon } from '../../svg';
+import { DatePickerIcon, DeleteIcon, DeliveredIcon, Drop,  ExportIcon, FilterIcon, NewIcon, ProcessingIcon, SearchIcon, ShippingIcon, ViewIcon } from '../../svg';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteOrders, getOrders, searchOrders, orderStatistics, getAllOrdersList, filterOrder, setFilterValues } from '../../redux/ordersSlice';
+import { deleteOrders, getOrders, orderStatistics, getAllOrderExport, setFilterValues } from '../../redux/ordersSlice';
 import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
-import Calendar from 'react-calendar';
 import * as XLSX from 'xlsx';
 import moment from 'moment'
 import ErrorPage from '../../component/ErrorPage';
@@ -25,12 +24,9 @@ export const MadeToOrders = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const { ordersData, filterOptions, isLoading, isRefresh, orderStatisticsData } = useSelector((state) => state.orders);
+console.log('ordersData==============',ordersData);
 
     //Main data
-    console.log('ordersData==================', ordersData);
-
-
-
 
     const [value, setValue] = useState([
         { val: "All Date", id: 0 },
@@ -58,9 +54,7 @@ export const MadeToOrders = () => {
     };
 
 
-    const handleSubject = (value) => {
-        dispatch(deleteOrders(value))
-    }
+   
 
     const calculateShowingRange = () => {
         const start = (ordersData?.currentPage - 1) * ordersData.limit + 1;
@@ -91,14 +85,10 @@ export const MadeToOrders = () => {
 
 
     const handleStartDateChange = (e) => {
-        console.log('e==============', e);
-
         setSelectedDate(e);
         dispatch(setFilterValues({ startDate: e, page: 1 }))
     };
     const handleEndDateChange = (e) => {
-        console.log('e==============', e);
-
         setSelectedDate(e);
         dispatch(setFilterValues({ endDate: e, page: 1 }))
     };
@@ -107,14 +97,12 @@ export const MadeToOrders = () => {
         setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
         dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
     };
-    useEffect(() => {
-        dispatch(setFilterValues({ orderType: 'Made to orders' }))
-    }, [])
+    
 
     useEffect(() => {
         const getAllCategories = async () => {
             try {
-                await dispatch(getOrders(filterOptions));
+                await dispatch(getOrders({ ...filterOptions, orderType: 'Made to orders', }));
             } catch (error) {
                 console.log(error);
             }
@@ -133,8 +121,6 @@ export const MadeToOrders = () => {
     };
 
     const deletedData = (value) => {
-        console.log('value',value);
-        
         let data ={
             status:true
         }
@@ -414,24 +400,26 @@ export const MadeToOrders = () => {
 
 
     const exportToExcel = async () => {
-        // console.log(transaction)
-
-        const result = await dispatch(getAllOrdersList()).unwrap()
+        const data = 'orderType=Made to orders&isTrashed=false'
+        const result = await dispatch(getAllOrderExport(data)).unwrap()
         const excelData = result?.data?.map((item) => ({
-            Order_id: item?.order_id || '_',
-            OrderItem_Name: item?.order_items[0]?.name || '_',
-            OrderItem_Quantity: item?.order_items[0]?.units || '_',
-            Customer: item?.customer?.name || '-',
+            Order_id: item?._id || '_',
+            OrderItem_Name: item?.productDetails[0]?.productName || '_',
+            // OrderItem_Quantity: item?.productDetails[0]?.units || '_',
+            Customer: item?.customer?.firstName || '-',
             Email: item?.customer?.email || '-',
             Grand_Total: item?.grandTotal || '-',
-            Payment_Mode: item?.payment_method || '-',
-            Date: moment(item?.order_date).format('MMM DD,YYYY, HH:MMA'),
+            Advance_Paid: item?.advancePaid || '-',
+            Payment_id: item?.payment?.id || '-',
+            Payment_status: item?.payment?.status || '-',
+            Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
             Status: item?.status || '-',
+            Order_type: item?.orderType || '-',
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-        XLSX.writeFile(workbook, 'orders.xlsx');
+        XLSX.writeFile(workbook, 'MadeToOrders.xlsx');
     };
 
    
@@ -537,6 +525,8 @@ export const MadeToOrders = () => {
                             <>
                                 <div>
                                     {ordersData?.data?.map((item, index) => {
+                                        const arr = item?.status;
+                                        let lastValue = arr?.at(-1);
                                         return (
                                             <div className={productStyle.info} key={index}>
                                                 <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
@@ -559,7 +549,7 @@ export const MadeToOrders = () => {
                                                     {item?.customer?.firstName}{" "}{item?.customer?.lastName}
                                                     <br />
                                                     {/* <span className={productStyle.description} style={{ color: '#667085' }}>{item?.customer?.email}</span> */}
-                                                    <span className={productStyle.description} style={{ color: '#667085' }}>{item?.customer?.email && item?.customer?.email?.length > 15 ? `${item?.customer?.email.substring(0, 15)}...` : item?.customer?.email}</span>
+                                                    <span className={productStyle.description} style={{ color: '#667085',textTransform:'none'  }}>{item?.customer?.email && item?.customer?.email?.length > 15 ? `${item?.customer?.email.substring(0, 15)}...` : item?.customer?.email}</span>
                                                 </div>
                                                 <div className={orderStyle.totalStyle} >
                                                     <div>
@@ -579,11 +569,10 @@ export const MadeToOrders = () => {
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div
                                                     style={{
-                                                        backgroundColor: item?.status === 'NEW'
-                                                            ? "#4A4C561A" : item.status === 'PROCESSING'
-                                                                ? '#F439391A' : item.status === 'DELIVERED'
-                                                                    ? '#EAF8FF' : item.status === 'READY TO SHIP'
-                                                                        ? '#B93ED71A' : item.status === 'CONFIRMED'
+                                                        backgroundColor: lastValue?.name === 'NEW'
+                                                            ? "#4A4C561A" : lastValue?.name === 'PROCESSING'
+                                                                ? '#F439391A' : lastValue?.name === 'DELIVERED'
+                                                                    ? '#EAF8FF' : lastValue?.name === 'READY TO SHIP'
                                                                             ? '#EDDF181A' : '#EAF8FF',
                                                         width: '15%',
                                                         borderRadius: 10,
@@ -607,19 +596,17 @@ export const MadeToOrders = () => {
                                                             letterSpacing: 0.1,
                                                             textAlign: 'center',
                                                             // textTransform: 'capitalize',
-                                                            color: item?.status === 'NEW'
-                                                                ? "#4A4C56" : item.status === 'PROCESSING'
-                                                                    ? '#F86624' : item.status === 'DELIVERED'
-                                                                        ? '#2BB2FE' : item.status === 'READY TO SHIP'
-                                                                            ? '#B93ED7' : item.status === 'CONFIRMED'
+                                                            color: lastValue?.name === 'NEW'
+                                                                ? "#4A4C56" : lastValue?.name === 'PROCESSING'
+                                                                    ? '#F86624' : lastValue?.name === 'DELIVERED'
+                                                                        ? '#2BB2FE' : lastValue?.name === 'READY TO SHIP'
                                                                                 ? '#EDDF18' : '#3250FF',
                                                         }}
-                                                    >{item?.status === 'NEW'
-                                                        ? "New" : item.status === 'PROCESSING'
-                                                            ? 'Processing' : item.status === 'DELIVERED'
-                                                                ? 'Delivered' : item.status === 'READY TO SHIP'
-                                                                    ? 'Ready to ship' : item.status === 'CONFIRMED'
-                                                                        ? 'Confirmed' : 'Shipped'}
+                                                    >{item?.status[0]?.name === 'NEW'
+                                                        ? "New" : lastValue?.name === 'PROCESSING'
+                                                            ? 'Processing' : lastValue?.name === 'DELIVERED'
+                                                                ? 'Delivered' : lastValue?.name === 'READY TO SHIP'
+                                                                    ? 'Ready to ship'  : 'Shipped'}
                                                     </span>
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />

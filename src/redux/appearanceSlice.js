@@ -110,7 +110,7 @@ export const getAppearanceCategories = createAsyncThunk('getAppearanceCategories
 export const addAppearanceCategories = createAsyncThunk('addAppearanceCategories', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.addAppearanceCategories(body);
-        if (status === 200) {
+        if (status === 201) {
             // render otp screen
             dispatch(setAddAppearanceCategories(body));
             Toastify.success("Categories added successfully");
@@ -160,9 +160,9 @@ export const getBrandSlider = createAsyncThunk('getBrandSlider', async (body, { 
         const { data, status } = await api.getBrandSlider(body);
         if (status === 200) {
             //get categories data
-            dispatch(setBrandSlider(data))
+            dispatch(setBrandSlider(data?.data?.brandSliders))
         }
-        return data
+        return data?.data?.brandSliders
     } catch (err) {
         // Toastify.error(err.response.data.message)
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")

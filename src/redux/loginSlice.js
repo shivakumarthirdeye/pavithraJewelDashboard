@@ -19,12 +19,11 @@ const initialState = {
 
 export const login = createAsyncThunk('login', async (body, { rejectWithValue, dispatch }) => {
     try {
-        console.log('hi========================');
+    
         
         const { data, status } = await api.adminLogin(body);
         dispatch(setLoading(true))
 
-        console.log(data,"data!--------");
         
 
         if (status === 200) {
@@ -46,8 +45,6 @@ export const forgotPassword = createAsyncThunk('forgotPassword', async (body, { 
        
      
         const { data, status } = await api.forgotPassword(body);
-        console.log('data==========',data);
-        console.log('first',body.email)
         
         dispatch(setLoading(true))
         if (status === 200) {
@@ -84,8 +81,7 @@ export const verifyOtp = createAsyncThunk('verifyOtp', async (body, { rejectWith
 export const resetPassword = createAsyncThunk('verifyOtp', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.resetPassword(body);
-        console.log('data===========',data);
-        
+       
         dispatch(setLoading(true))
         if (status === 200) {
                 dispatch(setLoading(false))

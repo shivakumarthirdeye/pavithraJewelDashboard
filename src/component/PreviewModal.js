@@ -4,7 +4,19 @@ import { Box, Modal } from '@mui/material';
 import { CancelIcon, DownloadIcon } from '../svg';
 import orderStyle from '../container/orders/orders.module.css';
 
-const PreviewModal = ({ open, onClose,data }) => {
+const PreviewModal = ({ open, onClose, data }) => {
+  console.log('data', data);
+
+  const pancardUrl = '/pancard.png'; // Image URL
+
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = data; // Set the image URL
+    link.download = 'pancard.png'; // File name for download
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const style = {
     position: "absolute",
@@ -40,10 +52,14 @@ const PreviewModal = ({ open, onClose,data }) => {
           </div>
         </div>
 
-        <div style={{ marginTop: 20,marginBottom:20 }} className={orderStyle.downloadingButtonStyle}>
-          <DownloadIcon/> Download
+        <div
+          style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}
+          className={orderStyle.downloadingButtonStyle}
+          onClick={handleDownload}
+        >
+          <DownloadIcon /> Download
         </div>
-        <img src='/pancard.png' style={{width: '100%',height:"300px",objectFit:'cover',minHeight:'20vh'}} alt='Pancard'/>
+        <img src={data} style={{ width: '100%', height: "300px", objectFit: 'cover', minHeight: '20vh' }} alt='Pancard' />
       </Box>
     </Modal>
   );

@@ -72,7 +72,7 @@ export default function ViewBrandSlider() {
                             }}>
                             Brand Name
                         </Typography>
-                        {brandSliderData?.data?.brandSliders?.map((item, index) => (
+                        {brandSliderData?.map((item, index) => (
                             <div
                                 key={index}
                                 style={{

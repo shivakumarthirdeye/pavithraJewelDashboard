@@ -13,8 +13,8 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { ImageIcon } from '../../svg';
 import api from '../../helper/Api';
-import { addAboutus } from '../../redux/appearanceSlice';
-import { useDispatch } from 'react-redux';
+import { addAboutus, getAboutus } from '../../redux/appearanceSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -34,6 +34,14 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function AboutUs() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { aboutUsData } = useSelector((state) => state.appearance)
+    // console.log('aboutUsData',aboutUsData);
+
+    const viewAboutus = aboutUsData?.data;
+
+    React.useEffect(() => {
+        dispatch(getAboutus())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         title: yup.string().required("Title is required"),
@@ -51,7 +59,8 @@ export default function AboutUs() {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             title: "",
@@ -67,7 +76,17 @@ export default function AboutUs() {
     })
 
     // console.log('valuessssssssssssssssssssss'.values);
-    
+    React.useEffect(() => {
+        if (viewAboutus) {
+            setValues({
+                title: viewAboutus?.title,
+                description: viewAboutus?.description,
+                image1: viewAboutus?.image1,
+                image2: viewAboutus?.image2
+            })
+        }
+    }, [viewAboutus, setValues])
+
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addAboutus(value))
@@ -101,7 +120,7 @@ export default function AboutUs() {
                         }
                     })
 
-                    setFieldValue('image1',  data?.data?.url)
+                    setFieldValue('image1', data?.data?.url)
                 }
             }
         } catch (err) {
@@ -243,7 +262,7 @@ export default function AboutUs() {
                                             <img
                                                 src={values.image1}
                                                 alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px',width:200,height:100,objectFit:'cover' }}
+                                                style={{ maxWidth: '100%', marginTop: '0px', width: 200, height: 100, objectFit: 'cover' }}
                                             />
                                             {/* <button onClick={handleUpload}>Upload</button> */}
                                         </div>
@@ -255,22 +274,22 @@ export default function AboutUs() {
                                                     Drag and drop image here, or click add image
                                                 </p>
                                             </div>
-                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="imageFile"
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleImageChange}
-                                                />
-                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                    Add Image
-                                                </label>
-                                            </div>
+
                                         </>
                                     )
                                     }
-
+                                    <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            id="imageFile"
+                                            style={{ display: 'none' }}
+                                            onChange={handleImageChange}
+                                        />
+                                        <label htmlFor="imageFile" className={productStyle.uploadBox}>
+                                            Add Image
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             {/* {
@@ -297,7 +316,7 @@ export default function AboutUs() {
                                             <img
                                                 src={values.image2}
                                                 alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px',width:200,height:100,objectFit:'cover' }}
+                                                style={{ maxWidth: '100%', marginTop: '0px', width: 200, height: 100, objectFit: 'cover' }}
                                             />
                                             {/* <button onClick={handleUpload}>Upload</button> */}
                                         </div>
@@ -309,22 +328,22 @@ export default function AboutUs() {
                                                     Drag and drop image here, or click add image
                                                 </p>
                                             </div>
-                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                                <input
-                                                    type="file"
-                                                    accept="image/*"
-                                                    id="imageTwoFile"
-                                                    style={{ display: 'none' }}
-                                                    onChange={handleImage2Change}
-                                                />
-                                                <label htmlFor="imageTwoFile" className={productStyle.uploadBox}>
-                                                    Add Image
-                                                </label>
-                                            </div>
+
                                         </>
                                     )
                                     }
-
+                                    <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            id="imageTwoFile"
+                                            style={{ display: 'none' }}
+                                            onChange={handleImage2Change}
+                                        />
+                                        <label htmlFor="imageTwoFile" className={productStyle.uploadBox}>
+                                            Add Image
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
                             {

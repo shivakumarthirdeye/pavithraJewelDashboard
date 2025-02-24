@@ -15,7 +15,7 @@ import appearancStyle from './appearance.module.css'
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategoriesExport } from '../../redux/categoriesSlice';
-import { addAppearanceCategories } from '../../redux/appearanceSlice';
+import { addAppearanceCategories, getAppearanceCategories } from '../../redux/appearanceSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 
@@ -32,6 +32,16 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function Categories() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const { appearanceCategoriesData } = useSelector(
+        (state) => state.appearance);
+    
+    const viewCategories = appearanceCategoriesData?.data?.categories
+    
+    
+    React.useEffect(() => {
+        dispatch(getAppearanceCategories())
+    }, [dispatch])
+
 
     const { categoriesExportData } = useSelector(
         (state) => state.categories);
@@ -66,6 +76,14 @@ export default function Categories() {
 
     })
 
+    React.useEffect(() => {
+        if (viewCategories?.length > 0) {
+            const selectedIds = viewCategories?.map(category => category._id);
+            setSelectedCategories(viewCategories); // Set the full category objects
+            setFieldValue('categories', selectedIds, true); // Set only IDs in Formik
+        }
+    }, [viewCategories, setFieldValue]);
+
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addAppearanceCategories(value))
@@ -86,12 +104,24 @@ export default function Categories() {
         const selectedCategoryIds = event.target.value; // Get selected category IDs
         // Find the full category objects based on selected IDs
         const selectedCategoriesData = categoriesExportData?.filter((category) =>
-            selectedCategoryIds.includes(category._id)
+            selectedCategoryIds?.includes(category?._id)
         );
 
         setSelectedCategories(selectedCategoriesData);
         setFieldValue('categories', selectedCategoryIds, true); // Store only the IDs in Formik
     };
+
+    const handleRemoveCategory = (categoryId) => {
+        // Filter out the removed category
+        const updatedCategories = selectedCategories?.filter(cat => cat._id !== categoryId);
+    
+        // Update state
+        setSelectedCategories(updatedCategories);
+    
+        // Update Formik's field value with the remaining category IDs
+        setFieldValue('categories', updatedCategories?.map(cat => cat._id), true);
+    };
+    
 
     return (
         <div style={{ marginTop: 20 }}>
@@ -147,14 +177,11 @@ export default function Categories() {
                             defaultValue=''
                             multiple
                             name='categories'
-                            value={selectedCategories.map(category => category._id)}
+                            value={selectedCategories?.map(category => category?._id)}
                             onChange={handleCategoryChange}
                             renderValue={(selected) =>
                                 selected?.length > 0
-                                    ? categoriesExportData
-                                        ?.filter(category => selected.includes(category._id))
-                                        .map(category => category.name)
-                                        .join(', ')
+                                    ? categoriesExportData?.filter(category => selected?.includes(category?._id))?.map(category => category?.name).join(', ')
                                     : "Select Category"
                             }
                         >
@@ -187,13 +214,13 @@ export default function Categories() {
                             color: '#777980'
                         }}
                     >
-                        You need to select 4 categories
+                        You need to select 5 categories
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
                         {selectedCategories?.map((item, index) => (
                             <div className={appearancStyle.categoriesStyle} key={index}>
                                 <div className={appearancStyle.textStyle}>{item.name} </div>
-                                <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
+                                <div style={{ marginTop: 5,cursor:'pointer' }} onClick={() => handleRemoveCategory(item._id)}><CancelCateIcon /></div>
                             </div>
                         ))}
                     </div>

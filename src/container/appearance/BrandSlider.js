@@ -7,15 +7,15 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
 import { Box, Button, TextField } from '@mui/material';
 import { custom, saveChanges, TextInput } from '../../MaterialsUI';
-import { PlusIcon } from '../../svg';
+import { DeletIcon, PlusIcon } from '../../svg';
 import appearancStyle from './appearance.module.css';
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
-import { addBrandSlider } from '../../redux/appearanceSlice';
+import { addBrandSlider, getBrandSlider } from '../../redux/appearanceSlice';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -30,6 +30,12 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function BrandSlider() {
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const { brandSliderData } = useSelector((state) => state.appearance)
+    // console.log('brandSliderData', brandSliderData);
+
+    React.useEffect(() => {
+        dispatch(getBrandSlider())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         brandSliders: yup.array().min(1, "At least one slider is required"), // Ensure there's at least one slider
@@ -66,6 +72,13 @@ export default function BrandSlider() {
         }
 
     }
+
+    React.useEffect(() => {
+        if (brandSliderData.length > 0) {
+            setFieldValue("brandSliders", brandSliderData.map(brand => brand));
+        }
+    }, [brandSliderData, setFieldValue]);
+
     React.useEffect(() => {
         if (values.brandSliders.length === 0) {
             setFieldValue("brandSliders", [""]); // Ensures at least one input field
@@ -139,8 +152,8 @@ export default function BrandSlider() {
                                     sx={TextInput}
                                 />
 
-                                <div className={appearancStyle.addBackgroundStyle} onClick={handleAddBrandSlider}>
-                                    <PlusIcon />
+                                <div className={appearancStyle.deleteBackgroundStyle} onClick={() => handleRemoveBrandSlider(index)}>
+                                    <DeletIcon />
                                 </div>
                             </div>
                             {errors.brandSliders?.[index] && touched.brandSliders?.[index] && (
@@ -151,6 +164,9 @@ export default function BrandSlider() {
                         </Box>
                     </AccordionDetails>
                 ))}
+                <div className={appearancStyle.addBackgroundStyle} onClick={handleAddBrandSlider} style={{marginLeft:20}}>
+                    <PlusIcon />
+                </div>
                 <Box sx={{
                     marginBottom: '20px',
                     marginRight: '20px',

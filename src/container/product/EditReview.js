@@ -112,7 +112,7 @@ const EditReview = ({ open, onClose, data }) => {
                     </div>
                 </div>
                 <div className="products-info">
-                    <img src={values?.productId?.featurerdImage[0]} alt='featuredImage' className="product-image" />
+                    <img src={values?.productId?.featurerdImage} alt='featuredImage' className="product-image" />
                     <div style={{ marginLeft: 20 }}>
                         <h3 className="product-heading">{values?.productId?.productName}</h3>
                         <p className="product-price">₹{values?.productId?.salePrice} </p>

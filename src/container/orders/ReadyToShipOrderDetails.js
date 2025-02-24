@@ -4,9 +4,13 @@ import productStyle from '../../container/product/product.module.css'
 import { CopyIcon, Customer, CustomerInfoIcon, DatePickerIcon, DownloadIcon, EmailIcon, ExportBlackIcon, ForwardIcon, HomeIcon, IDIcon, IncomeIcon, InfoIcon, InfoReviewIcon, InvoiceIcon, LocationIcon, Orders, PayIcon, PaymentIcon, PhoneIcon, ShipingIcon, ShipMethodIcon } from '../../svg';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrdersDetails, getCustomerReviews } from '../../redux/ordersSlice';
+import { getOrdersDetails, getCustomerReviews, updateStatus } from '../../redux/ordersSlice';
 import PreviewModal from '../../component/PreviewModal';
 import { formatDate } from '../../helper/FormatDate';
+import { MenuItem, Select } from '@mui/material';
+import { formselect } from '../../MaterialsUI';
+import { ArrowDropDownIcon } from '@mui/x-date-pickers';
+import { useFormik } from 'formik';
 
 export const ReadyToShipOrderDetails = () => {
     const navigate = useNavigate()
@@ -16,19 +20,23 @@ export const ReadyToShipOrderDetails = () => {
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
     console.log('ordersDetailsData', ordersDetailsData);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [datas, setData] = useState([]);
+    const [copied, setCopied] = useState(false);
+    const [copiedPhone, setCopiedPhone] = useState(false);
+    const [copiedPaymentid, setCopiedPaymentId] = useState(false);
+    const [copiedShippingId, setCopiedShippingId] = useState(false);
 
 
     useEffect(() => {
         dispatch(getOrdersDetails(id))
-    }, [])
+    }, [dispatch, id,isRefresh])
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [isExchangeModalOpen, setIsExchangeModalOpen] = useState(false);
-    const [datas, setData] = useState([]);
+    
 
     useEffect(() => {
         dispatch(getCustomerReviews(id))
-    }, [isRefresh])
+    }, [isRefresh, id, dispatch])
 
     const openModal = (data) => {
         setData(data);
@@ -37,15 +45,75 @@ export const ReadyToShipOrderDetails = () => {
     const closeModal = () => {
         setIsModalOpen(false);
     };
-    const openExchangeModal = (data) => {
-        setData(data);
-        setIsExchangeModalOpen(true);
+
+
+    const handleCopyEmail = () => {
+        const email = ordersDetailsData?.data?.userId?.email;
+        if (email) {
+            navigator.clipboard.writeText(email)
+                .then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
     };
-    const closeExchangeModal = () => {
-        setIsExchangeModalOpen(false);
+    const handleCopyPhone = () => {
+        const phone = ordersDetailsData?.data?.userId?.phone
+        if (phone) {
+            navigator.clipboard.writeText(phone)
+                .then(() => {
+                    setCopiedPhone(true);
+                    setTimeout(() => setCopiedPhone(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const handleCopyPaymentId = () => {
+        const paymentId = ordersDetailsData?.data?.payment?.id
+        if (paymentId) {
+            navigator.clipboard.writeText(paymentId)
+                .then(() => {
+                    setCopiedPaymentId(true);
+                    setTimeout(() => setCopiedPaymentId(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const handleCopyShippingId = () => {
+        const shippingId = ordersDetailsData?.data?.payment?.id
+        if (shippingId) {
+            navigator.clipboard.writeText(shippingId)
+                .then(() => {
+                    setCopiedShippingId(true);
+                    setTimeout(() => setCopiedShippingId(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
     };
 
-    
+    const {
+        setFieldValue,
+        values
+    } = useFormik({
+        initialValues: {
+            status: "",
+        },
+        onSubmit: async (values) => {
+            // dispatch(updateStatus({ values, id }));
+        }
+    });
+
+    const handleStatusChange = (event) => {
+        const selectedStatus = event.target.value;
+        if (selectedStatus) {
+            setFieldValue("status", selectedStatus); // Update Formik state
+            dispatch(updateStatus({ val: { status: selectedStatus, } , id: id, })); // Trigger API call
+        }
+    };
+    const arr = ordersDetailsData?.data?.status;
+    const lastValue = arr?.at(-1); 
+    console.log(lastValue); // Output: 50
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
@@ -73,14 +141,10 @@ export const ReadyToShipOrderDetails = () => {
                             Customer reviews
                         </div>
                     )} */}
-                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews`)}>
+                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
-                    {ordersDetailsData?.status === 'EXCHANGE REQUEST' && (
-                        <div className={orderStyle.exchangeStyle} onClick={() => openExchangeModal()}>
-                            Exchange request
-                        </div>
-                    )}
+
                     <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice')}>
                         <InvoiceIcon /><div className={productStyle.addcategoryText}> Invoice</div>
                     </div>
@@ -119,7 +183,7 @@ export const ReadyToShipOrderDetails = () => {
                                     </span>
                                 </div>
                             </div>
-                            <div className={orderStyle.iconStyle}style={{ gap: 10, alignItems: 'flex-start' }}>
+                            <div className={orderStyle.iconStyle} style={{ gap: 10, alignItems: 'flex-start' }}>
                                 <div className={orderStyle.cardWrap} style={{ marginTop: 5, }}>
                                     <DatePickerIcon />
                                     <div className={orderStyle.filterTextStyle}>
@@ -129,17 +193,14 @@ export const ReadyToShipOrderDetails = () => {
                                 </div>
                                 <div className={orderStyle.goldRateStyle}>
                                     Gold rate 18k: <span> ₹{ordersDetailsData?.data?.goldRate18k}/g </span>
-                                    <br/>
+                                    <br />
                                     Gold rate 22k: <span> ₹{ordersDetailsData?.data?.goldRate22k}/g </span>
                                 </div>
                                 <div
                                     style={{
-                                        backgroundColor: ordersDetailsData?.data?.status === 'NEW' ? "#c7c8ca"
-                                            : ordersDetailsData?.data?.status === 'PROCESSING' ? '#F439391A'
-                                                : ordersDetailsData?.data?.status === 'SHIPPED' ? '#EAF8FF'
-                                                    : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "#E9FAF7"
-                                                        : ordersDetailsData?.data?.status === "EXCHANGED" ? "#e7f9bb"
-                                                            : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "#f7e5f9"
+                                        backgroundColor: lastValue?.name === 'NEW' ? "#c7c8ca"
+                                            : lastValue?.name === 'PROCESSING' ? '#F439391A'
+                                                : lastValue?.name === 'SHIPPED' ? '#EAF8FF'
                                                                 : '#E9FAF7',
                                         // width: '35%',
                                         borderRadius: 10,
@@ -160,20 +221,14 @@ export const ReadyToShipOrderDetails = () => {
                                             fontWeight: '600',
                                             letterSpacing: 0.5,
                                             textAlign: 'center',
-                                            color: ordersDetailsData?.data?.status === 'NEW' ? "#4A4C56"
-                                                : ordersDetailsData?.data?.status === 'PROCESSING' ? '#F86624'
-                                                    : ordersDetailsData?.data?.status === 'SHIPPED' ? '#2BB2FE'
-                                                        : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "#1A9882"
-                                                            : ordersDetailsData?.data?.status === "EXCHANGED" ? "#97d30c"
-                                                                : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "#c723ca"
+                                            color: lastValue?.name === 'NEW' ? "#4A4C56"
+                                                : lastValue?.name === 'PROCESSING' ? '#F86624'
+                                                    : lastValue?.name === 'SHIPPED' ? '#2BB2FE'
                                                                     : '#1A9882',
                                         }}
-                                    >{ordersDetailsData?.data?.status === 'NEW' ? "New"
-                                        : ordersDetailsData?.data?.status === 'PROCESSING' ? 'Processing'
-                                            : ordersDetailsData?.data?.status === 'SHIPPED' ? 'Shipped'
-                                                : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "Delivered"
-                                                    : ordersDetailsData?.data?.status === "EXCHANGED" ? "Exchanged"
-                                                        : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
+                                    >{lastValue?.name === 'NEW' ? "New"
+                                        : lastValue?.name === 'PROCESSING' ? 'Processing'
+                                            : lastValue?.name === 'SHIPPED' ? 'Shipped'
                                                             : 'Delivered'
                                         }</span>
                                 </div>
@@ -229,13 +284,28 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.priceStyle}>Subtotal </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal?.toFixed(2)}</div>
                             </div>
+                            <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
+                            </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.priceStyle}>GST ({ordersDetailsData?.data?.gst}%) </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.gst}</div>
+                                <div className={orderStyle.pendingAmountStyle}>Stone charges </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.stoneCharges}</div>
+                            </div>
+                            <div className={orderStyle.bottomLineStyle} />
+                            <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.pendingAmountStyle}>Making charges </div>
+                                <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.makingCharges}%</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -317,15 +387,33 @@ export const ReadyToShipOrderDetails = () => {
                                 <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>Order Status</p>
 
                             </div>
-                            <div className={orderStyle.statusStyling} style={{ marginLeft: 30, marginTop: 10 }}>
-                                {ordersDetailsData?.data?.status === 'NEW' ? "New"
-                                    : ordersDetailsData?.data?.status === 'PROCESSING' ? 'Processing'
-                                        : ordersDetailsData?.data?.status === 'SHIPPED' ? 'Shipped'
-                                            : ordersDetailsData?.data?.status === "EXCHANGE REQUEST" ? "Delivered"
-                                                : ordersDetailsData?.data?.status === "EXCHANGED" ? "Exchanged"
-                                                    : ordersDetailsData?.data?.status === "EXCHANGE REJECTED" ? "Exchange Rejected"
-                                                        : 'Delivered'}
-
+                            <div style={{ marginLeft: 30, marginTop: 10 }}>
+                            <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    sx={{
+                                        ...formselect,
+                                        "& .MuiSelect-select": {
+                                            fontWeight: values.status ? "500" : "400",
+                                            color: values.status ? "#081735" : "#858D9D",
+                                        },
+                                    }}
+                                    IconComponent={(props) => (
+                                        <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
+                                    )}
+                                    displayEmpty
+                                    defaultValue=""
+                                    name="status"
+                                    value={values.status || lastValue?.name}
+                                    onChange={handleStatusChange} // Custom handler
+                                >
+                                    <MenuItem value="">Select</MenuItem>
+                                    <MenuItem value="NEW">New</MenuItem>
+                                    <MenuItem value="PROCESSING">Processing</MenuItem>
+                                    <MenuItem value="SHIPPED">Shipped</MenuItem>
+                                    <MenuItem value="DELIVERED">Delivered</MenuItem>
+                                    <MenuItem value="READY TO SHIP">Ready to ship</MenuItem>
+                                </Select>
                             </div>
                         </>
                         <>
@@ -346,12 +434,13 @@ export const ReadyToShipOrderDetails = () => {
                                     <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>Email</p>
 
                                 </div>
-                                <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10, textTransform: 'none' }}>
                                     {ordersDetailsData?.data?.userId?.email}
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyEmail}>
                                 <CopyIcon />
+                                {copied && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                         <div className={orderStyle.iconStyle}>
@@ -365,8 +454,9 @@ export const ReadyToShipOrderDetails = () => {
                                     {ordersDetailsData?.data?.userId?.phone}
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPhone}>
                                 <CopyIcon />
+                                {copiedPhone && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                     </div>
@@ -421,8 +511,9 @@ export const ReadyToShipOrderDetails = () => {
                                     {ordersDetailsData?.data?.payment?.id}
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPaymentId}>
                                 <CopyIcon />
+                                {copiedPaymentid && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                         <>
@@ -456,8 +547,9 @@ export const ReadyToShipOrderDetails = () => {
                                     {/* SHP1092311 */}NA
                                 </div>
                             </div>
-                            <div style={{ marginTop: 20 }}>
+                            <div style={{ marginTop: 20 }} onClick={handleCopyShippingId}>
                                 <CopyIcon />
+                                {copiedShippingId && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                             </div>
                         </div>
                         <>
@@ -480,12 +572,7 @@ export const ReadyToShipOrderDetails = () => {
                 open={isModalOpen}
                 data={datas}
             />
-            {/* <ExchangeRequest
-                // heading={"Delete Order"}
-                closeModal={closeExchangeModal}
-                open={isExchangeModalOpen}
-                data={ordersDetailsData?.exchange}
-            /> */}
+
 
         </div >
     )

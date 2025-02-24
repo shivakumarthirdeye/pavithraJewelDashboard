@@ -10,13 +10,13 @@ import { custom, saveChanges, SelectStyle, TextArea, TextInput } from '../../Mat
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import { AddIcon, CancelCateIcon } from '../../svg';
+import { AddIcon, CancelCateIcon, DeletIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
 import { unwrapResult } from '@reduxjs/toolkit';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { addCounters } from '../../redux/appearanceSlice';
+import { addCounters, getCounters } from '../../redux/appearanceSlice';
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -31,6 +31,12 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function Counters() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { countersData } = useSelector((state) => state.appearance);
+    const viewCounters = countersData?.data?.counters;
+
+    React.useEffect(() => {
+        dispatch(getCounters())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         counters: yup.array().of(
@@ -50,7 +56,8 @@ export default function Counters() {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             counters: [
@@ -66,6 +73,18 @@ export default function Counters() {
         }
 
     })
+
+    React.useEffect(() => {
+        if (viewCounters) {
+            setValues({
+                counters: viewCounters.map(item => ({
+                    name: item?.name || '',
+                    counts: item?.counts || 0,
+                }))
+            });
+        }
+    }, [viewCounters, setValues]);
+
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addCounters(value))
@@ -83,6 +102,10 @@ export default function Counters() {
             ...values.counters,
             { name: '', counts: 0, }
         ]);
+    };
+    const handleRemoveCounter = (index) => {
+        const updatedSliders = values.counters.filter((_, i) => i !== index);
+        setFieldValue('counters', updatedSliders);
     };
     return (
         <div style={{ marginTop: 20 }}>
@@ -177,15 +200,22 @@ export default function Counters() {
                             </div>
                             <div
                                 className={appearancStyle.deleteBackgroundStyle}
-                                onClick={handleAddHeroBanner}
+                                onClick={() => handleRemoveCounter(index)}
                                 style={{ marginTop: 30 }}
                             >
-                                <AddIcon />
+                                <DeletIcon />
                             </div>
                         </Box>
 
                     </AccordionDetails>
                 ))}
+                <div
+                    className={appearancStyle.addButtonStyle}
+                    onClick={handleAddHeroBanner}
+                    style={{ marginTop: 30,marginLeft:20 }}
+                >
+                    <AddIcon /><span> Counter</span>
+                </div>
                 <Box sx={{
                     marginBottom: '20px',
                     marginRight: '20px',

@@ -12,9 +12,9 @@ import { useFormik } from 'formik';
 import * as yup from "yup";
 import { AddIcon, CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { addHeroBanner, addTestimonials } from '../../redux/appearanceSlice';
+import { addHeroBanner, addTestimonials, getTestimonials } from '../../redux/appearanceSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import api from '../../helper/Api';
@@ -34,6 +34,15 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function Testimonials() {
     const dispatch = useDispatch();
     const navigate = useNavigate()
+    const { testimonialsData } = useSelector((state) => state.appearance);
+    const viewTestimonials = testimonialsData?.data?.testimonials;
+    console.log('viewTestimonials', viewTestimonials);
+
+
+
+    React.useEffect(() => {
+        dispatch(getTestimonials())
+    }, [dispatch])
 
     const schema = yup.object().shape({
         testimonials: yup.array().of(
@@ -54,7 +63,8 @@ export default function Testimonials() {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             testimonials: [
@@ -72,6 +82,20 @@ export default function Testimonials() {
         }
 
     })
+
+    React.useEffect(() => {
+        if (viewTestimonials) {
+            setValues({
+                testimonials: viewTestimonials.map(item => ({
+                    rating: item?.rating || '',
+                    customerName: item?.customerName || '',
+                    customerRole: item?.customerRole || '',  // Ensure correct property name
+                    testimony: item?.testimony || '',
+                }))
+            });
+        }
+    }, [viewTestimonials, setValues]);
+    
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addTestimonials(value))

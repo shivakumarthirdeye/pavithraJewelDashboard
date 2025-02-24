@@ -13,7 +13,6 @@ import { editPendingPrice } from '../../redux/ordersSlice';
 
 const EditPriceModal = ({ open, onClose, data }) => {
     const dispatch = useDispatch()
-    console.log('dastas===============',data);
     
 
     const schema = yup.object().shape({
@@ -47,7 +46,6 @@ const EditPriceModal = ({ open, onClose, data }) => {
         }
 
     })
-    console.log('data============', values);
 
     useEffect(() => {
         if (data) {

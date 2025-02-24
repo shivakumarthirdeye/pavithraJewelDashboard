@@ -10,14 +10,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import { getGoldRate, updateGoldRate } from "../../redux/dashboardSlice";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { getGoldRate, getStatistics, setFilterValues, updateGoldRate } from "../../redux/dashboardSlice";
+import { IconButton, InputAdornment, Skeleton, TextField } from "@mui/material";
 import { fieldText } from "../../MaterialsUI";
 
 export const Dashboard = () => {
     const dispatch = useDispatch();
-    const { goldRateData,isRefresh } = useSelector((state) => state.dashboard);
-    console.log('goldRateData', goldRateData);
+    const { goldRateData, statisticsData, isRefresh, isLoading } = useSelector((state) => state.dashboard);
+    console.log('statisticsData', statisticsData);
 
     //state
     const [value, setValue] = useState([
@@ -38,25 +38,25 @@ export const Dashboard = () => {
             id: 0,
             icon: <IncomeIcon />,
             name: "Income",
-            number: 3230,
+            number: statisticsData?.totalOrderRevenue?.toFixed(2),
         },
         {
             id: 1,
             icon: <OrderIcon />,
             name: "Orders",
-            number: 2390,
+            number: statisticsData?.totalOrders,
         },
         {
             id: 2,
             icon: <ProductIcon />,
             name: "Products",
-            number: 6456,
+            number: statisticsData?.totalProducts,
         },
         {
             id: 3,
             icon: <CustomerIcon />,
             name: "Customer",
-            number: 860,
+            number: statisticsData?.totalUsers,
         },
     ];
 
@@ -89,7 +89,13 @@ export const Dashboard = () => {
 
     useEffect(() => {
         dispatch(getGoldRate())
-    }, [dispatch,isRefresh])
+    }, [dispatch, isRefresh])
+
+    useEffect(() => {
+        const selectedFilter = `filter=${value[selected].val}`;
+        dispatch(getStatistics(selectedFilter));
+    }, [dispatch, value, selected]);
+
 
     return (
         <div style={{ padding: 20 }}>
@@ -285,12 +291,11 @@ export const Dashboard = () => {
                                     {item?.name}
                                 </div>
                             </div>
-                            <div className={dashboardStyle.numStyle}>{item?.number}</div>
-                            {/* {isLoadingStatistics ? (
-                <Skeleton variant="text" width="70%" height={60} style={{ marginBottom: "8px" }} />
-              ) : (
-                <div className={dashboardStyle.numStyle}>{item?.number}</div>
-              )} */}
+                            {isLoading ? (
+                                <Skeleton variant="text" width="70%" height={60} style={{ marginBottom: "8px" }} />
+                            ) : (
+                                <div className={dashboardStyle.numStyle}>{item?.number}</div>
+                            )}
                         </div>
                     );
                 })}

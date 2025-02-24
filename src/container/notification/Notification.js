@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getNotification, markAsRead } from "../../redux/notificationSlice";
 import CustomSeparator from "../../component/CustomizedBreadcrumb";
 import { Dropdown, UnreadIcon } from "../../svg";
+import { useNavigate } from "react-router-dom";
 
 
 
@@ -13,16 +14,17 @@ import { Dropdown, UnreadIcon } from "../../svg";
 
 const Notifications = () => {
     const dispatch = useDispatch()
+    const navigate = useNavigate();
 
     const user = useSelector((state) => state.user);
-    const notification = useSelector((state) => state.notification)
+    const { notificationData, isRefresh } = useSelector((state) => state.notification)
 
-    const incomingNotification = notification?.notificationData?.notifications || []
+    const incomingNotification = notificationData?.data?.notifications || []
 
     console.log(incomingNotification, "incoming");
 
 
-    console.log("users", user);
+    // console.log("users", user);
 
     const formattedDate = (date = new Date()) => {
         const dateFromMongoDB = new Date(date);
@@ -45,18 +47,11 @@ const Notifications = () => {
         }
     };
 
-    const handleMark = async (data) => {
-        try {
-            console.log(data, "data");
+    const handleReadNotification = async (id) => {
+        // Dispatch action to mark as read
+        await dispatch(markAsRead(id));
 
-            await dispatch(markAsRead(data))
-            // await getNotification(user?.data?._id)
-
-        } catch (error) {
-            console.log(error.message);
-
-        }
-    }
+    };
 
 
     // const handleMarkAll=()=>{
@@ -69,7 +64,7 @@ const Notifications = () => {
     useEffect(() => {
         dispatch(getNotification())
 
-    }, [notification.isRefresh, dispatch])
+    }, [dispatch, isRefresh])
 
 
     return (
@@ -88,61 +83,51 @@ const Notifications = () => {
                 </div>
                 <div>
                     {/* No Notifications for Received */}
-                    {/* {incomingNotification && incomingNotification.length === 0 && (
-                            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 50 }}>
-                                <p>You have no new notifications</p>
-                            </div>
-                        )} */}
+                    {incomingNotification && incomingNotification.length === 0 && (
+                        <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 50 }}>
+                            <p>You have no new notifications</p>
+                        </div>
+                    )}
 
-                    {/* Notification List */}
-
-                    {/* <div className={notificationStyle.notificationList}>
-                                
-                                    <div
-                                        
-                                        className={notificationStyle.notificationItem}
-                                        onClick={() => handleMark()}
-                                    >
-                                        <div className={notificationStyle.icon}>
-                                            <UnreadIcon />
-                                        </div>
-                                        <div className={notificationStyle.notificationContent}>
-                                            
-                                            <p className={notificationStyle.notificationDescription}>
-                                                Dummy content added here
-                                            </p>
-                                            <div className={notificationStyle.viewStyle}>View</div>
-                                            <span className={notificationStyle.notificationTimestamp} style={{ paddingBottom: 20 }}
-                                            >
-                                                Today at 9:42 AM
-                                            </span>
-                                        </div>
-                                        {notification?.isRead && <Checkmark size="small" />}
-                                    </div>
-                                
-                            </div> */}
-
-                    {incomingNotification && incomingNotification.length > 0 && (
                         <div className={notificationStyle.notificationList}>
-                            {incomingNotification.map((notification) => (
+                            {incomingNotification?.map((notification) => (
                                 <div
                                     key={notification._id} // Unique key for each notification
                                     className={notificationStyle.notificationItem}
-                                    onClick={() => handleMark(notification._id)}
                                 >
                                     {notification?.isRead === false && (
-                                    <div className={notificationStyle.icon}>
-                                        <UnreadIcon />
-                                    </div>
+                                        <div className={notificationStyle.icon}>
+                                            <UnreadIcon />
+                                        </div>
                                     )}
                                     <div className={notificationStyle.notificationContent}>
                                         <h4 className={notificationStyle.notificationTitle}>
 
-                                        {notification.title}
+                                            {notification.title}
                                         </h4>
                                         <p className={notificationStyle.notificationDescription}>
                                             {notification.message}
                                         </p>
+                                        {notification?.notificationType === 'ORDER' && notification?.orderType === 'Ready to ship orders' && (
+                                            <div className={notificationStyle.viewStyle}
+                                                onClick={() => {
+                                                    navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/${notification?.orderId}`);
+                                                    handleReadNotification(notification._id);
+                                                }}
+                                            >
+                                                View
+                                            </div>
+                                        )}
+                                        {notification?.notificationType === 'ORDER' && notification?.orderType === 'Made to orders' && (
+                                            <div className={notificationStyle.viewStyle}
+                                                onClick={() => {
+                                                    navigate(`/orders/MadeToOrders/MadeToOrderDetails/${notification?.orderId}`);
+                                                    handleReadNotification(notification._id);
+                                                }}
+                                            >
+                                                View
+                                            </div>
+                                        )}
                                         <span className={notificationStyle.notificationTimestamp} style={{ paddingBottom: 20 }}
                                         >
                                             {formattedDate(notification.createdAt)}
@@ -151,7 +136,6 @@ const Notifications = () => {
                                 </div>
                             ))}
                         </div>
-                    )}
                     <div className={notificationStyle.viewAllStyle}>
                         <span> View All</span>
                     </div>
