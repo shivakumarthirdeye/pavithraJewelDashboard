@@ -41,10 +41,10 @@ export const orderStatistics = createAsyncThunk('orderStatistics', async (body, 
         
         if (status === 200) {
                 //get categories data
-                dispatch(setStatistics(data.data))
+                dispatch(setStatistics(data))
                 
             } 
-            return data.data
+            return data
         } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }

@@ -602,7 +602,7 @@ console.log('ordersData==============',ordersData);
                                                                         ? '#2BB2FE' : lastValue?.name === 'READY TO SHIP'
                                                                                 ? '#EDDF18' : '#3250FF',
                                                         }}
-                                                    >{item?.status[0]?.name === 'NEW'
+                                                    >{lastValue?.name === 'NEW'
                                                         ? "New" : lastValue?.name === 'PROCESSING'
                                                             ? 'Processing' : lastValue?.name === 'DELIVERED'
                                                                 ? 'Delivered' : lastValue?.name === 'READY TO SHIP'

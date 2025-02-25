@@ -25,7 +25,7 @@ export const ReadyToShipOrders = () => {
     const { ordersData, filterOptions, isLoading, isRefresh, orderStatisticsData } = useSelector((state) => state.orders);
 
     //Main data
-    console.log('ordersData==================', ordersData);
+    console.log('orderStatisticsData==================', orderStatisticsData);
 
     const [value, setValue] = useState([
         { val: "All Date", id: 0 },
