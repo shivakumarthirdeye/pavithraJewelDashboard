@@ -9,8 +9,8 @@ import { cancle, formselect, saveData } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
 import api from '../../helper/Api';
-import { addCategories, editCategories } from '../../redux/categoriesSlice';
-import { useDispatch } from 'react-redux';
+import { addCategories, editCategories, getCategoryById } from '../../redux/categoriesSlice';
+import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import Toastify from '../../helper/Toastify';
 import { unwrapResult } from '@reduxjs/toolkit';
@@ -19,9 +19,15 @@ const EditCategory = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
     const { id } = useParams();
-    const location = useLocation();
-    const item = location.state;
-    const data = item?.item;
+    const {categoryByIdData} = useSelector(
+        (state) => state.categories
+    );
+    console.log('categoryByIdData',categoryByIdData);
+
+
+    useEffect(() => {
+        dispatch(getCategoryById(id))
+    },[dispatch,id])
 
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
@@ -55,17 +61,17 @@ const EditCategory = () => {
 
     })
     useEffect(() => {
-        if (data) {
+        if (categoryByIdData) {
             setValues({
-                name: data?.name || "",
-                description: data?.description || '',
-                thumbnailPhoto: data?.thumbnailPhoto || '',
-                status: data?.status || '',
+                name: categoryByIdData?.name || "",
+                description: categoryByIdData?.description || '',
+                thumbnailPhoto: categoryByIdData?.thumbnailPhoto || '',
+                status: categoryByIdData?.status || '',
                 _id: id
 
             });
         }
-    }, [data, setValues, id]);
+    }, [categoryByIdData, setValues, id]);
 
     const handleSubject = async (values) => {
         const result = await dispatch(editCategories(values));
@@ -248,11 +254,11 @@ const EditCategory = () => {
                                                 value={values.catFile}
                                             />
                                         </div>
-                                        <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
+                                        {/* <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
                                             <label htmlFor='catFile'>
-                                                Add Image
+                                                Update Image
                                             </label>
-                                        </div>
+                                        </div> */}
                                     </>
                                 )
                                 }
@@ -273,7 +279,7 @@ const EditCategory = () => {
                                 </div>
                                 <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
                                     <label htmlFor='catFile'>
-                                        Add Image
+                                    Update Image
                                     </label>
                                 </div>
                             </div>

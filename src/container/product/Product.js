@@ -43,7 +43,7 @@ const Product = () => {
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
-    console.log('exportProductsData', exportProductsData);
+    console.log('categoriesExportData', categoriesExportData);
 
 
     const calculateShowingRange = () => {
@@ -191,7 +191,9 @@ const Product = () => {
             >
                 <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#822D32', marginLeft: 12, marginRight: 1, fontFamily: 'Poppins' }}> Clear All</Typography>
             </Box>
-            {categoriesExportData?.data?.map((cat) => (
+            {categoriesExportData?.length > 0 ? (
+            < >
+            {categoriesExportData?.map((cat) => (
                 <Box
                     key={cat._id} // Use cat._id as key for better optimization
                     onClick={() => handleCategorySelect({ target: { value: cat?._id } })}
@@ -223,6 +225,12 @@ const Product = () => {
                         {selectedCategory === cat._id && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}{cat?.name}</Typography>
                 </Box>
             ))}
+            </>
+            ) : (
+                <Box>
+                    <Typography>No Categories</Typography>
+                </Box>
+            )}
         </div>
     );
 

@@ -1,7 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import invoiceStyles from "./invoice.module.css";
+import { useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { getOrdersDetails } from "../../redux/ordersSlice";
+import { formatDate } from "../../helper/FormatDate";
+import { getGoldRate } from "../../redux/dashboardSlice";
 
 const OrdersInvoice = () => {
+    const { id } = useParams();
+    const dispatch = useDispatch();
+    const { ordersDetailsData, isRefresh } = useSelector((state) => state.orders);
+    const { goldRateData } = useSelector((state) => state.dashboard);
+    console.log('ordersDetailsData', ordersDetailsData);
+    // console.log('goldRateData', goldRateData);
+    const invoiceData = ordersDetailsData?.data;
+    const goldRate = goldRateData?.data
+
+    useEffect(() => {
+        dispatch(getOrdersDetails(id))
+    }, [dispatch, id, isRefresh])
+
+    useEffect(() => {
+        dispatch(getGoldRate())
+    }, [dispatch])
     return (
         <div className={invoiceStyles.invoiceContainer}>
             <header className={invoiceStyles.header}>
@@ -22,13 +43,13 @@ const OrdersInvoice = () => {
                 <div className={invoiceStyles.fromTo}>
                     <div>
                         <h3 className={invoiceStyles.h3Style}>TO</h3>
-                        <p className={invoiceStyles.myCompany}>Customer name</p>
-                        <p className={invoiceStyles.addressTextStyle}>4 th street , 3 main,
-                            kalyan nagar, bangalore</p>
-                        <p className={invoiceStyles.addressTextStyle} style={{ marginTop: 10 }}>PAN: NDGV1234</p>
-                        <p className={invoiceStyles.addressTextStyle}>Contact: 9876543210</p>
-                        <p className={invoiceStyles.addressTextStyle}>State: Karnataka</p>
-                        <p className={invoiceStyles.addressTextStyle}>State Code: 29</p>
+                        <p className={invoiceStyles.myCompany}>{invoiceData?.shippingAddress?.firstName} {invoiceData?.shippingAddress?.lastName}</p>
+                        <p className={invoiceStyles.addressTextStyle}>{invoiceData?.shippingAddress?.streetAddress} , ,
+                            {invoiceData?.shippingAddress?.unit}  {invoiceData?.shippingAddress?.city}, </p>
+                        <p className={invoiceStyles.addressTextStyle} style={{ marginTop: 10 }}>PAN: {invoiceData?.panNumber}</p>
+                        <p className={invoiceStyles.addressTextStyle}>Contact: {invoiceData?.userId?.phone}</p>
+                        <p className={invoiceStyles.addressTextStyle}>State: {invoiceData?.shippingAddress?.state}</p>
+                        <p className={invoiceStyles.addressTextStyle}>State Code: {invoiceData?.shippingAddress?.pincode}</p>
                         <p className={invoiceStyles.addressTextStyle}>GSTIN/Unique ID: URD</p>
                     </div>
                     <div>
@@ -51,9 +72,9 @@ const OrdersInvoice = () => {
                     </div>
                     <div>
                         <p></p>
-                        <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}> 01.16.2023.</p>
-                        <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}>Karnataka</p>
-                        <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}> 29</p>
+                        <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}> {formatDate(invoiceData?.createdAt)}</p>
+                        <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}>{invoiceData?.shippingAddress?.state}</p>
+                        <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}> {invoiceData?.shippingAddress?.pincode}</p>
                         <p className={invoiceStyles.addressStyle} style={{ textAlign: 'right' }}> 29AAHPC4317P1ZF</p>
                     </div>
                 </div >
@@ -89,16 +110,18 @@ const OrdersInvoice = () => {
                 <div className={invoiceStyles.goldRateStyle}>GOLD RATE</div>
                 <div className={invoiceStyles.totalStyle}>TOTAL</div>
             </div>
-            <div className={invoiceStyles.tableData}>
-                <div className={invoiceStyles.slNoStyle}>1.</div>
-                <div className={invoiceStyles.nameStyle}>Pure Gold ornaments 916 Hallmark<br />
-                    <span className={invoiceStyles.charges}>Making charges: 10%</span>
+            {invoiceData?.products?.map((item, index) => (
+                <div className={invoiceStyles.tableData}>
+                    <div className={invoiceStyles.slNoStyle}>{index + 1}.</div>
+                    <div className={invoiceStyles.nameStyle}>{item?.productId?.productName}<br />
+                        <span className={invoiceStyles.charges}>Making charges: {item?.makingCharges}%</span>
+                    </div>
+                    <div className={invoiceStyles.hsnStyle} style={{ fontSize: 9, color: '#101011' }}>{item?.productId?.inventory?.sku}</div>
+                    <div className={invoiceStyles.qtyStyle} style={{ fontSize: 9, color: '#101011' }}>{item?.totalWeight}</div>
+                    <div className={invoiceStyles.goldRateStyle} style={{ fontSize: 9, color: '#101011' }}>₹{item?.productId?.gold?.type === 'k22' ? goldRate?.k22 : goldRate?.k18}</div>
+                    <div className={invoiceStyles.totalStyle} style={{ fontSize: 9, color: '#101011', fontWeight: 600 }}>₹2000</div>
                 </div>
-                <div className={invoiceStyles.hsnStyle} style={{ fontSize: 9, color: '#101011' }}>7113</div>
-                <div className={invoiceStyles.qtyStyle} style={{ fontSize: 9, color: '#101011' }}>10</div>
-                <div className={invoiceStyles.goldRateStyle} style={{ fontSize: 9, color: '#101011' }}>₹2000</div>
-                <div className={invoiceStyles.totalStyle} style={{ fontSize: 9, color: '#101011', fontWeight: 600 }}>₹2000</div>
-            </div>
+            ))}
             <div className={invoiceStyles.totalAmount} >
                 <div className={invoiceStyles.invoiceGstText} style={{ fontSize: 12 }}>Total Amount before tax GST ( SGST / UGST / CGST / IGST )</div>
                 <div className={invoiceStyles.invoiceGstText}>₹2000</div>
@@ -130,8 +153,8 @@ const OrdersInvoice = () => {
             <section className={invoiceStyles.summary}>
                 <div className={invoiceStyles.notes}>
                     <h3 className={invoiceStyles.declaration}>Declaration</h3>
-                    <p className={invoiceStyles.declarationText}> 1. I/We declare that this invoice shows actual price of the  goods described and that all particulars are true and correct.<br/>
-                     2. Error and Omission in the this invoice shall be subject to the jurisdiction of the Bangalore</p>
+                    <p className={invoiceStyles.declarationText}> 1. I/We declare that this invoice shows actual price of the  goods described and that all particulars are true and correct.<br />
+                        2. Error and Omission in the this invoice shall be subject to the jurisdiction of the Bangalore</p>
                 </div>
                 <div className={invoiceStyles.totals}>
                     <p className={invoiceStyles.logoTitle}>For Pavithra jewels</p>

@@ -53,7 +53,7 @@ const Login = () => {
             <div className={styles.login}>
                 <div className={styles.content} style={{paddingLeft:60,paddingRight:60}}>
                     <h3 style={{ paddingBottom: 20 }}>Hi, Welcome Back!</h3>
-                    <p>Login to you account to enjoy</p>
+                    <p>Login to your account to enjoy</p>
 
                     <Box component="form" noValidate autoComplete="off" >
                         <div className={styles.labelText} style={{ marginTop: 40 }}>Email address</div>

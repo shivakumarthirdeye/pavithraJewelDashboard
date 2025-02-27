@@ -75,7 +75,7 @@ function App() {
             <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/:id' element={<ReadyToShipOrderDetails />} />
             <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/:id' element={<CustomerReview />} />
             <Route path='/orders/ReadyToShipOrders/TrashReadyToShip' element={<TrashReadyToShip />} />
-            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice' element={<OrdersInvoice />} />
+            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/:id' element={<OrdersInvoice />} />
             <Route path='/orders/MadeToOrders/MadeToOrderDetails/:id' element={<MadeToOrderDetails />} />
             <Route path='/orders/MadeToOrders/TrashMadeToOrders' element={<TrashMadeToOrders />} />
             <Route path='/customer/Customers' element={<Customers />} />

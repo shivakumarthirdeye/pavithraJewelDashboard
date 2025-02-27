@@ -18,6 +18,7 @@ const initialState = {
     categoriesData: {},
     deleteCategoriesData: {},
     categoriesExportData: {},
+    categoryByIdData: {},
     errorMsg: "",
     isError: false
 }
@@ -84,6 +85,21 @@ export const editCategories = createAsyncThunk('editCategories', async (body, { 
     }
 }
 )
+export const getCategoryById = createAsyncThunk('getCategoryById', async (body, { rejectWithValue, dispatch }) => {
+    try {
+        const { data, status } = await api.getCategoryById(body);
+        if (status === 200) {
+            // render otp screen
+            dispatch(setCategoryById(data?.data));
+        }
+        return data.data
+
+    } catch (err) {
+        Toastify.error(err.response.data.message);
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
 export const deleteCategories = createAsyncThunk('deleteCategories', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.deleteCategories(body);
@@ -123,6 +139,9 @@ export const categoriesSlice = createSlice({
         setDeleteCategories: (state, action) => {
             state.deleteCategoriesData = action.payload
         },
+        setCategoryById: (state, action) => {
+            state.categoryByIdData = action.payload
+        },
         setRefresh: (state) => {
             state.isRefresh = !state.isRefresh
         },
@@ -156,7 +175,8 @@ export const {
     setDeleteCategories,
     setRefresh,
     setFilterValues,
-    setCategoriesExport
+    setCategoriesExport,
+    setCategoryById
 } = categoriesSlice.actions
 
 export default categoriesSlice.reducer;

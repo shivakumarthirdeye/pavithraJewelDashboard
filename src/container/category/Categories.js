@@ -202,7 +202,7 @@ const Categories = () => {
                     <div>
                         <h2 className={catStyle.categoryText}>Category</h2>
                     </div>
-                    <CustomSeparator dashboard="Dashboard" type="Category" />
+                    <CustomSeparator dashboard="Dashboard" type="Categories " />
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 20 }}>
                     <div

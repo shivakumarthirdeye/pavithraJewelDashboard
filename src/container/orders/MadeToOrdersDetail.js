@@ -18,7 +18,7 @@ export const MadeToOrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh,updateStatusData } = useSelector((state) => state.orders);
-    console.log('ordersDetailsData', ordersDetailsData);
+    // console.log('ordersDetailsData', ordersDetailsData);
     // console.log('updateStatusData', updateStatusData);
 
 
@@ -163,7 +163,7 @@ export const MadeToOrderDetails = () => {
                     <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
-                    <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice')}>
+                    <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>
                         <InvoiceIcon /><div className={productStyle.addcategoryText}> Invoice</div>
                     </div>
                     <div

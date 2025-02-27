@@ -97,6 +97,9 @@ class Api {
     editCategories = (data) => {
         return this.init().put(`/admin/category/${data?._id}`, data)
     }
+    getCategoryById = (data) => {
+        return this.init().get(`/admin/category/${data}`, data)
+    }
     deleteCategories = (data) => {
         return this.init().delete(`/admin/category/${data}`, data)
     }

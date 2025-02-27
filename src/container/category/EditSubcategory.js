@@ -236,26 +236,7 @@ const EditSubcategory = () => {
                                 ) : (
                                     <>
                                         <ImageIcon />
-                                        <div>
-                                            <label htmlFor='catFile' className={categoryStyle.uploadBox}>
-                                                <p className={categoryStyle.uploadText} style={{ marginTop: 10 }}>
-                                                    Drag and drop image here, or click add image
-                                                </p>
-                                            </label>
-                                            <input
-                                                type='file'
-                                                accept="image/*"
-                                                id='catFile'
-                                                style={{ display: 'none' }}
-                                                onChange={handleImageChange}
-                                                value={values.catFile}
-                                            />
-                                        </div>
-                                        <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
-                                            <label htmlFor='catFile'>
-                                                Add Image
-                                            </label>
-                                        </div>
+                                        
                                     </>
                                 )
                                 }
@@ -276,7 +257,7 @@ const EditSubcategory = () => {
                                 </div>
                                 <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
                                     <label htmlFor='catFile'>
-                                        Add Image
+                                        Update Image
                                     </label>
                                 </div>
                             </div>

@@ -527,11 +527,11 @@ export const theme = createTheme({
                     fontSize: '12px',
                     color: '#2F2F2F',
                     fontWeight: '400',
-                    padding: '10px 16px',
+                    padding: '10px 0px 10px 40px',
                     // borderRadius: '20px',
                     borderBottom: '1px solid #EFEEF1',
                     overflow: 'visible',
-                    marginRight: 'auto',
+                    marginRight: '0px',
                     display: 'flex',
                     justifyContent: 'flex-start',
                     // alignItems:'flex-start',
@@ -544,8 +544,8 @@ export const theme = createTheme({
                     '&.Mui-selected': {
                         backgroundColor: '#EFEEF1',
                         color: '#2F2F2F',
-                        alignItem: 'left',
-                        marginLeft: 'auto',
+                        // alignItem: 'left',
+                        // marginLeft: 'auto',
                         '&:hover': {
                             backgroundColor: '#d6dafe',
                         },
@@ -553,13 +553,14 @@ export const theme = createTheme({
                             content: '"✔"', // Add checkmark icon
                             fontSize: '14px',
                             color: '#2F2F2F',
-                            // marginRight: 'auto',
-                            textAlign: 'left'
+                            marginLeft: '-20px',
+                            textAlign: 'left',
+                            position: 'fixed'
                         },
                     },
                     '&.MuiMenu-list': {
                         paddingTop: '0',
-                        paddingBottom: '0'
+                        paddingBottom: '0px',
                     }
                 },
             },

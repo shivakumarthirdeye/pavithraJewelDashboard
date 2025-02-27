@@ -19,7 +19,7 @@ export const ReadyToShipOrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
-    console.log('ordersDetailsData', ordersDetailsData);
+    // console.log('ordersDetailsData', ordersDetailsData);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [datas, setData] = useState([]);
     const [copied, setCopied] = useState(false);
