@@ -18,6 +18,7 @@ const initialState = {
     subCategoriesData: {},
     deleteSubCategoriesData: {},
     subCategoiesExportData:{},
+    subCategoriesByIdData:{},
     errorMsg: "",
     isError: false
 }
@@ -32,6 +33,20 @@ export const getSubCategories = createAsyncThunk('getSubCategories', async (body
                 // dispatch(setRefresh())
             } 
             return data
+        } catch (err) {
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
+export const getSubCategoriesById = createAsyncThunk('getSubCategoriesById', async (body, { rejectWithValue, dispatch }) => {
+    try {
+        const { data, status } = await api.getSubCategoriesById(body);
+        if (status === 200) {
+                //get categories data
+                dispatch(setSubCategoriesById(data.data))
+                // dispatch(setRefresh())
+            } 
+            return data.data
         } catch (err) {
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
@@ -123,6 +138,9 @@ export const subCategoriesSlice = createSlice({
         setDeleteSubCategories: (state, action) => {
             state.deleteSubCategoriesData = action.payload
         },
+        setSubCategoriesById: (state, action) => {
+            state.subCategoriesByIdData = action.payload
+        },
         setRefresh:(state) => {
             state.isRefresh = !state.isRefresh
         },
@@ -196,6 +214,7 @@ export const {
     setRefresh,
     setFilterValues,
     setSubCategoriesExport,
+    setSubCategoriesById
 } = subCategoriesSlice.actions
 
 export default subCategoriesSlice.reducer;

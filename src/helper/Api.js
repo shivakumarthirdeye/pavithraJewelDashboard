@@ -112,6 +112,9 @@ class Api {
     getSubCategories = (data) => {
         return this.init().get(`/admin/subcategory?${data}`, data)
     }
+    getSubCategoriesById = (data) => {
+        return this.init().get(`/admin/subcategory/${data}`, data)
+    }
     editSubCategories = (data) => {
         return this.init().put(`/admin/subcategory/${data?._id}`, data)
     }
@@ -204,7 +207,7 @@ class Api {
         return this.init().get(`/admin/customer?${data}`, data)
     }
     getCustomersDetail = (data) => {
-        return this.init().get(`/admin/customer/${data}`, data)
+        return this.init().get(data)
     }
     getExportsCustomers = (data) => {
         return this.init().get(`/admin/exportCustomer`, data)
@@ -234,6 +237,9 @@ class Api {
     }
     editCountry = (data) => {
         return this.init().put(`/admin/country/${data?._id}`, data)
+    }
+    getCountryById = (data) => {
+        return this.init().get(`/admin/country/${data}`)
     }
     deleteCountry = (data) => {
         return this.init().delete(`/admin/country/${data}`, data)
@@ -311,8 +317,8 @@ class Api {
     }
 
     //getNotification
-    getNotification = () => {
-        return this.init().get('/admin/getAllNotifications')
+    getNotification = (data) => {
+        return this.init().get(`/admin/getAllNotifications${data}`)
     }
     markAsRead = (data) => {
         return this.init().put(`/admin/readedNotification/${data}`)

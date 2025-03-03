@@ -11,11 +11,12 @@ const initialState = {
     customersDetailData:{},
     deleteCustomersData:{},
     filterOptions: {
-        search: "",
         page: 1,
+        search: "",        
         order: '',
         sortBy: '',
         limit: 10,
+        status:''
     },
     errorMsg: "",
     isError: false
@@ -47,9 +48,11 @@ export const getExportsCustomers = createAsyncThunk("getExportsCustomers" ,async
     }
 })
 
-export const getCustomersDetail = createAsyncThunk("getCustomersDetail" ,async (body, { rejectWithValue, dispatch }) => {
+export const getCustomersDetail = createAsyncThunk("getCustomersDetail" ,async ({id, ...queryParams}, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.getCustomersDetail(body);
+        const queryString = new URLSearchParams(queryParams).toString();
+        const url = `/admin/customer/${id}?${queryString}`;
+        const { data, status } = await api.getCustomersDetail(url);
         if (status === 200) {
                 //get categories data
                 dispatch(setCustomersDetail(data))

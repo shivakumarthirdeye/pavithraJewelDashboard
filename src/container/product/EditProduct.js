@@ -74,7 +74,7 @@ const EditProduct = () => {
     const schema = yup.object().shape({
         productName: yup.string().required("Product name is required"),
         status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
+        // description: yup.string().required("Description is required"),
         // tags: yup.array().required("Tags are required"),
         tags: yup
             .array()
@@ -85,26 +85,33 @@ const EditProduct = () => {
         featurerdImage: yup.string().required("Image is required"),
         media: yup.object().shape({
             photo: yup.array().min(1, "At least one image is required"),
-            video: yup.array().min(1, "At least one video is required")
+            // video: yup.array().min(1, "At least one video is required")
         }),
-        discount: yup.object().shape({
-            discountValue: yup.number().typeError("Discount Value must be a number").min(1, "Discount Value is required"),
-            discountStartdate: yup.date().required("Start Date is required"),
-            discountEnddate: yup.date().required("End Date is required"),
-        }),
-        shipping: yup.object().shape({
-            weight: yup.number().typeError("Weight must be a number").min(1, "Weight is required"),
-            height: yup.number().typeError("Height must be a number").min(1, "Height is required"),
-            length: yup.number().typeError("Length must be a number").min(1, "Length is required"),
-            width: yup.number().typeError("Width must be a number").min(1, "Width is required"),
-        }),
+        // discount: yup.object().shape({
+        //     discountValue: yup.number().typeError("Discount Value must be a number").min(1, "Discount Value is required"),
+        //     discountStartdate: yup.date().required("Start Date is required"),
+        //     discountEnddate: yup.date().required("End Date is required"),
+        // }),
+        // shipping: yup.object().shape({
+        //     weight: yup.number().typeError("Weight must be a number").min(1, "Weight is required"),
+        //     height: yup.number().typeError("Height must be a number").min(1, "Height is required"),
+        //     length: yup.number().typeError("Length must be a number").min(1, "Length is required"),
+        //     width: yup.number().typeError("Width must be a number").min(1, "Width is required"),
+        // }),
         features: yup.object().shape({
-            itemWeight: yup.number().typeError("Item weight must be a number").min(1, "Item weight is required"),
-            stoneWeight: yup.number().typeError("Stone weight must be a number").min(1, "Stone weight is required"),
-            stoneColor: yup.string().required("Stone color is required"),
-            feature: yup.string().required("feature is required"),
-            productWidth: yup.number().typeError("Product width must be a number").min(1, "Product width is required"),
-            productHeight: yup.number().typeError("Product height must be a number").min(1, "Product height is required"),
+            // itemWeight: yup.number().typeError("Item weight must be a number").min(1, "Item weight is required"),
+            // stoneWeight: yup.number().typeError("Stone weight must be a number").min(1, "Stone weight is required"),
+            // stoneColor: yup.string().required("Stone color is required"),
+            // feature: yup.string().required("feature is required"),
+            // productWidth: yup.number().typeError("Product width must be a number").min(1, "Product width is required"),
+            productHeight: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("Product length must be a number")
+                    .when("status", (status, schema) =>
+                        status === "active" ? schema.required("Product length is required") : schema
+                    ),
+            }),
         }),
         metalType: yup
             .array()
@@ -200,7 +207,7 @@ const EditProduct = () => {
         }),
         category: yup.object().shape({
             productCategory: yup.string().required("Category is required"),
-            productSubcategory: yup.string().required("Subcategory is required"),
+            // productSubcategory: yup.string().required("Subcategory is required"),
         }),
         inventory: yup.object().shape({
             sku: yup.string().required("Sku is required"),
@@ -227,12 +234,30 @@ const EditProduct = () => {
             description: "",
             tags: [],
             features: {
-                itemWeight: 0,
-                stoneWeight: 0,
-                stoneColor: '',
-                productWidth: 0,
-                productHeight: 0,
-                feature: ''
+                itemWeight: {
+                    value: 0,
+                    status: false
+                },
+                stoneWeight: {
+                    value: 0,
+                    status: false
+                },
+                stoneColor: {
+                    value: '',
+                    status: false
+                },
+                productWidth: {
+                    value: 0,
+                    status: false
+                },
+                productHeight: {
+                    value: 0,
+                    status: false
+                },
+                feature: {
+                    value: '',
+                    status: false
+                },
             },
             media: {
                 photo: [],
@@ -525,50 +550,7 @@ const EditProduct = () => {
             Toastify.error("Error uploading images");
         }
     };
-    // const handleImageChange = async (e, index, values) => {
-    //     const files = e.target?.files; // Get all selected files
-    //     if (!files || files.length === 0) return;
-
-    //     try {
-    //         const uploadedImages = []; // Temporary array to store uploaded image URLs
-
-    //         for (const file of files) {
-    //             const body = {
-    //                 key: `${Date.now()}_${file.name}`,
-    //                 fileType: file.type,
-    //                 fileName: file.name,
-    //             };
-
-    //             const { data, status } = await api.getPutSignedUrl(body);
-
-    //             if (status === 200) {
-    //                 await axios.put(data.data?.preSigned, file, {
-    //                     headers: { "Content-Type": file.type },
-    //                 });
-
-    //                 uploadedImages.push(data?.data?.url); // Add the uploaded image URL to the array
-    //             }
-    //         }
-
-    //         // Add the uploaded images to the product at the specified index
-    //         const updatedProducts = values?.map((product, idx) =>
-    //             index === idx
-    //                 ? {
-    //                       ...product,
-    //                       images: [...(product.images || []), ...uploadedImages], // Append new images
-    //                   }
-    //                 : product
-    //         );
-
-    //         setFieldValue("media.photo", updatedProducts);
-
-    //         console.log("Uploaded Images:", uploadedImages);
-    //     } catch (err) {
-    //         console.error("Error uploading files", err);
-    //         toast.error("Error uploading files");
-    //     }
-    // };
-
+    
 
     // Media Video
     const handleVideoChange = async (e, attribute, repo) => {
@@ -656,6 +638,26 @@ const EditProduct = () => {
     };
     const handleCheckFinalSalePrice = (e) => {
         setFieldValue('pricing.finalSalePrice.status', e.target.checked);
+    };
+
+    //handleCheckFeatures
+    const handleCheckItemWeight = (e) => {
+        setFieldValue('features.itemWeight.status', e.target.checked);
+    };
+    const handleCheckStoneWeight = (e) => {
+        setFieldValue('features.stoneWeight.status', e.target.checked);
+    };
+    const handleCheckStoneColor = (e) => {
+        setFieldValue('features.stoneColor.status', e.target.checked);
+    };
+    const handleCheckProductWidth = (e) => {
+        setFieldValue('features.productWidth.status', e.target.checked);
+    };
+    const handleCheckProductHeight = (e) => {
+        setFieldValue('features.productHeight.status', e.target.checked);
+    };
+    const handleCheckFeature = (e) => {
+        setFieldValue('features.feature.status', e.target.checked);
     };
 
     const imageHandler = async () => {
@@ -881,26 +883,36 @@ const EditProduct = () => {
 
     useEffect(() => {
         if (
-            values?.pricing?.goldRate?.value ||
-            values?.pricing?.diamondCost?.value ||
-            values?.pricing?.polkiCost?.value ||
-            values?.pricing?.makingCharges?.value ||
-            values?.pricing?.stoneCharges?.value
+            values?.pricing?.goldWeight?.value &&
+            values?.pricing?.goldRate?.value
         ) {
-            const totalCost =
-                (values?.pricing?.goldRate?.value || 0) +
-                (values?.pricing?.diamondCost?.value || 0) +
-                (values?.pricing?.polkiCost?.value || 0) +
-                (values?.pricing?.makingCharges?.value || 0) +
-                (values?.pricing?.stoneCharges?.value || 0);
-
-            const gstMultiplier = 1 + (values?.pricing?.gst?.value || 0) / 100;
-
-            const finalSalePrice = totalCost * gstMultiplier;
-
-            setFieldValue('pricing.finalSalePrice.value', finalSalePrice); // Formatting to 2 decimal places
+            // ✅ Calculate gold price
+            const goldWeight = values?.pricing?.goldWeight?.value || 0;
+            const goldRate = values?.pricing?.goldRate?.value || 0;
+            // const goldPrice = goldWeight * goldRate; // ✅ Corrected
+    
+            // ✅ Calculate making charges (percentage of goldPrice, NOT goldRate)
+            const makingChargesPercentage = values?.pricing?.makingCharges?.value || 0;
+            const makingCharges = (goldRate * makingChargesPercentage) / 100;
+    
+            // ✅ Calculate subtotal (before GST)
+            const stoneCharges = values?.pricing?.stoneCharges?.value || 0;
+            const diamondCost = values?.pricing?.diamondCost?.value || 0;
+            const polkiCost = values?.pricing?.polkiCost?.value || 0;
+    
+            const subtotal = goldRate + makingCharges + stoneCharges + diamondCost + polkiCost;
+    
+            // ✅ Apply GST correctly
+            const gstPercentage = values?.pricing?.gst?.value || 0;
+            const gstAmount = (subtotal * gstPercentage) / 100; // ✅ Corrected GST calculation
+    
+            const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
+    
+            // ✅ Update form values
+            setFieldValue('pricing.finalSalePrice.value', finalSalePrice.toFixed(2));
         }
     }, [
+        values?.pricing?.goldWeight?.value,
         values?.pricing?.goldRate?.value,
         values?.pricing?.diamondCost?.value,
         values?.pricing?.polkiCost?.value,
@@ -909,7 +921,8 @@ const EditProduct = () => {
         values?.pricing?.gst?.value,
         setFieldValue
     ]);
-
+    
+    
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={productStyle.container}>
@@ -962,9 +975,9 @@ const EditProduct = () => {
                                 style={{ borderRadius: 20 }}
                             />
 
-                            {
+                            {/* {
                                 errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
-                            }
+                            } */}
                         </div>
                         <div style={{ marginTop: 20 }}>
                             <label className={productStyle.label}>Tags</label>
@@ -990,12 +1003,14 @@ const EditProduct = () => {
                         </h6>
                         <div className={productStyle.itemsStyle}>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Item weight</label>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                    <CustomizedCheckbox handleCheck={handleCheckItemWeight} checked={values.features.itemWeight.status} /> <span>Item weight</span>
+                                </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
-                                    name="features.itemWeight"
-                                    value={values.features.itemWeight || ''}
+                                    name="features.itemWeight.value"
+                                    value={values.features.itemWeight.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1030,17 +1045,19 @@ const EditProduct = () => {
 
                                     }}
                                 />
-                                {
+                                {/* {
                                     errors?.features?.itemWeight && touched?.features?.itemWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.itemWeight}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Stone Weight</label>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                    <CustomizedCheckbox handleCheck={handleCheckStoneWeight} checked={values.features.stoneWeight.status} /> <span>Stone Weight</span>
+                                </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
-                                    name="features.stoneWeight"
-                                    value={values.features.stoneWeight || ''}
+                                    name="features.stoneWeight.value"
+                                    value={values.features.stoneWeight.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1074,34 +1091,38 @@ const EditProduct = () => {
 
                                     }}
                                 />
-                                {
+                                {/* {
                                     errors?.features?.stoneWeight && touched?.features?.stoneWeight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.stoneWeight}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Stone color/type</label>
+                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                    <CustomizedCheckbox handleCheck={handleCheckStoneColor} checked={values.features.stoneColor.status} /> <span>Stone color/type</span>
+                                </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name="features.stoneColor"
-                                    value={values.features.stoneColor || ''}
+                                    name="features.stoneColor.value"
+                                    value={values.features.stoneColor.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {
+                                {/* {
                                     errors?.features?.stoneColor && touched?.features?.stoneColor && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.stoneColor}</p>
-                                }
+                                } */}
                             </div>
                         </div>
                         <div className={productStyle.itemsStyle}>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Product Width</label>
+                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                    <CustomizedCheckbox handleCheck={handleCheckProductWidth} checked={values.features.productWidth.status} /> <span>Product Width</span>
+                                </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
-                                    name="features.productWidth"
-                                    value={values.features.productWidth || ''}
+                                    name="features.productWidth.value"
+                                    value={values.features.productWidth.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1135,17 +1156,19 @@ const EditProduct = () => {
 
                                     }}
                                 />
-                                {
+                                {/* {
                                     errors?.features?.productWidth && touched?.features?.productWidth && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.productWidth}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Product Height</label>
+                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                    <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length</span>
+                                </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
-                                    name="features.productHeight"
-                                    value={values.features.productHeight || ''}
+                                    name="features.productHeight.value"
+                                    value={values.features.productHeight.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
@@ -1180,23 +1203,25 @@ const EditProduct = () => {
                                     }}
                                 />
                                 {
-                                    errors?.features?.productHeight && touched?.features?.productHeight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.productHeight}</p>
+                                    errors?.features?.productHeight?.value && touched?.features?.productHeight?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.productHeight?.value}</p>
                                 }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                                <label className={productStyle.label}>Feature</label>
+                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                    <CustomizedCheckbox handleCheck={handleCheckFeature} checked={values.features.feature.status} /> <span>Feature</span>
+                                </div>
                                 <TextField
                                     placeholder='Enter'
                                     type={'text'}
-                                    name="features.feature"
-                                    value={values.features.feature || ''}
+                                    name="features.feature.value"
+                                    value={values.features.feature.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {
+                                {/* {
                                     errors?.features?.feature && touched?.features?.feature && <p style={{ color: "red", fontSize: "12px" }}>{errors?.features?.feature}</p>
-                                }
+                                } */}
                             </div>
                         </div>
 
@@ -1508,7 +1533,7 @@ const EditProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckMakingCharges} checked={values.pricing.makingCharges.status} /> <span>Making charges*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckMakingCharges} checked={values.pricing.makingCharges.status} /> <span>Making charges in %*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1544,7 +1569,7 @@ const EditProduct = () => {
                                                     }}
                                                     disableRipple // disables ripple effect for a cleaner loo
                                                 >
-                                                    Rs.
+                                                    %
                                                 </IconButton>
                                             </InputAdornment>
                                         ),
@@ -1933,9 +1958,9 @@ const EditProduct = () => {
                                     sx={fieldText}
 
                                 />
-                                {
+                                {/* {
                                     errors?.discount?.discountValue && touched?.discount?.discountValue && <p style={{ color: "red", fontSize: "12px" }}>{errors?.discount?.discountValue}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} >
@@ -1981,9 +2006,9 @@ const EditProduct = () => {
                                         />
                                     </LocalizationProvider>
                                 </div>
-                                {
+                                {/* {
                                     errors.discountStartDate && touched.discountStartDate && <p style={{ color: "red", fontSize: "12px" }}>{errors.discountStartDate}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} > <span>Discount End Date</span>
@@ -2099,9 +2124,9 @@ const EditProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {
+                                {/* {
                                     errors?.shipping?.weight && touched?.shipping?.weight && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.weight}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '25%' }}>
                                 <div className={productStyle.checkBoxStyle} >
@@ -2116,9 +2141,9 @@ const EditProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {
+                                {/* {
                                     errors?.shipping?.height && touched?.shipping?.height && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.height}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '25%' }}>
                                 <div className={productStyle.checkBoxStyle}>
@@ -2133,9 +2158,9 @@ const EditProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {
+                                {/* {
                                     errors?.shipping?.length && touched?.shipping?.length && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.length}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '25%' }}>
                                 <div className={productStyle.checkBoxStyle}>
@@ -2150,9 +2175,9 @@ const EditProduct = () => {
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                 />
-                                {
+                                {/* {
                                     errors?.shipping?.width && touched?.shipping?.width && <p style={{ color: "red", fontSize: "12px" }}>{errors?.shipping?.width}</p>
-                                }
+                                } */}
                             </div>
                         </div>
                     </div>
@@ -2227,9 +2252,9 @@ const EditProduct = () => {
                                 ))}
                             </Select>
                         </div>
-                        {
+                        {/* {
                             errors.category?.productSubcategory && touched?.category?.productSubcategory && <p style={{ color: "red", fontSize: "12px" }}>{errors?.category?.productSubcategory}</p>
-                        }
+                        } */}
                     </div>
 
                     {/* Gold */}

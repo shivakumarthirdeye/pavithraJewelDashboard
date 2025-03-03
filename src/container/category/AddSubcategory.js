@@ -26,8 +26,8 @@ const AddSubcategory = () => {
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
         status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
-        thumbnailPhoto: yup.string().required("Image is required"),
+        // description: yup.string().required("Description is required"),
+        // thumbnailPhoto: yup.string().required("Image is required"),
         parentId: yup.string().required("Category is required"),
     })
 
@@ -114,7 +114,7 @@ const AddSubcategory = () => {
                         General Information
                     </h6>
                     <div style={{ marginTop: 20 }}>
-                        <label className={categoryStyle.label}>Category Name</label>
+                        <label className={categoryStyle.label}>Category Name*</label>
                         <Select
                             // className={categoryStyle.formselect}
                             labelId="demo-simple-select-label"
@@ -154,7 +154,7 @@ const AddSubcategory = () => {
                         errors.parentId && touched.parentId && <p style={{ color: "red", fontSize: "12px" }}>{errors.parentId}</p>
                     }
                     <div style={{ marginTop: 20 }}>
-                        <label className={categoryStyle.label}>Subcategory Name</label>
+                        <label className={categoryStyle.label}>Subcategory Name*</label>
                         <TextField
                             type='text'
                             onBlur={handleBlur}
@@ -184,9 +184,9 @@ const AddSubcategory = () => {
                             sx={TextArea}
                         />
                         {/* </div> */}
-                        {
+                        {/* {
                             errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
-                        }
+                        } */}
                     </div>
 
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
@@ -241,14 +241,14 @@ const AddSubcategory = () => {
 
                             </div>
                         </div>
-                        {
+                        {/* {
                             errors.img && touched.img && <p style={{ color: "red", fontSize: "12px" }}>{errors.img}</p>
-                        }
+                        } */}
                     </div>
                     <div className={categoryStyle.catStatusStyle}>
                         <h6 className={categoryStyle.variationText}>Status</h6>
                         <div style={{ marginTop: 15 }}>
-                            <label className={categoryStyle.label}>Category Status</label>
+                            <label className={categoryStyle.label}>Subcategory Status*</label>
                             <br />
                             <Select
                                 // className={categoryStyle.formselect}

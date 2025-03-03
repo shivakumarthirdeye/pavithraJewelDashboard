@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import customerStyle from "./customer.module.css";
 import orderStyle from "../orders/orders.module.css";
 import productStyle from "../product/product.module.css";
+import catStyle from '../category/category.module.css'
 import {
     BillingAddressIcon,
     ContactIcon,
@@ -26,7 +27,7 @@ import {
 } from "../../svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getCustomersDetail } from "../../redux/customerSlice";
+import { getCustomersDetail, setFilterValues } from "../../redux/customerSlice";
 import { Box, CircularProgress, Pagination, Typography } from "@mui/material";
 import { deleteOrders } from "../../redux/ordersSlice"
 import PopoverComponent from "../../component/Popover";
@@ -41,138 +42,74 @@ export const CustomersDetails = () => {
     const dispatch = useDispatch();
     const { id } = useParams();
 
-    const { customersDetailData } = useSelector((state) => state.customers);
+    const { customersDetailData, filterOptions, isLoading, isRefresh } = useSelector((state) => state.customers);
     const customerDetails = customersDetailData?.data;
     const customerDetailOrders =
         customersDetailData?.orders;
 
     console.log("customerDetailOrders", customerDetailOrders);
-    console.log("customerDetails", customerDetails);
+    console.log("customersDetailData", customersDetailData);
 
     //State
     const [datas, setData] = useState([]);
+    const [order, setOrder] = useState('asc')
     const [search, setSearch] = useState("");
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState(null);
-    const [filteredOrders, setFilteredOrders] = useState([]);
-    const [paginatedOrders, setPaginatedOrders] = useState([]);
-    const [currentPage, setCurrentPage] = useState(1); // Pagination state
+    const [status, setStatus] = useState("");
 
-    const itemsPerPage = 10; // Adjust based on your requirements
-
-    useEffect(() => {
-        dispatch(getCustomersDetail(id))
-    }, [dispatch, id])
+    // useEffect(() => {
+    //     dispatch(getCustomersDetail(id))
+    // }, [dispatch, id])
 
     const handleSubject = (value) => {
         dispatch(deleteOrders(value))
     }
 
-    const indexOfLastProduct = currentPage * itemsPerPage;
-    const indexOfFirstProduct = indexOfLastProduct - itemsPerPage;
-    let currentProducts = customerDetailOrders?.slice(
-        indexOfFirstProduct,
-        indexOfLastProduct
-    );
-
-    const totalPages = Math.ceil(customerDetailOrders?.length / itemsPerPage);
-
-
-
-    const handleDateChange = (date) => {
-        setSelectedDate((prevFilter) =>
-            prevFilter && prevFilter.getTime() === date.getTime() ? '' : date
+    const calculateShowingRange = () => {
+        const start = (customersDetailData?.currentPage - 1) * customersDetailData.limit + 1;
+        const end = Math.min(
+            customersDetailData?.currentPage * customersDetailData.limit,
+            customersDetailData?.totalItems
         );
+        return { start, end };
     };
 
+    const { start, end } = calculateShowingRange();
 
-    console.log(search)
 
-    const onPageChange = (pageNumber) => {
-        if (pageNumber >= 1 && pageNumber <= totalPages) {
-            setCurrentPage(pageNumber);
-        }
+    const handlePageChange = (event, page) => {
+        dispatch(setFilterValues({ page }));
     };
 
-    const searchByProductName = (order) => {
-        return Array.isArray(order?.order_items.productDetails) && order.order_items.productDetails.some((item) =>
-            item?.name?.toLowerCase().includes(search.toLowerCase())
-        );
+    const handleSearch = (e) => {
+        setSearch(e.target.value);
+        dispatch(setFilterValues({ search: e.target.value, page: 1 }));
     };
 
+    const handleFilterSelection = (e) => {
+        console.log('e------------',e);
+        
+        setSelectedFilter(e)
+        dispatch(setFilterValues({ status: e, page: 1 }));
+    }
 
+    const handleOpenMenu = (e) => {
+        setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
+        dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
+    };
     useEffect(() => {
-        // Filter orders based on selected date and status
-        let filtered = customerDetailOrders || [];
-
-        if (search) {
-            filtered = filtered.filter(searchByProductName);
-        }
-
-        if (selectedDate) {
-            const formattedSelectedDate = selectedDate.toLocaleDateString("en-US");
-            filtered = filtered.filter((order) => {
-                const orderDate = new Date(order.order_date).toLocaleDateString(
-                    "en-US"
-                );
-                return orderDate === formattedSelectedDate;
-            });
-        }
-
-        if (selectedFilter) {
-            filtered = filtered.filter((order) => order.status === selectedFilter);
-        }
-
-
-
-
-        // Pagination
-        const startIndex = (currentPage - 1) * itemsPerPage;
-        const endIndex = startIndex + itemsPerPage;
-        setPaginatedOrders(filtered.slice(startIndex, endIndex));
-        setFilteredOrders(filtered); // Store all filtered orders for pagination control
-    }, [customerDetailOrders, selectedDate, selectedFilter, currentPage, search]);
-
-    currentProducts = paginatedOrders; // Use paginatedOrders derived from filtered data
-    console.log("currentProducts", currentProducts);
-
-    const getPageNumbers = () => {
-        const maxPagesToShow = 5;
-        const pages = [];
-        const totalPages = Math.ceil(filteredOrders.length / itemsPerPage); // Total pages based on filtered orders
-
-        if (totalPages <= maxPagesToShow) {
-            for (let i = 1; i <= totalPages; i++) {
-                pages.push(i);
+        const getAllCustomer = async () => {
+            try {
+                await dispatch(getCustomersDetail({...filterOptions, id:id}));
+            } catch (error) {
+                console.log(error);
             }
-        } else {
-            if (currentPage <= 3) {
-                pages.push(1, 2, 3, 4, "...", totalPages);
-            } else if (currentPage >= totalPages - 2) {
-                pages.push(
-                    1,
-                    totalPages - 3,
-                    totalPages - 2,
-                    totalPages - 1,
-                    totalPages
-                );
-            } else {
-                pages.push(
-                    1,
-                    currentPage - 1,
-                    currentPage,
-                    currentPage + 1,
-                    "...",
-                    totalPages
-                );
-            }
-        }
+        };
+        getAllCustomer();
+    }, [dispatch, filterOptions, isRefresh,id]);
 
-        return pages;
-    };
-
-    const pageNumbers = getPageNumbers();
 
     //Delete Modal
     const openDeleteModal = (data) => {
@@ -183,14 +120,6 @@ export const CustomersDetails = () => {
         setIsDeleteModalOpen(false);
     };
 
-    //Useeffect
-    useEffect(() => {
-        dispatch(getCustomersDetail(id));
-    }, [dispatch]);
-
-    const handleFilterSelection = (filter) => {
-        setSelectedFilter((prevFilter) => (prevFilter === filter ? '' : filter));
-    };
 
 
     const formatDate = (date) => {
@@ -203,16 +132,16 @@ export const CustomersDetails = () => {
         return formattedDate;
     };
 
-    const dateContent = (
-        <div style={{ width: "300px" }}>
-            <Calendar
-                onChange={handleDateChange}
-                value={selectedDate}
-                // maxDate={new Date()}
-                className={customerStyle.calendarStyle}
-            />
-        </div>
-    );
+    // const dateContent = (
+    //     <div style={{ width: "300px" }}>
+    //         <Calendar
+    //             onChange={handleDateChange}
+    //             value={selectedDate}
+    //             // maxDate={new Date()}
+    //             className={customerStyle.calendarStyle}
+    //         />
+    //     </div>
+    // );
 
     const statusContent = (
         <div style={{ width: "100%", }}>
@@ -349,71 +278,14 @@ export const CustomersDetails = () => {
         </div>
     );
 
-    const Data = [
-        {
-            order_id: 12332,
-            order_items: {
-                productDetails: [{
-                    name: 'Supriya',
-                    featuredImage: '/jweleryImage.png'
-                }
-                ]
-            },
-            order_date: '22 jan 2025',
-            grandTotal: '54543',
-            payment_method: 'Visa',
-            status: 'NEW'
-        },
-        {
-            order_id: 12333,
-            order_items: {
-                productDetails: [{
-                    name: 'Supriya',
-                    featuredImage: '/jweleryImage.png'
-                }
-                ]
-            },
-            order_date: '22 jan 2025',
-            grandTotal: '54543',
-            payment_method: 'Visa',
-            status: 'PROCCESSING'
-        },
-        {
-            order_id: 12334,
-            order_items: {
-                productDetails: [{
-                    name: 'Supriya',
-                    featuredImage: '/jweleryImage.png'
-                }
-                ]
-            },
-            order_date: '22 jan 2025',
-            grandTotal: '54543',
-            payment_method: 'Visa',
-            status: 'SHIPPED'
-        },
-        {
-            order_id: 12334,
-            order_items: {
-                productDetails: [{
-                    name: 'Supriya',
-                    featuredImage: '/jweleryImage.png'
-                }
-                ]
-            },
-            order_date: '22 jan 2025',
-            grandTotal: '54543',
-            payment_method: 'Visa',
-            status: 'DELIVERED'
-        },
-    ]
+
 
     return (
         <div style={{ padding: 20, marginTop: 60 }}>
             <div className={productStyle.container}>
                 <div>
                     <h2 className={productStyle.categoryText}>Customers details</h2>
-                    <CustomSeparator dashboard={'Dashboard'} type='Customer Details' />
+                    <CustomSeparator dashboard={'Dashboard'} type='Customers' subType='Customers Details'/>
                 </div>
                 <div
                     className={orderStyle.exportStyle}
@@ -696,18 +568,18 @@ export const CustomersDetails = () => {
                         <input
                             type="text"
                             value={search}
-                            onChange={(e) => setSearch(e.target.value)}
+                            onChange={handleSearch}
                             placeholder="Search Order. . ."
                         />
                     </div>
                     <div className={productStyle.width}>
-                        <div className={productStyle.dateStlye}>
+                        {/* <div className={productStyle.dateStlye}>
                             <PopoverComponent
                                 icon={<DatePickerIcon />}
                                 label="Select Dates"
                                 content={dateContent}
                             />
-                        </div>
+                        </div> */}
                         <div className={productStyle.filter}>
                             <PopoverComponent
                                 icon={<FilterIcon />}
@@ -721,27 +593,27 @@ export const CustomersDetails = () => {
                     <div className={orderStyle.orderMainStyle}> Order Id </div>
 
                     <div className={customerStyle.productMainStyle}> Product </div>
-                    <div className={productStyle.dropdownStyle}>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "productName" } })}>
                         {" "}
                         <Drop color="#858D9D" /> {" "}
                     </div>
                     <div className={orderStyle.dateStyle}>Date</div>
-                    <div className={productStyle.dropdownStyle}>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "date" } })}>
                         {" "}
                         <Drop color="#858D9D" /> {" "}
                     </div>
                     <div className={orderStyle.totalStyle}>Total </div>
-                    <div className={productStyle.dropdownStyle}>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "total" } })}>
                         {" "}
                         <Drop color="#858D9D" /> {" "}
                     </div>
                     <div className={orderStyle.paymentStyle}>Payment</div>
-                    <div className={productStyle.dropdownStyle}>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "payment" } })}>
                         {" "}
                         <Drop color="#858D9D" /> {" "}
                     </div>
                     <div className={orderStyle.status}>Status</div>
-                    <div className={productStyle.dropdownStyle}>
+                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "status" } })}>
                         {" "}
                         <Drop color="#858D9D" /> {" "}
                     </div>
@@ -751,6 +623,8 @@ export const CustomersDetails = () => {
                     <>
                         <div>
                             {customerDetailOrders?.map((item, index) => {
+                                const arr = item?.status;
+                                const lastValue = arr?.at(-1); 
                                 return (
                                     <div
                                         className={productStyle.info}
@@ -767,7 +641,7 @@ export const CustomersDetails = () => {
                                             <img
                                                 width={40}
                                                 height={40}
-                                                src={item?.productDetails[0]?.featuredImage}
+                                                src={item?.productDetails[0]?.featurerdImage}
                                                 alt="Featured"
                                             />
                                             <div>
@@ -805,17 +679,17 @@ export const CustomersDetails = () => {
                                             className={orderStyle.paymentStyle}
                                             style={{ color: "#667085", }}
                                         >
-                                            {item?.payment?.type}
+                                            {item?.payment?.status}
                                         </div>
                                         <div className={productStyle.dropdownStyle} />
                                         <div
                                             style={{
                                                 backgroundColor:
-                                                    item?.status === "NEW"
+                                                lastValue?.name === "NEW"
                                                         ? "#c7c8ca"
-                                                        : item.status === "PROCCESSING"
+                                                        : lastValue?.name === "PROCCESSING"
                                                             ? "#F439391A"
-                                                            : item.status === "SHIPPED"
+                                                            : lastValue?.name === "SHIPPED"
                                                                 ? "#EAF8FF"
                                                                 : "#E9FAF7",
                                                 width: "14%",
@@ -840,16 +714,16 @@ export const CustomersDetails = () => {
                                                     textTransform: "capitalize",
                                                     textAlign: "center",
                                                     color:
-                                                        item?.status === "NEW"
+                                                    lastValue?.name === "NEW"
                                                             ? "#4A4C56"
-                                                            : item.status === "PROCCESSING"
+                                                            : lastValue?.name === "PROCCESSING"
                                                                 ? "#F86624"
-                                                                : item.status === "SHIPPED"
+                                                                : lastValue?.name === "SHIPPED"
                                                                     ? "#2BB2FE"
                                                                     : "#1A9882",
                                                 }}
                                             >
-                                                {item?.status === 'NEW' ? 'New' : item?.status === 'PROCCESSING' ? 'Processing' : 'Shipped'}
+                                                {lastValue?.name === 'NEW' ? 'New' : lastValue?.name === 'PROCCESSING' ? 'Processing' : lastValue?.name === 'SHIPPED' ? 'Shipped' : 'Delivered'}
                                             </span>
                                         </div>
                                         <div className={productStyle.dropdownStyle} />
@@ -883,26 +757,23 @@ export const CustomersDetails = () => {
                             })}
                         </div>
                         <div
-                            className={productStyle.entryView}
-                            style={{ padding: 20, }}
+                            className={catStyle.entryView}
+                            style={{ padding: 20 }}
                         >
-                            <div className={productStyle.showingText}>
-                                {/* Showing {start}-{end} from {categoriesData?.totalCategories}{" "} */}
-                                Showing 1-2 from 2
+                            <div className={catStyle.showingText}>
+                                Showing {start}-{end} from {customersDetailData?.totalItems}{" "}
                             </div>
                             <Pagination
-                                // count={categoriesData?.totalPages}
-                                // page={filterOptions?.page}
-                                // onChange={handlePageChange}
-                                count={2}
-                                page={2}
+                                count={customersDetailData?.totalPages}
+                                page={filterOptions?.page}
+                                onChange={handlePageChange}
                                 shape="rounded"
                                 siblingCount={1} // Show one sibling page (previous and next)
                                 boundaryCount={0} // Do not show first and last buttons
                                 sx={{
                                     "& .MuiPaginationItem-root": {
                                         margin: "0 4px",
-                                        color: "#E87819",
+                                        //   color: "#512DA8",
                                         border: "1px solid #E0E2E7",
                                         borderRadius: "6px",
                                         fontSize: "14px",

@@ -32,8 +32,8 @@ const EditCategory = () => {
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
         status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
-        thumbnailPhoto: yup.string().required("Image is required"),
+        // description: yup.string().required("Description is required"),
+        // thumbnailPhoto: yup.string().required("Image is required"),
     })
 
     const {
@@ -72,6 +72,18 @@ const EditCategory = () => {
             });
         }
     }, [categoryByIdData, setValues, id]);
+
+    const handleCancel = () => {
+        if (categoryByIdData) {
+            setValues({
+                name: categoryByIdData?.name || "",
+                description: categoryByIdData?.description || '',
+                thumbnailPhoto: categoryByIdData?.thumbnailPhoto || '',
+                status: categoryByIdData?.status || false,
+                _id: categoryByIdData?._id,
+            });
+        }
+    };
 
     const handleSubject = async (values) => {
         const result = await dispatch(editCategories(values));
@@ -208,13 +220,13 @@ const EditCategory = () => {
                                 },
                             }}
                         />
-                        {
+                        {/* {
                             errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
-                        }
+                        } */}
                     </div>
 
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
-                        <Button sx={cancle} onClick={resetForm} variant="contained" disableElevation={true}>Cancel</Button>
+                        <Button sx={cancle} onClick={handleCancel} variant="contained" disableElevation={true}>Cancel</Button>
 
                         <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save Changes</Button>
 
@@ -239,26 +251,7 @@ const EditCategory = () => {
                                 ) : (
                                     <>
                                         <ImageIcon />
-                                        <div>
-                                            <label htmlFor='catFile' className={categoryStyle.uploadBox}>
-                                                <p className={categoryStyle.uploadText} style={{ marginTop: 10 }}>
-                                                    Drag and drop image here, or click add image
-                                                </p>
-                                            </label>
-                                            <input
-                                                type='file'
-                                                accept="image/*"
-                                                id='catFile'
-                                                style={{ display: 'none' }}
-                                                onChange={handleImageChange}
-                                                value={values.catFile}
-                                            />
-                                        </div>
-                                        {/* <div className={categoryStyle.pixel} style={{ marginTop: 10 }}>
-                                            <label htmlFor='catFile'>
-                                                Update Image
-                                            </label>
-                                        </div> */}
+                                        
                                     </>
                                 )
                                 }
@@ -284,9 +277,7 @@ const EditCategory = () => {
                                 </div>
                             </div>
                         </div>
-                        {
-                            errors.img && touched.img && <p style={{ color: "red", fontSize: "12px" }}>{errors.img}</p>
-                        }
+                        
                     </div>
                     <div className={categoryStyle.catStatusStyle}>
                         <h6 className={categoryStyle.variationText}>Status</h6>

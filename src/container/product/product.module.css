@@ -973,6 +973,12 @@ input {
     padding-top: 20px;
     padding-bottom: 20px;
 }
+.dollarSyle span{
+    font-size: 24px;
+    color: #89898b;
+    text-decoration: line-through;
+    font-weight: 400;
+}
 
 .colorVariantStyle {
     font-family: Public Sans;

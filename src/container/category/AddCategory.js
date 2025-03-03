@@ -21,8 +21,8 @@ const AddCategory = () => {
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
         status: yup.string().required("Status is required"),
-        description: yup.string().required("Description is required"),
-        thumbnailPhoto: yup.string().required("Image is required"),
+        // description: yup.string().required("Description is required"),
+        // thumbnailPhoto: yup.string().required("Image is required"),
     })
 
     const {
@@ -131,9 +131,9 @@ const AddCategory = () => {
                             rows={4}
                             sx={TextArea}
                         />
-                        {
+                        {/* {
                             errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
-                        }
+                        } */}
                     </div>
 
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
@@ -188,9 +188,7 @@ const AddCategory = () => {
 
                             </div>
                         </div>
-                        {
-                            errors.img && touched.img && <p style={{ color: "red", fontSize: "12px" }}>{errors.img}</p>
-                        }
+                        
                     </div>
                     <div className={categoryStyle.catStatusStyle}>
                         <h6 className={categoryStyle.variationText}>Status</h6>

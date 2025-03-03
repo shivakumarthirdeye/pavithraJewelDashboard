@@ -17,6 +17,7 @@ const initialState = {
     countryData: {},
     deleteCountryData: {},
     exportCountryData:{},
+    countryByIdData:{},
     errorMsg: "",
     isError: false
 }
@@ -66,6 +67,21 @@ export const editCountry = createAsyncThunk('editCountry', async (body, { reject
 
     } catch (err) {
         Toastify.error(err.response.data.message);
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
+export const getCountryById = createAsyncThunk('getCountryById', async (body, { rejectWithValue, dispatch }) => {
+    try {
+        const { data, status } = await api.getCountryById(body);
+        if (status === 200) {
+            // render otp screen
+            dispatch(setCountryById(data.data));
+        }
+        return data.data
+
+    } catch (err) {
+        // Toastify.error(err.response.data.message);
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
 }
@@ -124,6 +140,9 @@ export const countrySlice = createSlice({
         setExportCountry: (state, action) => {
             state.exportCountryData = action.payload
         },
+        setCountryById: (state, action) => {
+            state.countryByIdData = action.payload
+        },
         setRefresh:(state) => {
             state.isRefresh = !state.isRefresh
         },
@@ -159,7 +178,8 @@ export const {
     setRefresh,
     setFilterValues,
     setSubCategoriesExport,
-    setExportCountry
+    setExportCountry,
+    setCountryById
 } = countrySlice.actions
 
 export default countrySlice.reducer;

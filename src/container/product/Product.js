@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import productStyle from './product.module.css';
-import Calendar from 'react-calendar';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProducts, getExportProducts, getProducts, setFilterValues } from '../../redux/productSlice';
@@ -15,7 +14,7 @@ import { DatePickerIcon, DeleteIcon, Drop, EditIcon, ExportIcon, FilterIcon, Plu
 import DeleteModal from '../../component/DeleteModal';
 import { formatDate } from '../../helper/FormatDate';
 import { getCategoriesExport } from '../../redux/categoriesSlice';
-import { DateCalendar, LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
@@ -37,13 +36,13 @@ const Product = () => {
     const [order, setOrder] = useState('asc')
 
 
-    const { productsData, filterOptions, isLoading, isRefresh,exportProductsData } = useSelector(
+    const { productsData, filterOptions, isLoading, isRefresh, } = useSelector(
         (state) => state.products
     );
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
-    console.log('categoriesExportData', categoriesExportData);
+    // console.log('categoriesExportData', categoriesExportData);
 
 
     const calculateShowingRange = () => {
@@ -79,13 +78,13 @@ const Product = () => {
 
 
     const handleStartDateChange = (e) => {
-        console.log('e==============', e);
+        // console.log('e==============', e);
 
         setSelectedDate(e);
         dispatch(setFilterValues({ startDate: e, page: 1 }))
     };
     const handleEndDateChange = (e) => {
-        console.log('e==============', e);
+        // console.log('e==============', e);
 
         setSelectedDate(e);
         dispatch(setFilterValues({ endDate: e, page: 1 }))
@@ -126,7 +125,7 @@ const Product = () => {
 
 
 
-    console.log('first', selectedDate)
+    // console.log('first', selectedDate)
 
 
 
@@ -462,7 +461,7 @@ const Product = () => {
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={productStyle.priceStyle}>
-                                                    Rs. {item?.sellingPrice}
+                                                    Rs. {item?.sellingPrice?.toFixed(2)}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div

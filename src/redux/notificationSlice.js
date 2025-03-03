@@ -12,7 +12,7 @@ const initialState = {
 
 export const getNotification = createAsyncThunk('getNotification', async (body, { rejectWithValue, dispatch }) => {
     try { 
-        const { data, status } = await api.getNotification();
+        const { data, status } = await api.getNotification(body);
 
         if (status === 200) {
             dispatch(setNotification(data||[]))

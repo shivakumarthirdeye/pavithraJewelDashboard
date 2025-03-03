@@ -19,7 +19,7 @@ export const ReadyToShipOrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
-    // console.log('ordersDetailsData', ordersDetailsData);
+    console.log('ordersDetailsData', ordersDetailsData);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [datas, setData] = useState([]);
     const [copied, setCopied] = useState(false);
@@ -284,12 +284,19 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.priceStyle}>Subtotal </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal?.toFixed(2)}</div>
                             </div>
+                            {/* <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.pendingAmountStyle}>Gold weight</div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
+                            </div> */}
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
+                                <div className={orderStyle.totalAmountStyle}>₹{(ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100).toFixed(2)}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >

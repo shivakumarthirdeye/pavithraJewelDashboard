@@ -3,7 +3,7 @@ import Styles from '../../component/styles.module.css';
 import { Box, Button, MenuItem, Modal, Select } from '@mui/material';
 import { CancelIcon } from '../../svg';
 import { cancle, saveData } from '../../MaterialsUI';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import countryStyle from './country.module.css';
 import catStyle from '../category/category.module.css'
@@ -11,7 +11,7 @@ import { formselect } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import { editCountry } from '../../redux/countrySlice';
+import { editCountry, getCountryById } from '../../redux/countrySlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 
 const EditCountry = ({ open, onClose, data }) => {
@@ -20,6 +20,9 @@ const EditCountry = ({ open, onClose, data }) => {
 
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const {countryByIdData} = useSelector((state) => state.country)
+    console.log('countryByIdData',countryByIdData);
+    
 
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
@@ -44,16 +47,21 @@ const EditCountry = ({ open, onClose, data }) => {
             handleSubject(values)
         }
     })
+
     useEffect(() => {
-        if (data) {
+        dispatch(getCountryById(data?._id))
+    },[dispatch,data?._id])
+
+    useEffect(() => {
+        if (countryByIdData) {
             setValues({
-                name: data?.name || "",
-                status: data?.status || '',
-                _id: data?._id
+                name: countryByIdData?.name || "",
+                status: countryByIdData?.status || '',
+                _id: countryByIdData?._id
 
             });
         }
-    }, [data, setValues,]);
+    }, [data, setValues,countryByIdData]);
 
     const handleSubject = async (values) => {
         const result = await dispatch(editCountry(values));
@@ -62,8 +70,15 @@ const EditCountry = ({ open, onClose, data }) => {
     };
 
     const handleCancel = (values) => {
-        resetForm(values)
-        navigate('/country/Country')
+        if (countryByIdData) {
+            setValues({
+                name: countryByIdData?.name || "",
+                status: countryByIdData?.status || '',
+                _id: countryByIdData?._id
+
+            });
+        }
+        // onClose()
     }
 
     const style = {

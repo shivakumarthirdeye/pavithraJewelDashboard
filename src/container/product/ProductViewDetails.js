@@ -20,7 +20,7 @@ const ProductViewDetails = () => {
     const getAllReview = productsDetail?.productsDetailsData?.allreviews;
     const location = useLocation()
     const path = location.pathname.split("/")[2]
-    console.log('productsDetailBYID', productById);
+    // console.log('productsDetail', productsDetail);
 
 
     useEffect(() => {
@@ -281,7 +281,7 @@ const ProductViewDetails = () => {
                             </div> */}
                         </div>
                         <div className={productStyle.dollarSyle}>
-                            ₹{productById?.pricing?.finalSalePrice?.value}
+                            ₹{(productsDetail?.productsDetailsData?.sellingPrice)?.toFixed(2)} <span> ₹{productsDetail?.productsDetailsData?.totalPrice}</span>
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Description:
@@ -299,19 +299,19 @@ const ProductViewDetails = () => {
                                         <div className={productStyle.featuresHeading}>
                                             Item Weight
                                             <br />
-                                            <div className={productStyle.featureValue}>{productById?.features?.itemWeight}</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.itemWeight?.value}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
                                             Stone Weight
                                             <br />
-                                            <div className={productStyle.featureValue}>{productById?.features?.stoneWeight}</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.stoneWeight?.value}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
                                             Stone Color/Type
                                             <br />
-                                            <div className={productStyle.featureValue}>{productById?.features?.stoneColor}</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.stoneColor?.value}</div>
                                         </div>
                                     </div>
                                     <div className={productStyle.middleBorder} />
@@ -319,19 +319,19 @@ const ProductViewDetails = () => {
                                         <div className={productStyle.featuresHeading}>
                                             Product Width
                                             <br />
-                                            <div className={productStyle.featureValue}>{productById?.features?.productWidth}</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.productWidth?.value}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
                                             Product Height
                                             <br />
-                                            <div className={productStyle.featureValue}>{productById?.features?.productHeight}</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.productHeight?.value}</div>
                                         </div>
                                         <div className={productStyle.borderRight} />
                                         <div className={productStyle.featuresHeading}>
                                             Feature
                                             <br />
-                                            <div className={productStyle.featureValue}>{productById?.features?.feature}</div>
+                                            <div className={productStyle.featureValue}>{productById?.features?.feature?.value}</div>
                                         </div>
                                     </div>
                                 </div>

@@ -10,7 +10,7 @@ import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
 import { useDispatch, useSelector } from 'react-redux';
 import { getCategoriesExport } from '../../redux/categoriesSlice';
-import { addSubCategories, editSubCategories } from '../../redux/subCategoriesSlice';
+import { addSubCategories, editSubCategories, getSubCategoriesById } from '../../redux/subCategoriesSlice';
 import { unwrapResult } from '@reduxjs/toolkit';
 import api from '../../helper/Api';
 import axios from 'axios';
@@ -26,7 +26,10 @@ const EditSubcategory = () => {
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
-    console.log('categoriesExportData', categoriesExportData);
+    const { subCategoriesByIdData } = useSelector(
+        (state) => state.subCategories
+    );
+    console.log('subCategoriesByIdData', subCategoriesByIdData);
 
     const schema = yup.object().shape({
         name: yup.string().required("Name is required"),
@@ -62,18 +65,18 @@ const EditSubcategory = () => {
     })
 
     useEffect(() => {
-        if (data) {
+        if (subCategoriesByIdData) {
             setValues({
-                name: data?.name || "",
-                description: data?.description || '',
-                thumbnailPhoto: data?.thumbnailPhoto || '',
-                status: data?.status || '',
-                parentId: data?.parentId || "",
+                name: subCategoriesByIdData?.name || "",
+                description: subCategoriesByIdData?.description || '',
+                thumbnailPhoto: subCategoriesByIdData?.thumbnailPhoto || '',
+                status: subCategoriesByIdData?.status || '',
+                parentId: subCategoriesByIdData?.parentId || "",
                 _id: id
 
             });
         }
-    }, [data, setValues, id]);
+    }, [subCategoriesByIdData, setValues, id]);
 
     const handleSubject = async (values) => {
         const result = await dispatch(editSubCategories(values));
@@ -115,6 +118,22 @@ const EditSubcategory = () => {
         dispatch(getCategoriesExport())
     }, [dispatch])
 
+    useEffect(() => {
+        dispatch(getSubCategoriesById(id))
+    }, [dispatch,id])
+
+    const handleCancel = () => {
+        if (subCategoriesByIdData) {
+            setValues({
+                name: subCategoriesByIdData?.name || "",
+                description: subCategoriesByIdData?.description || '',
+                thumbnailPhoto: subCategoriesByIdData?.thumbnailPhoto || '',
+                status: subCategoriesByIdData?.status || false,
+                parentId: subCategoriesByIdData?.parentId || "",
+                _id: subCategoriesByIdData?._id,
+            });
+        }
+    };
 
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
@@ -135,7 +154,7 @@ const EditSubcategory = () => {
                         General Information
                     </h6>
                     <div style={{ marginTop: 20 }}>
-                        <label className={categoryStyle.label}>Category Name</label>
+                        <label className={categoryStyle.label}>Category Name*</label>
                         <Select
                             // className={categoryStyle.formselect}
                             labelId="demo-simple-select-label"
@@ -157,7 +176,7 @@ const EditSubcategory = () => {
                             onChange={handleChange}
                         >
                             <MenuItem value="" sx={{ color: "#858D9D" }}>Select</MenuItem>
-                            {categoriesExportData?.data?.length > 0 && categoriesExportData?.data?.map((category) => (
+                            {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
                                 <MenuItem
                                     key={category._id}
                                     value={category._id}
@@ -175,7 +194,7 @@ const EditSubcategory = () => {
                         errors.parentId && touched.parentId && <p style={{ color: "red", fontSize: "12px" }}>{errors.parentId}</p>
                     }
                     <div style={{ marginTop: 20 }}>
-                        <label className={categoryStyle.label}>Subcategory Name</label>
+                        <label className={categoryStyle.label}>Subcategory Name*</label>
                         <TextField
                             type='text'
                             onBlur={handleBlur}
@@ -205,13 +224,13 @@ const EditSubcategory = () => {
                             sx={TextArea}
                         />
                         {/* </div> */}
-                        {
+                        {/* {
                             errors.description && touched.description && <p style={{ color: "red", fontSize: "12px" }}>{errors.description}</p>
-                        }
+                        } */}
                     </div>
 
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
-                        <Button sx={cancle} onClick={resetForm} variant="contained" disableElevation={true}>Cancel</Button>
+                        <Button sx={cancle} onClick={handleCancel} variant="contained" disableElevation={true}>Cancel</Button>
                         <div>
                             <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save</Button>
                         </div>
@@ -269,7 +288,7 @@ const EditSubcategory = () => {
                     <div className={categoryStyle.catStatusStyle}>
                         <h6 className={categoryStyle.variationText}>Status</h6>
                         <div style={{ marginTop: 15 }}>
-                            <label className={categoryStyle.label}>Category Status</label>
+                            <label className={categoryStyle.label}>Subcategory Status*</label>
                             <br />
                             <Select
                                 // className={categoryStyle.formselect}
