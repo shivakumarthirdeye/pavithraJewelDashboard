@@ -329,7 +329,7 @@ const AddProduct = () => {
             },
             category: {
                 productCategory: '',
-                productSubcategory: ''
+                productSubcategory: null
             },
             gold: {
                 type: "",
@@ -368,7 +368,7 @@ const AddProduct = () => {
         setFieldValue("category.productCategory", selectedCategoryId); // Update the category value in Formik
 
         // Reset subcategory selection
-        setFieldValue("category.productSubcategory", "");
+        setFieldValue("category.productSubcategory", null);
 
         // Fetch subcategories for the selected category (assuming you have a function to fetch them)
         const filteredSubcategories = subCategoiesExportData?.data?.filter(
@@ -804,18 +804,18 @@ const AddProduct = () => {
             // ✅ Calculate gold price
             const goldWeight = values?.pricing?.goldWeight?.value || 0;
             const goldRate = values?.pricing?.goldRate?.value || 0;
-            const goldPrice = goldWeight * goldRate; // ✅ Corrected
+            // const goldPrice = goldWeight * goldRate; // ✅ Corrected
     
             // ✅ Calculate making charges (percentage of goldPrice, NOT goldRate)
             const makingChargesPercentage = values?.pricing?.makingCharges?.value || 0;
-            const makingCharges = (goldPrice * makingChargesPercentage) / 100;
+            const makingCharges = (goldRate * makingChargesPercentage) / 100;
     
             // ✅ Calculate subtotal (before GST)
             const stoneCharges = values?.pricing?.stoneCharges?.value || 0;
             const diamondCost = values?.pricing?.diamondCost?.value || 0;
             const polkiCost = values?.pricing?.polkiCost?.value || 0;
     
-            const subtotal = goldPrice + makingCharges + stoneCharges + diamondCost + polkiCost;
+            const subtotal = goldRate + makingCharges + stoneCharges + diamondCost + polkiCost;
     
             // ✅ Apply GST correctly
             const gstPercentage = values?.pricing?.gst?.value || 0;
@@ -2132,7 +2132,6 @@ const AddProduct = () => {
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
-                                defaultValue=''
                                 name='category.productSubcategory'
                                 value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}

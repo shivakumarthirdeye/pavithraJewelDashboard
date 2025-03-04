@@ -340,7 +340,7 @@ const EditProduct = () => {
             },
             category: {
                 productCategory: '',
-                productSubcategory: ''
+                productSubcategory: null
             },
             gold: {
                 type: "",
@@ -492,7 +492,7 @@ const EditProduct = () => {
     const handleCategoryChange = (event) => {
         const selectedCategoryId = event.target.value;
         setFieldValue("category.productCategory", selectedCategoryId);
-        setFieldValue("category.productSubcategory", "");
+        setFieldValue("category.productSubcategory", null);
 
         // Filter and update the state correctly
         const filteredSubcategories = subCategoiesExportData?.data?.filter(
@@ -2239,7 +2239,7 @@ const EditProduct = () => {
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
-                                defaultValue=''
+                                // defaultValue=''
                                 name='category.productSubcategory'
                                 value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}
