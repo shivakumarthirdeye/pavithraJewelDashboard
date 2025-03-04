@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import { custom, saveChanges, TextArea, TextInput } from '../../MaterialsUI';
 import productStyle from '../product/product.module.css';
 import { ImageIcon } from '../../svg';
@@ -24,15 +24,23 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 }));
 export default function ViewAboutUs() {
     const dispatch = useDispatch();
-    const {aboutUsData} = useSelector((state) => state.appearance)
+    const {aboutUsData,isLoading} = useSelector((state) => state.appearance)
     // console.log('aboutUsData',aboutUsData);
     
     const viewAboutus = aboutUsData?.data;
+    
 
     React.useEffect(() => {
         dispatch(getAboutus())
     },[dispatch])
     
+    if (isLoading) {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+            <CircularProgress />
+          </div>
+        )
+      }
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>

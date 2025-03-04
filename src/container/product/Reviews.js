@@ -5,6 +5,7 @@ import { useDispatch,useSelector } from "react-redux";
 import { getReviewsForProducts } from "../../redux/productSlice";
 import { EditIcon, EditReviewIcon, InfoIcon, } from "../../svg";
 import EditReview from "./EditReview";
+import ErrorPage from "../../component/ErrorPage";
 
 const Reviews = ({data}) => {
 console.log('data===============',data);
@@ -112,6 +113,7 @@ console.log('data===============',data);
                 <div className={orderStyle.backgroundStyle}><InfoIcon /></div>
                 <p className={orderStyle.customerText}>Customer Reviews</p>
             </div> */}
+            {data?.length > 0 ? (
             <div className='product-container'>
                 {data?.map((item, index) => (
                         <div className='product-card'>
@@ -168,6 +170,9 @@ console.log('data===============',data);
                         </div>
                 ))}
             </div>
+            ) : (
+                <ErrorPage/>
+            )}
         </div >
         <EditReview
             open={isModalOpen}

@@ -152,9 +152,9 @@ export const MadeToOrderDetails = () => {
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
-                    <div className={orderStyle.exportStyle}>
+                    {/* <div className={orderStyle.exportStyle}>
                         <ExportBlackIcon /> Export
-                    </div>
+                    </div> */}
                     {/* {ordersDetailsData?.status === 'DELIVERED' && (
                         <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
                             Customer reviews

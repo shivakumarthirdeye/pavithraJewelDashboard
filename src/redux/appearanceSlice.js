@@ -415,6 +415,141 @@ export const appearanceSlice = createSlice({
             state.isRefresh = !state.isRefresh
         },
     },
+    extraReducers: (builder) => {
+
+        // getSliders
+        builder.addCase(getSliders.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getSliders.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.slidersData = action.payload
+        })
+        builder.addCase(getSliders.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+
+        // getHeroBanner
+        builder.addCase(getHeroBanner.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getHeroBanner.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.heroBannerData = action.payload
+        })
+        builder.addCase(getHeroBanner.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getHeroBanner
+        builder.addCase(getAppearanceCategories.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getAppearanceCategories.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.appearanceCategoriesData = action.payload
+        })
+        builder.addCase(getAppearanceCategories.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getAboutus
+        builder.addCase(getAboutus.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getAboutus.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.aboutUsData = action.payload
+        })
+        builder.addCase(getAboutus.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getBrandSlider
+        builder.addCase(getBrandSlider.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getBrandSlider.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.brandSliderData = action.payload
+        })
+        builder.addCase(getBrandSlider.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getFeaturerdProducts
+        builder.addCase(getFeaturerdProducts.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getFeaturerdProducts.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.featurerdProductsData = action.payload
+        })
+        builder.addCase(getFeaturerdProducts.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getOfferbanner
+        builder.addCase(getOfferbanner.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getOfferbanner.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.offerBannerData = action.payload
+        })
+        builder.addCase(getOfferbanner.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getTestimonials
+        builder.addCase(getTestimonials.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getTestimonials.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.testimonialsData = action.payload
+        })
+        builder.addCase(getTestimonials.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getCounters
+        builder.addCase(getCounters.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getCounters.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.countersData = action.payload
+        })
+        builder.addCase(getCounters.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // getInstagram
+        builder.addCase(getInstagram.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getInstagram.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.instagramData = action.payload
+        })
+        builder.addCase(getInstagram.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+
+    }
 })
 
 export const {

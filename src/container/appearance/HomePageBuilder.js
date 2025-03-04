@@ -34,7 +34,7 @@ const HomePageBuilder = () => {
             <HeroBanner />
             <Categories />
             <AboutUs />
-            <Slider />
+            {/* <Slider /> */}
             <BrandSlider />
             <FeaturedProducts />
             <OffersBanner/>

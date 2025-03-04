@@ -42,8 +42,8 @@ const EditProduct = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { id } = useParams();
-    const {productsDetailsData} = useSelector((state)=> state.products)
-    
+    const { productsDetailsData } = useSelector((state) => state.products)
+
     const data = productsDetailsData?.data;
     console.log('productsDetailsData==============', productsDetailsData);
 
@@ -550,7 +550,7 @@ const EditProduct = () => {
             Toastify.error("Error uploading images");
         }
     };
-    
+
 
     // Media Video
     const handleVideoChange = async (e, attribute, repo) => {
@@ -791,7 +791,7 @@ const EditProduct = () => {
                         }
                     })
 
-                    setFieldValue('featurerdImage',  data?.data?.url)
+                    setFieldValue('featurerdImage', data?.data?.url)
                 }
             }
         } catch (err) {
@@ -890,24 +890,24 @@ const EditProduct = () => {
             const goldWeight = values?.pricing?.goldWeight?.value || 0;
             const goldRate = values?.pricing?.goldRate?.value || 0;
             // const goldPrice = goldWeight * goldRate; // ✅ Corrected
-    
+
             // ✅ Calculate making charges (percentage of goldPrice, NOT goldRate)
             const makingChargesPercentage = values?.pricing?.makingCharges?.value || 0;
             const makingCharges = (goldRate * makingChargesPercentage) / 100;
-    
+
             // ✅ Calculate subtotal (before GST)
             const stoneCharges = values?.pricing?.stoneCharges?.value || 0;
             const diamondCost = values?.pricing?.diamondCost?.value || 0;
             const polkiCost = values?.pricing?.polkiCost?.value || 0;
-    
+
             const subtotal = goldRate + makingCharges + stoneCharges + diamondCost + polkiCost;
-    
+
             // ✅ Apply GST correctly
             const gstPercentage = values?.pricing?.gst?.value || 0;
             const gstAmount = (subtotal * gstPercentage) / 100; // ✅ Corrected GST calculation
-    
+
             const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
-    
+
             // ✅ Update form values
             setFieldValue('pricing.finalSalePrice.value', finalSalePrice.toFixed(2));
         }
@@ -921,8 +921,8 @@ const EditProduct = () => {
         values?.pricing?.gst?.value,
         setFieldValue
     ]);
-    
-    
+
+
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={productStyle.container}>
@@ -1096,7 +1096,7 @@ const EditProduct = () => {
                                 } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckStoneColor} checked={values.features.stoneColor.status} /> <span>Stone color/type</span>
                                 </div>
                                 <TextField
@@ -1115,7 +1115,7 @@ const EditProduct = () => {
                         </div>
                         <div className={productStyle.itemsStyle}>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckProductWidth} checked={values.features.productWidth.status} /> <span>Product Width</span>
                                 </div>
                                 <TextField
@@ -1161,7 +1161,7 @@ const EditProduct = () => {
                                 } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length</span>
                                 </div>
                                 <TextField
@@ -1207,7 +1207,7 @@ const EditProduct = () => {
                                 }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckFeature} checked={values.features.feature.status} /> <span>Feature</span>
                                 </div>
                                 <TextField
@@ -1269,7 +1269,7 @@ const EditProduct = () => {
                                                         multiple
                                                     />
                                                     <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                        Add Image
+                                                        Change Images
                                                     </label>
                                                 </div>
                                             </div>
@@ -1295,7 +1295,7 @@ const EditProduct = () => {
                                                     multiple
                                                 />
                                                 <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                                    Add Image
+                                                    Change Images
                                                 </label>
                                             </div>
 
@@ -1328,30 +1328,47 @@ const EditProduct = () => {
                                     ) : (
                                         <>
                                             <ImageIcon />
-
+                                            <div>
+                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                    Drag and drop image here, or click add image
+                                                </p>
+                                            </div>
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="video/*"
+                                                    id="videoFile"
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleVideoChange}
+                                                />
+                                                <label htmlFor="videoFile" className={productStyle.uploadBox}>
+                                                    Add Video
+                                                </label>
+                                            </div>
                                         </>
                                     )
                                     }
-
-                                    <>
-                                        <div>
-                                            <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
-                                                Drag and drop image here, or click add image
-                                            </p>
-                                        </div>
-                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                            <input
-                                                type="file"
-                                                accept="video/*"
-                                                id="videoFile"
-                                                style={{ display: 'none' }}
-                                                onChange={handleVideoChange}
-                                            />
-                                            <label htmlFor="videoFile" className={productStyle.uploadBox}>
-                                                Add Video
-                                            </label>
-                                        </div>
-                                    </>
+                                    {values?.media?.video?.length > 0 && (
+                                        <>
+                                            <div>
+                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                    Drag and drop image here, or click add image
+                                                </p>
+                                            </div>
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="video/*"
+                                                    id="videoFile"
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleVideoChange}
+                                                />
+                                                <label htmlFor="videoFile" className={productStyle.uploadBox}>
+                                                    Change Video
+                                                </label>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                             {
@@ -2239,7 +2256,7 @@ const EditProduct = () => {
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
-                                // defaultValue=''
+                                defaultValue=''
                                 name='category.productSubcategory'
                                 value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}
@@ -2342,7 +2359,7 @@ const EditProduct = () => {
                                                 style={{ maxWidth: '100%', marginTop: '0px' }}
                                             />
                                             {/* <button onClick={handleUpload}>Upload</button> */}
-                                            <div style={{marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                                            <div style={{ marginTop: 10, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                                 <p className={productStyle.uploadText}>
                                                     Drag and drop image here, or click add image
                                                 </p>
@@ -2356,7 +2373,7 @@ const EditProduct = () => {
                                                         onChange={handleFeatureImageChange}
                                                     />
                                                     <label htmlFor="featuredFile" className={productStyle.uploadBox}>
-                                                        Add Image
+                                                        Change Image
                                                     </label>
                                                 </div>
                                             </div>
@@ -2378,7 +2395,7 @@ const EditProduct = () => {
                                                     onChange={handleFeatureImageChange}
                                                 />
                                                 <label htmlFor="featuredFile" className={productStyle.uploadBox}>
-                                                    Add Image
+                                                    Change Image
                                                 </label>
                                             </div>
                                         </>

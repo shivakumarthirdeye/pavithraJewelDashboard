@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import { cancle, custom, fieldText, InputURL, saveChanges, saveData, TextArea, TextInput } from '../../MaterialsUI';
 import { AddIcon, DeletIcon, ImageIcon } from '../../svg';
 import productStyle from '../product/product.module.css';
@@ -29,7 +29,7 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
 export default function ViewOffersBanner() {
     const dispatch = useDispatch();
-    const { offerBannerData } = useSelector((state) => state.appearance);
+    const { offerBannerData,isLoading } = useSelector((state) => state.appearance);
     const viewOfferBanner = offerBannerData?.data;
     console.log('viewOfferBanner', viewOfferBanner);
 
@@ -38,6 +38,14 @@ export default function ViewOffersBanner() {
     React.useEffect(() => {
         dispatch(getOfferbanner())
     }, [dispatch])
+
+    if (isLoading) {
+        return (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+            <CircularProgress />
+          </div>
+        )
+      }
 
     return (
         <div style={{ marginTop: 20 }}>

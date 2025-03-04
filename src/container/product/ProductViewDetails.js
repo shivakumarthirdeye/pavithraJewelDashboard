@@ -20,7 +20,7 @@ const ProductViewDetails = () => {
     const getAllReview = productsDetail?.productsDetailsData?.allreviews;
     const location = useLocation()
     const path = location.pathname.split("/")[2]
-    // console.log('productsDetail', productsDetail);
+    console.log('productsDetail', productsDetail);
 
 
     useEffect(() => {
@@ -138,7 +138,7 @@ const ProductViewDetails = () => {
                     </div>
                 </div>
             </div>
-            <div>
+            <div style={{marginTop:20}}>
                 {/* <Tab
                     value={value}
                     selected={selected}

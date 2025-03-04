@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, MenuItem, Select, TextField } from '@mui/material';
 import { custom, saveChanges, SelectStyle, TextArea, TextInput } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
@@ -27,7 +27,7 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 }));
 export default function ViewCounters() {
     const dispatch = useDispatch();
-    const { countersData } = useSelector((state) => state.appearance);
+    const { countersData, isLoading } = useSelector((state) => state.appearance);
     const viewCounters = countersData?.data?.counters;
 
     React.useEffect(() => {
@@ -55,70 +55,86 @@ export default function ViewCounters() {
 
                     }}>Counters</Typography>
                 </AccordionSummary>
-                {viewCounters?.map((counts, index) => (
-                    <AccordionDetails
-                        sx={{
-                            backgroundColor: '#F8F9FF',
-                            // width:'100%',
-                            height: 'fit-content',
-                            padding: '18px 29px',
-                            margin: "0px 20px 20px 19px"
-                        }}
-                    >
-                        <Box sx={{
-                            marginBottom: '10px',
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            width: '100%',
-                            alignItems: 'center',
-                            gap: '10px'
-                        }}>
-                            <div style={{ width: '50%' }}>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '500',
-                                        fontFamily: 'Public Sans',
-                                        fontSize: '14px',
-                                        lineHeight: '28px',
-                                        letterSpacing: '0.005em',
-                                        textAlign: 'left',
-                                        color: '#777980'
-                                    }}>
-                                    Name
-                                </Typography>
-                                <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
-                                    value={counts.name}
-                                    sx={TextInput}
-                                    disabled
-                                />
-                            </div>
-                            <div style={{ width: '50%' }}>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '500',
-                                        fontFamily: 'Public Sans',
-                                        fontSize: '14px',
-                                        lineHeight: '28px',
-                                        letterSpacing: '0.005em',
-                                        textAlign: 'left',
-                                        color: '#777980'
-                                    }}>
-                                    Counts
-                                </Typography>
-                                <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
-                                    value={counts.counts}
-                                    sx={TextInput}
-                                    disabled
-                                />
-                            </div>
-                        </Box>
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <>
+                        {viewCounters?.length > 0 ? (
+                            <>
+                                {viewCounters?.map((counts, index) => (
+                                    <AccordionDetails
+                                        sx={{
+                                            backgroundColor: '#F8F9FF',
+                                            // width:'100%',
+                                            height: 'fit-content',
+                                            padding: '18px 29px',
+                                            margin: "0px 20px 20px 19px"
+                                        }}
+                                    >
+                                        <Box sx={{
+                                            marginBottom: '10px',
+                                            display: 'flex',
+                                            justifyContent: 'flex-start',
+                                            width: '100%',
+                                            alignItems: 'center',
+                                            gap: '10px'
+                                        }}>
+                                            <div style={{ width: '50%' }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: '500',
+                                                        fontFamily: 'Public Sans',
+                                                        fontSize: '14px',
+                                                        lineHeight: '28px',
+                                                        letterSpacing: '0.005em',
+                                                        textAlign: 'left',
+                                                        color: '#777980'
+                                                    }}>
+                                                    Name
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='Enter'
+                                                    type={'text'}
+                                                    value={counts.name}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
+                                            </div>
+                                            <div style={{ width: '50%' }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: '500',
+                                                        fontFamily: 'Public Sans',
+                                                        fontSize: '14px',
+                                                        lineHeight: '28px',
+                                                        letterSpacing: '0.005em',
+                                                        textAlign: 'left',
+                                                        color: '#777980'
+                                                    }}>
+                                                    Counts
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='Enter'
+                                                    type={'text'}
+                                                    value={counts.counts}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
+                                            </div>
+                                        </Box>
 
-                    </AccordionDetails>
-                ))}
+                                    </AccordionDetails>
+                                ))}
+                            </>
+                        ) : (
+                            <div>
+                                Counters not found
+                            </div>
+                        )}
+                    </>
+                )}
             </CustomAccordion>
         </div >
     );

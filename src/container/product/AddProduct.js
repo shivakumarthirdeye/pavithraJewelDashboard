@@ -204,7 +204,7 @@ const AddProduct = () => {
             totalstock: yup.number().typeError("Total stock must be a number").min(1, "Total stock is required"),
         }),
         gold: yup.object().shape({
-            type: yup.string().required("Gold type is required"),
+            // type: yup.string().required("Gold type is required"),
             orderType: yup.string().required("Order type is required"),
         }),
     });
@@ -798,11 +798,14 @@ const AddProduct = () => {
 
     useEffect(() => {
         if (
-            values?.pricing?.goldWeight?.value &&
-            values?.pricing?.goldRate?.value
+            values?.pricing?.goldWeight?.value ||
+            values?.pricing?.goldRate?.value ||
+            values?.pricing?.stoneCharges?.value ||
+            values?.pricing?.makingCharges?.value ||
+            values?.pricing?.diamondCost?.value ||
+            values?.pricing?.polkiCost?.value 
         ) {
             // ✅ Calculate gold price
-            const goldWeight = values?.pricing?.goldWeight?.value || 0;
             const goldRate = values?.pricing?.goldRate?.value || 0;
             // const goldPrice = goldWeight * goldRate; // ✅ Corrected
     
@@ -862,7 +865,7 @@ const AddProduct = () => {
                             General Information
                         </h6>
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Product Name</label>
+                            <label className={productStyle.label}>Product Name*</label>
                             <TextField
                                 placeholder='Type product name here. . .'
                                 type={'text'}
@@ -896,7 +899,7 @@ const AddProduct = () => {
                             } */}
                         </div>
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Tags</label>
+                            <label className={productStyle.label}>Tags*</label>
                             <TextField
                                 placeholder='Type and add'
                                 type={'text'}
@@ -906,9 +909,9 @@ const AddProduct = () => {
                                 onBlur={handleBlur}
                                 sx={fieldText}
                             />
-                            {/* {
+                            {
                                 errors.tags && touched.tags && <p style={{ color: "red", fontSize: "12px" }}>{errors.tags}</p>
-                            } */}
+                            }
                         </div>
                     </div>
 
@@ -1078,7 +1081,7 @@ const AddProduct = () => {
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
                             <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1147,7 +1150,7 @@ const AddProduct = () => {
                         <h6 className={productStyle.variationText}>Media</h6>
                         {/* Photos */}
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Photo</label>
+                            <label className={productStyle.label}>Photo*</label>
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
@@ -1257,7 +1260,7 @@ const AddProduct = () => {
                     {/* Metal type */}
                     <div className={productStyle.variationStyle} style={{ marginTop: 20 }}>
                         <h6 className={productStyle.variationText}>
-                            Metal Type
+                            Metal Type*
                         </h6>
                         <div style={{ display: 'flex', width: '70%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
                             {metalTypeData?.map((item, index) => (
@@ -1961,7 +1964,7 @@ const AddProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 20 }}>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >
-                                    <span>Product ID</span>
+                                    <span>Product ID*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1979,7 +1982,7 @@ const AddProduct = () => {
                             </div>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >
-                                    <span>Total Stock</span>
+                                    <span>Total Stock*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -2080,7 +2083,7 @@ const AddProduct = () => {
                     <div className={productStyle.thumbanilStyle}>
                         <h6 className={productStyle.variationText}>Category</h6>
                         <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Product Category</label>
+                            <label className={productStyle.label}>Product Category*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2116,7 +2119,7 @@ const AddProduct = () => {
                             }
                         </div>
                         <div style={{ marginTop: 10 }}>
-                            <label className={productStyle.label}>Product Sub-Category</label>
+                            <label className={productStyle.label}>Product Sub-Category(optional)</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2132,6 +2135,7 @@ const AddProduct = () => {
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
+                                defaultValue=''
                                 name='category.productSubcategory'
                                 value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}
@@ -2155,7 +2159,7 @@ const AddProduct = () => {
                             <h6 className={productStyle.variationText}>Gold</h6>
                         </div>
                         <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Gold Type*</label>
+                            <label className={productStyle.label}>Gold Type</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2182,9 +2186,9 @@ const AddProduct = () => {
 
                             </Select>
                         </div>
-                        {
+                        {/* {
                             errors?.gold?.type && touched?.gold?.type && <p style={{ color: "red", fontSize: "12px" }}>{errors?.gold?.type}</p>
-                        }
+                        } */}
                         <div style={{ marginTop: 10 }}>
                             <label className={productStyle.label}>Order Type</label>
                             <br />

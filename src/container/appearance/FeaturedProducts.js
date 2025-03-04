@@ -52,7 +52,7 @@ export default function FeaturedProducts() {
 
     const schema = yup.object().shape({
         products: yup.array()
-        .min(8, "You must select at least 8 products")
+        .min(6, "You must select at least 6 products")
         .required("Product is required"),
     });
 
@@ -224,7 +224,7 @@ export default function FeaturedProducts() {
                             color: '#777980'
                         }}
                     >
-                        You can select min 8 products
+                        You can select min 6 products
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
                         {selectedProducts?.map((item, index) => (

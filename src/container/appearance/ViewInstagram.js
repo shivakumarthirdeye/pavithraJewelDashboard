@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, TextField } from '@mui/material';
 import { custom, InputURL, saveChanges, TextArea, TextInput } from '../../MaterialsUI';
 import appearancStyle from './appearance.module.css';
 import productStyle from '../product/product.module.css';
@@ -28,7 +28,7 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 }));
 export default function ViewInstagram() {
     const dispatch = useDispatch();
-    const { instagramData } = useSelector((state) => state.appearance);
+    const { instagramData, isLoading } = useSelector((state) => state.appearance);
     const viewInsta = instagramData?.data?.instagram;
 
 
@@ -57,83 +57,97 @@ export default function ViewInstagram() {
 
                     }}>Instagram</Typography>
                 </AccordionSummary>
-                {viewInsta?.map((insta, index) => (
-                    <AccordionDetails
-                        key={index}
-                        sx={{
-                            backgroundColor: '#F8F9FF',
-                            // width:'100%',
-                            height: 'fit-content',
-                            padding: '18px 29px',
-                            margin: "0px 20px 20px 19px"
-                        }}
-                    >
-                        <Box sx={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
-                            <Box>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '500',
-                                        fontFamily: 'Public Sans',
-                                        fontSize: '14px',
-                                        lineHeight: '28px',
-                                        letterSpacing: '0.005em',
-                                        textAlign: 'left',
-                                        color: '#777980'
-                                    }}>
-                                    Image 1
-                                </Typography>
-                                <div className={productStyle.imageUpload1}>
-                                    <img src={insta.image1} style={{maxWidth: '100%', width: 250, height: 200, objectFit: 'cover' }} alt='sliderImage' />
-                                </div>
-                            </Box>
-                            <Box>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '500',
-                                        fontFamily: 'Public Sans',
-                                        fontSize: '14px',
-                                        lineHeight: '28px',
-                                        letterSpacing: '0.005em',
-                                        textAlign: 'left',
-                                        color: '#777980'
-                                    }}>
-                                    Image 2
-                                </Typography>
-                                <div className={productStyle.imageUpload1}>
-                                    <img src={insta.image2} style={{maxWidth: '100%', width: 250, height: 200, objectFit: 'cover' }} alt='sliderImage' />
-                                </div>
-                            </Box>
-                        </Box>
-                        <Box sx={{ marginBottom: '10px', }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Button Link
-                            </Typography>
-                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                                <div className={appearancStyle.httpsStyle}>
-                                    https://
-                                </div>
-                                <TextField
-                                    placeholder='Add Redirection Link Here'
-                                    type={'text'}
-                                    // name="name"
-                                    value={insta.buttonLink}
-                                    sx={InputURL}
-                                    disabled
-                                />
-                            </div>
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <>
+                        {viewInsta?.length > 0 ? (
+                            <>
+                                {viewInsta?.map((insta, index) => (
+                                    <AccordionDetails
+                                        key={index}
+                                        sx={{
+                                            backgroundColor: '#F8F9FF',
+                                            // width:'100%',
+                                            height: 'fit-content',
+                                            padding: '18px 29px',
+                                            margin: "0px 20px 20px 19px"
+                                        }}
+                                    >
+                                        <Box sx={{ marginBottom: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                                            <Box>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: '500',
+                                                        fontFamily: 'Public Sans',
+                                                        fontSize: '14px',
+                                                        lineHeight: '28px',
+                                                        letterSpacing: '0.005em',
+                                                        textAlign: 'left',
+                                                        color: '#777980'
+                                                    }}>
+                                                    Image 1
+                                                </Typography>
+                                                <div className={productStyle.imageUpload1}>
+                                                    <img src={insta.image1} style={{ maxWidth: '100%', width: 250, height: 200, objectFit: 'cover' }} alt='sliderImage' />
+                                                </div>
+                                            </Box>
+                                            <Box>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: '500',
+                                                        fontFamily: 'Public Sans',
+                                                        fontSize: '14px',
+                                                        lineHeight: '28px',
+                                                        letterSpacing: '0.005em',
+                                                        textAlign: 'left',
+                                                        color: '#777980'
+                                                    }}>
+                                                    Image 2
+                                                </Typography>
+                                                <div className={productStyle.imageUpload1}>
+                                                    <img src={insta.image2} style={{ maxWidth: '100%', width: 250, height: 200, objectFit: 'cover' }} alt='sliderImage' />
+                                                </div>
+                                            </Box>
+                                        </Box>
+                                        <Box sx={{ marginBottom: '10px', }}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: '500',
+                                                    fontFamily: 'Public Sans',
+                                                    fontSize: '14px',
+                                                    lineHeight: '28px',
+                                                    letterSpacing: '0.005em',
+                                                    textAlign: 'left',
+                                                    color: '#777980'
+                                                }}>
+                                                Button Link
+                                            </Typography>
+                                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+                                                <div className={appearancStyle.httpsStyle}>
+                                                    https://
+                                                </div>
+                                                <TextField
+                                                    placeholder='Add Redirection Link Here'
+                                                    type={'text'}
+                                                    // name="name"
+                                                    value={insta.buttonLink}
+                                                    sx={InputURL}
+                                                    disabled
+                                                />
+                                            </div>
 
-                        </Box>
-                    </AccordionDetails>
-                ))}
+                                        </Box>
+                                    </AccordionDetails>
+                                ))}
+                            </>
+                        ) : (
+                            <div>Instagram not found</div>
+                        )}
+                    </>
+                )}
             </CustomAccordion>
         </div >
     );

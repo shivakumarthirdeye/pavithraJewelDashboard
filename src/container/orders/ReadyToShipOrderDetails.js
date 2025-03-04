@@ -133,9 +133,9 @@ export const ReadyToShipOrderDetails = () => {
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
-                    <div className={orderStyle.exportStyle}>
+                    {/* <div className={orderStyle.exportStyle}>
                         <ExportBlackIcon /> Export
-                    </div>
+                    </div> */}
                     {/* {ordersDetailsData?.status === 'DELIVERED' && (
                         <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
                             Customer reviews
@@ -145,7 +145,7 @@ export const ReadyToShipOrderDetails = () => {
                         Customer reviews
                     </div>
 
-                    <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice')}>
+                    <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>
                         <InvoiceIcon /><div className={productStyle.addcategoryText}> Invoice</div>
                     </div>
                     <div
@@ -268,7 +268,7 @@ export const ReadyToShipOrderDetails = () => {
                                             </div>
                                             <div className={orderStyle.skuText} >{item?.productId?.inventory?.sku}</div>
                                             <div className={orderStyle.qytText}>{item?.quantity} pcs</div>
-                                            <div className={orderStyle.priceStyle}>₹{item?.sellingPrice} </div>
+                                            <div className={orderStyle.priceStyle}>₹{item?.sellingPrice?.toFixed(2)} </div>
                                             <div className={orderStyle.totalAmountStyle}>₹{item?.quantity * item?.sellingPrice?.toFixed(2)} </div>
 
                                         </div>
@@ -328,7 +328,7 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.priceStyle} style={{ fontWeight: '500', fontSize: 18 }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: '500', fontSize: 18 }}>₹{ordersDetailsData?.data?.grandTotal}</div>
+                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: '500', fontSize: 18 }}>₹{ordersDetailsData?.data?.grandTotal?.toFixed(2)}</div>
                             </div>
                         </div>
                     </div>

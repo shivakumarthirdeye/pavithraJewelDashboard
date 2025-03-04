@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, TextField } from '@mui/material';
+import { Box, CircularProgress, TextField } from '@mui/material';
 import { TextInput } from '../../MaterialsUI';
 import { useDispatch, useSelector } from 'react-redux';
 import { getBrandSlider } from '../../redux/appearanceSlice';
@@ -23,7 +23,7 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function ViewBrandSlider() {
     const dispatch = useDispatch();
 
-    const { brandSliderData } = useSelector((state) => state.appearance)
+    const { brandSliderData, isLoading } = useSelector((state) => state.appearance)
     // console.log('brandSliderData', brandSliderData);
 
     React.useEffect(() => {
@@ -72,27 +72,43 @@ export default function ViewBrandSlider() {
                             }}>
                             Brand Name
                         </Typography>
-                        {brandSliderData?.map((item, index) => (
-                            <div
-                                key={index}
-                                style={{
-                                    display: 'flex',
-                                    justifyContent: 'flex-start',
-                                    alignItems: 'center',
-                                    gap: '10px',
-                                    marginBottom:'10px'
-                                }}>
-                                <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
-                                    name="name"
-                                    value={item}
-                                    sx={TextInput}
-                                    disabled
-                                />
+                        {isLoading ? (
+                            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                                <CircularProgress />
+                            </Box>
+                        ) : (
+                            <>
+                                {brandSliderData?.length > 0 ? (
+                                    <>
+                                        {brandSliderData?.map((item, index) => (
+                                            <div
+                                                key={index}
+                                                style={{
+                                                    display: 'flex',
+                                                    justifyContent: 'flex-start',
+                                                    alignItems: 'center',
+                                                    gap: '10px',
+                                                    marginBottom: '10px'
+                                                }}>
+                                                <TextField
+                                                    placeholder='Enter'
+                                                    type={'text'}
+                                                    name="name"
+                                                    value={item}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
 
-                            </div>
-                        ))}
+                                            </div>
+                                        ))}
+                                    </>
+                                ) : (
+                                    <div>
+                                        Brands are not available
+                                    </div>
+                                )}
+                            </>
+                        )}
                     </Box>
                 </AccordionDetails>
 

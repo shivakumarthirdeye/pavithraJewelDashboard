@@ -85,7 +85,7 @@ export default function Instagram() {
                 instagram: viewInsta.map(item => ({
                     image1: item?.image1 || '',
                     image2: item?.image2 || '',
-                    buttonLink: item?.buttonLink || '', 
+                    buttonLink: item?.buttonLink || '',
                 }))
             });
         }
@@ -214,7 +214,7 @@ export default function Instagram() {
                                                 <img
                                                     src={values?.instagram[index]?.image1}
                                                     alt="Selected"
-                                                    style={{ maxWidth: '100%', marginTop: '0px',width:250,height:200,objectFit:'cover' }}
+                                                    style={{ maxWidth: '100%', marginTop: '0px', width: 250, height: 200, objectFit: 'cover' }}
                                                 />
                                                 {/* <button onClick={handleUpload}>Upload</button> */}
                                             </div>
@@ -241,7 +241,27 @@ export default function Instagram() {
                                             </>
                                         )
                                         }
-
+                                        {values?.instagram[index]?.image1.length > 0 && (
+                                            <>
+                                                <div>
+                                                    <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                        Drag and drop image here, or click add image
+                                                    </p>
+                                                </div>
+                                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        id={`imageOneFile-${index}`}
+                                                        style={{ display: 'none' }}
+                                                        onChange={(e) => handleImageOneChange(e, index)}
+                                                    />
+                                                    <label htmlFor={`imageOneFile-${index}`} className={productStyle.uploadBox}>
+                                                        Change Image
+                                                    </label>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 {
@@ -268,7 +288,7 @@ export default function Instagram() {
                                                 <img
                                                     src={values?.instagram[index]?.image2}
                                                     alt="Selected"
-                                                    style={{ maxWidth: '100%', marginTop: '0px',width:250,height:200,objectFit:'cover'  }}
+                                                    style={{ maxWidth: '100%', marginTop: '0px', width: 250, height: 200, objectFit: 'cover' }}
                                                 />
                                                 {/* <button onClick={handleUpload}>Upload</button> */}
                                             </div>
@@ -295,7 +315,28 @@ export default function Instagram() {
                                             </>
                                         )
                                         }
+                                        {values?.instagram[index]?.image2?.length > 0 && (
+                                            <>
 
+                                                <div>
+                                                    <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                        Drag and drop image here, or click add image
+                                                    </p>
+                                                </div>
+                                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                    <input
+                                                        type="file"
+                                                        accept="image/*"
+                                                        id={`imageTwoFile-${index}`}
+                                                        style={{ display: 'none' }}
+                                                        onChange={(e) => handleImageTwoChange(e, index)}
+                                                    />
+                                                    <label htmlFor={`imageTwoFile-${index}`} className={productStyle.uploadBox}>
+                                                        Change Image
+                                                    </label>
+                                                </div>
+                                            </>
+                                        )}
                                     </div>
                                 </div>
                                 {errors.instagram?.[index]?.image2 && touched.instagram?.[index]?.image2 && (

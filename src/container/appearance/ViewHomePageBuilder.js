@@ -18,13 +18,13 @@ import ViewCounters from './ViewCounters';
 import ViewInstagram from './ViewInstagram';
 
 const ViewHomePageBuilder = () => {
-    const navigate = useNavigate()
+    const navigate = useNavigate();
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container} style={{paddingBottom:20}}>
                 <div>
                     <h2 className={productStyle.categoryText}>Home Page Builder </h2>
-                    <CustomSeparator dashboard="Dashboard" type="Page Appearance " subType="Home Page Builder" />
+                    <CustomSeparator dashboard="Dashboard" type="Page Appearance " subType="View Home Page Builder" />
                 </div>
                 <div
                     className={appearanceStyle.backToStyle}
@@ -37,7 +37,7 @@ const ViewHomePageBuilder = () => {
             <ViewHeroBanner />
             <ViewCategories />
             <ViewAboutUs />
-            <ViewSlider />
+            {/* <ViewSlider /> */}
             <ViewBrandSlider />
             <ViewFeaturedProducts />
             <ViewOffersBanner/>

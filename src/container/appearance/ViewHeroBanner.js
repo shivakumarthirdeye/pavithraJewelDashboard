@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, IconButton, InputAdornment, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, IconButton, InputAdornment, TextField } from '@mui/material';
 import { cancle, custom, fieldText, InputURL, saveChanges, saveData, TextArea, TextInput } from '../../MaterialsUI';
 import { AddIcon, DeletIcon, ImageIcon } from '../../svg';
 import productStyle from '../product/product.module.css';
@@ -35,13 +35,13 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function ViewHeroBanner() {
 
     const dispatch = useDispatch();
-    const {heroBannerData} = useSelector((state) => state.appearance);
+    const { heroBannerData, isLoading } = useSelector((state) => state.appearance);
     const viewHeroBanner = heroBannerData?.data?.banner;
-    
+
 
     React.useEffect(() => {
         dispatch(getHeroBanner())
-    },[dispatch])
+    }, [dispatch])
 
     return (
         <div style={{ marginTop: 20 }}>
@@ -65,134 +65,150 @@ export default function ViewHeroBanner() {
 
                     }}>Hero Banner</Typography>
                 </AccordionSummary>
-                {viewHeroBanner?.map((banners, index) => (
-                    <AccordionDetails
-                        sx={{
-                            backgroundColor: '#F8F9FF',
-                            // width:'100%',
-                            height: 'fit-content',
-                            padding: '18px 29px',
-                            margin: "0px 20px 20px 19px"
-                        }}>
-                        <Box sx={{ marginBottom: '10px' }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Slider {index + 1} Title
-                            </Typography>
-                            <div style={{
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                alignItems: 'center',
-                                gap: '10px'
-                            }}>
-                                <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
-                                    name={`banner[${index}].title`}
-                                    value={banners.title || ''}
-                                    sx={TextInput}
-                                    disabled
-                                />
-                            </div>
-                        </Box>
-                        <Box sx={{ marginBottom: '10px' }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Banner Subtitle
-                            </Typography>
-                            <TextField
-                                placeholder='Enter'
-                                type={'text'}
-                                name={`banner[${index}].description`}
-                                value={banners.description}
-                                disabled
-                                sx={TextInput}
-                            />
-                        </Box>
-                        <Box sx={{ marginBottom: '10px' }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Banner Image
-                            </Typography>
-                            <div className={productStyle.imageUpload1}>
-                                <div className={productStyle.imageView}>
-                                   <img src={banners.image} style={{width:300,height:200,objectFit:'cover'}}alt='sliderImage'/>
-                                </div>
-                            </div>
-                        </Box>
-                        <Typography
-                            sx={{
-                                fontWeight: '500',
-                                fontFamily: 'Public Sans',
-                                fontSize: '14px',
-                                lineHeight: '28px',
-                                letterSpacing: '0.005em',
-                                textAlign: 'left',
-                                color: '#777980'
-                            }}>
-                            Button Link
-                        </Typography>
-                        <Box
-                            sx={{
-                                marginBottom: '10px',
-                                display: 'flex',
-                                justifyContent: 'flex-start',
-                                width: '100%',
-                                alignItems: 'center',
-                                gap: '10px'
-                            }}>
-                            <div style={{ width: '30%' }}>
-                                <TextField
-                                    placeholder='Button Text'
-                                    type={'text'}
-                                    name={`banner[${index}].buttonText`}
-                                    value={banners.buttonText}
-                                    sx={TextInput}
-                                    disabled
-                                />
-                               </div>
-                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
-                                <div className={appearancStyle.httpsStyle}>
-                                    https://
-                                </div>
-                                <TextField
-                                    placeholder='Add Redirection Link Here'
-                                    type={'text'}
-                                    name={`banner[${index}].buttonLink`}
-                                    value={banners.buttonLink}
-                                    sx={InputURL}
-                                    disabled
-                                />
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <>
+                        {viewHeroBanner?.length > 0 ? (
+                            <>
+                                {viewHeroBanner?.map((banners, index) => (
+                                    <AccordionDetails
+                                        sx={{
+                                            backgroundColor: '#F8F9FF',
+                                            // width:'100%',
+                                            height: 'fit-content',
+                                            padding: '18px 29px',
+                                            margin: "0px 20px 20px 19px"
+                                        }}>
+                                        <Box sx={{ marginBottom: '10px' }}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: '500',
+                                                    fontFamily: 'Public Sans',
+                                                    fontSize: '14px',
+                                                    lineHeight: '28px',
+                                                    letterSpacing: '0.005em',
+                                                    textAlign: 'left',
+                                                    color: '#777980'
+                                                }}>
+                                                Slider {index + 1} Title
+                                            </Typography>
+                                            <div style={{
+                                                display: 'flex',
+                                                justifyContent: 'flex-start',
+                                                alignItems: 'center',
+                                                gap: '10px'
+                                            }}>
+                                                <TextField
+                                                    placeholder='Enter'
+                                                    type={'text'}
+                                                    name={`banner[${index}].title`}
+                                                    value={banners.title || ''}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
+                                            </div>
+                                        </Box>
+                                        <Box sx={{ marginBottom: '10px' }}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: '500',
+                                                    fontFamily: 'Public Sans',
+                                                    fontSize: '14px',
+                                                    lineHeight: '28px',
+                                                    letterSpacing: '0.005em',
+                                                    textAlign: 'left',
+                                                    color: '#777980'
+                                                }}>
+                                                Banner Subtitle
+                                            </Typography>
+                                            <TextField
+                                                placeholder='Enter'
+                                                type={'text'}
+                                                name={`banner[${index}].description`}
+                                                value={banners.description}
+                                                disabled
+                                                sx={TextInput}
+                                            />
+                                        </Box>
+                                        <Box sx={{ marginBottom: '10px' }}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: '500',
+                                                    fontFamily: 'Public Sans',
+                                                    fontSize: '14px',
+                                                    lineHeight: '28px',
+                                                    letterSpacing: '0.005em',
+                                                    textAlign: 'left',
+                                                    color: '#777980'
+                                                }}>
+                                                Banner Image
+                                            </Typography>
+                                            <div className={productStyle.imageUpload1}>
+                                                <div className={productStyle.imageView}>
+                                                    <img src={banners.image} style={{ width: 300, height: 200, objectFit: 'cover' }} alt='sliderImage' />
+                                                </div>
+                                            </div>
+                                        </Box>
+                                        <Typography
+                                            sx={{
+                                                fontWeight: '500',
+                                                fontFamily: 'Public Sans',
+                                                fontSize: '14px',
+                                                lineHeight: '28px',
+                                                letterSpacing: '0.005em',
+                                                textAlign: 'left',
+                                                color: '#777980'
+                                            }}>
+                                            Button Link
+                                        </Typography>
+                                        <Box
+                                            sx={{
+                                                marginBottom: '10px',
+                                                display: 'flex',
+                                                justifyContent: 'flex-start',
+                                                width: '100%',
+                                                alignItems: 'center',
+                                                gap: '10px'
+                                            }}>
+                                            <div style={{ width: '30%' }}>
+                                                <TextField
+                                                    placeholder='Button Text'
+                                                    type={'text'}
+                                                    name={`banner[${index}].buttonText`}
+                                                    value={banners.buttonText}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
+                                            </div>
+                                            <div style={{ width: '100%', display: 'flex', alignItems: 'center' }}>
+                                                <div className={appearancStyle.httpsStyle}>
+                                                    https://
+                                                </div>
+                                                <TextField
+                                                    placeholder='Add Redirection Link Here'
+                                                    type={'text'}
+                                                    name={`banner[${index}].buttonLink`}
+                                                    value={banners.buttonLink}
+                                                    sx={InputURL}
+                                                    disabled
+                                                />
 
-                            </div>
-                        </Box>
+                                            </div>
+                                        </Box>
 
-                    </AccordionDetails>
-                ))}
+                                    </AccordionDetails>
+                                ))}
+                            </>
+                        ) : (
+                            <div>
+                                Hero banners not found
+                            </div>
+                        )}
+                    </>
+                )}
             </CustomAccordion>
         </div >
     );

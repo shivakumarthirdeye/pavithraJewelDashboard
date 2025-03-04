@@ -274,27 +274,44 @@ export default function AboutUs() {
                                                     Drag and drop image here, or click add image
                                                 </p>
                                             </div>
-
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id="imageFile"
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleImageChange}
+                                                />
+                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
+                                                    Add Image
+                                                </label>
+                                            </div>
                                         </>
                                     )
                                     }
-                                    <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            id="imageFile"
-                                            style={{ display: 'none' }}
-                                            onChange={handleImageChange}
-                                        />
-                                        <label htmlFor="imageFile" className={productStyle.uploadBox}>
-                                            Add Image
-                                        </label>
-                                    </div>
+                                    {values?.image1?.length > 0 && (
+                                        <>
+                                            <div>
+                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                    Drag and drop image here, or click add image
+                                                </p>
+                                            </div>
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id="imageFile"
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleImageChange}
+                                                />
+                                                <label htmlFor="imageFile" className={productStyle.uploadBox}>
+                                                    Change Image
+                                                </label>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
-                            {/* {
-                                errors.featuredImage && touched.featuredImage && <p style={{ color: "red", fontSize: "12px" }}>{errors.featuredImage}</p>
-                            } */}
                         </Box>
                         <Box>
                             <Typography
@@ -328,22 +345,43 @@ export default function AboutUs() {
                                                     Drag and drop image here, or click add image
                                                 </p>
                                             </div>
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id="imageTwoFile"
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleImage2Change}
+                                                />
+                                                <label htmlFor="imageTwoFile" className={productStyle.uploadBox}>
+                                                    Add Image
+                                                </label>
+                                            </div>
 
                                         </>
                                     )
                                     }
-                                    <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                        <input
-                                            type="file"
-                                            accept="image/*"
-                                            id="imageTwoFile"
-                                            style={{ display: 'none' }}
-                                            onChange={handleImage2Change}
-                                        />
-                                        <label htmlFor="imageTwoFile" className={productStyle.uploadBox}>
-                                            Add Image
-                                        </label>
-                                    </div>
+                                    {values?.image2?.length > 0 && (
+                                        <>
+                                            <div>
+                                                <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                    Drag and drop image here, or click add image
+                                                </p>
+                                            </div>
+                                            <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                                <input
+                                                    type="file"
+                                                    accept="image/*"
+                                                    id="imageTwoFile"
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleImage2Change}
+                                                />
+                                                <label htmlFor="imageTwoFile" className={productStyle.uploadBox}>
+                                                    Change Image
+                                                </label>
+                                            </div>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                             {

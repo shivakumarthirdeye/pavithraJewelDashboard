@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, MenuItem, Select, TextField } from '@mui/material';
+import { Box, Button, CircularProgress, MenuItem, Select, TextField } from '@mui/material';
 import { custom, saveChanges, SelectStyle, TextArea, TextInput } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
@@ -27,7 +27,7 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 }));
 export default function ViewTestimonials() {
     const dispatch = useDispatch();
-    const { testimonialsData } = useSelector((state) => state.appearance);
+    const { testimonialsData,isLoading } = useSelector((state) => state.appearance);
     const viewTestimonials = testimonialsData?.data?.testimonials;
     console.log('viewTestimonials', viewTestimonials);
 
@@ -59,114 +59,130 @@ export default function ViewTestimonials() {
 
                     }}>Testimonials</Typography>
                 </AccordionSummary>
-                {viewTestimonials?.map((banners, index) => (
-                    <AccordionDetails
-                        sx={{
-                            backgroundColor: '#F8F9FF',
-                            // width:'100%',
-                            height: 'fit-content',
-                            padding: '18px 29px',
-                            margin: "0px 20px 20px 19px"
-                        }}
-                    >
-                        <Box sx={{ marginBottom: '10px' }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Rating
-                            </Typography>
-                            <TextField
-                                placeholder='Enter'
-                                type={'text'}
-                                value={banners?.rating }
-                                sx={TextInput}
-                                disabled
-                            />
-                        </Box>
-                        <Box sx={{
-                            marginBottom: '10px',
-                            display: 'flex',
-                            justifyContent: 'flex-start',
-                            width: '100%',
-                            alignItems: 'center',
-                            gap: '10px'
-                        }}>
-                            <div style={{ width: '50%' }}>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '500',
-                                        fontFamily: 'Public Sans',
-                                        fontSize: '14px',
-                                        lineHeight: '28px',
-                                        letterSpacing: '0.005em',
-                                        textAlign: 'left',
-                                        color: '#777980'
-                                    }}>
-                                    Customer Name
-                                </Typography>
-                                <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
-                                    value={banners?.customerName}
-                                    sx={TextInput}
-                                    disabled
-                                />
-                            </div>
-                            <div style={{ width: '50%' }}>
-                                <Typography
-                                    sx={{
-                                        fontWeight: '500',
-                                        fontFamily: 'Public Sans',
-                                        fontSize: '14px',
-                                        lineHeight: '28px',
-                                        letterSpacing: '0.005em',
-                                        textAlign: 'left',
-                                        color: '#777980'
-                                    }}>
-                                    Customer Role
-                                </Typography>
-                                <TextField
-                                    placeholder='Enter'
-                                    type={'text'}
-                                    value={banners?.customerRole}
-                                    sx={TextInput}
-                                    disabled
-                                />
-                            </div>
-                        </Box>
-                        <Box sx={{ marginBottom: '10px' }}>
-                            <Typography
-                                sx={{
-                                    fontWeight: '500',
-                                    fontFamily: 'Public Sans',
-                                    fontSize: '14px',
-                                    lineHeight: '28px',
-                                    letterSpacing: '0.005em',
-                                    textAlign: 'left',
-                                    color: '#777980'
-                                }}>
-                                Their testimony
-                            </Typography>
-                            <TextField
-                                placeholder='Enter'
-                                type={'text'}
-                                value={banners.testimony}
-                                sx={TextArea}
-                                multiline
-                                rows={4}
-                                disabled
-                            />
+                {isLoading ? (
+                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                        <CircularProgress />
+                    </Box>
+                ) : (
+                    <>
+                        {viewTestimonials?.length > 0 ? (
+                            <>
+                                {viewTestimonials?.map((banners, index) => (
+                                    <AccordionDetails
+                                        sx={{
+                                            backgroundColor: '#F8F9FF',
+                                            // width:'100%',
+                                            height: 'fit-content',
+                                            padding: '18px 29px',
+                                            margin: "0px 20px 20px 19px"
+                                        }}
+                                    >
+                                        <Box sx={{ marginBottom: '10px' }}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: '500',
+                                                    fontFamily: 'Public Sans',
+                                                    fontSize: '14px',
+                                                    lineHeight: '28px',
+                                                    letterSpacing: '0.005em',
+                                                    textAlign: 'left',
+                                                    color: '#777980'
+                                                }}>
+                                                Rating
+                                            </Typography>
+                                            <TextField
+                                                placeholder='Enter'
+                                                type={'text'}
+                                                value={banners?.rating}
+                                                sx={TextInput}
+                                                disabled
+                                            />
+                                        </Box>
+                                        <Box sx={{
+                                            marginBottom: '10px',
+                                            display: 'flex',
+                                            justifyContent: 'flex-start',
+                                            width: '100%',
+                                            alignItems: 'center',
+                                            gap: '10px'
+                                        }}>
+                                            <div style={{ width: '50%' }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: '500',
+                                                        fontFamily: 'Public Sans',
+                                                        fontSize: '14px',
+                                                        lineHeight: '28px',
+                                                        letterSpacing: '0.005em',
+                                                        textAlign: 'left',
+                                                        color: '#777980'
+                                                    }}>
+                                                    Customer Name
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='Enter'
+                                                    type={'text'}
+                                                    value={banners?.customerName}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
+                                            </div>
+                                            <div style={{ width: '50%' }}>
+                                                <Typography
+                                                    sx={{
+                                                        fontWeight: '500',
+                                                        fontFamily: 'Public Sans',
+                                                        fontSize: '14px',
+                                                        lineHeight: '28px',
+                                                        letterSpacing: '0.005em',
+                                                        textAlign: 'left',
+                                                        color: '#777980'
+                                                    }}>
+                                                    Customer Role
+                                                </Typography>
+                                                <TextField
+                                                    placeholder='Enter'
+                                                    type={'text'}
+                                                    value={banners?.customerRole}
+                                                    sx={TextInput}
+                                                    disabled
+                                                />
+                                            </div>
+                                        </Box>
+                                        <Box sx={{ marginBottom: '10px' }}>
+                                            <Typography
+                                                sx={{
+                                                    fontWeight: '500',
+                                                    fontFamily: 'Public Sans',
+                                                    fontSize: '14px',
+                                                    lineHeight: '28px',
+                                                    letterSpacing: '0.005em',
+                                                    textAlign: 'left',
+                                                    color: '#777980'
+                                                }}>
+                                                Their testimony
+                                            </Typography>
+                                            <TextField
+                                                placeholder='Enter'
+                                                type={'text'}
+                                                value={banners.testimony}
+                                                sx={TextArea}
+                                                multiline
+                                                rows={4}
+                                                disabled
+                                            />
 
-                        </Box>
-                    </AccordionDetails>
-                ))}
+                                        </Box>
+                                    </AccordionDetails>
+                                ))}
+                            </>
+                        ) : (
+                            <div>
+                                Testimonials not found
+                            </div>
+                        )}
+                    </>
+                )}
             </CustomAccordion>
         </div >
     );

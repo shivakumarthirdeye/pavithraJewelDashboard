@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, Checkbox, ListItemText, MenuItem, Select } from '@mui/material';
+import { Box, Button, Checkbox, CircularProgress, ListItemText, MenuItem, Select } from '@mui/material';
 import { custom, saveChanges, formselect } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
@@ -31,17 +31,17 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function ViewCategories() {
     const dispatch = useDispatch();
 
-    const { appearanceCategoriesData } = useSelector(
+    const { appearanceCategoriesData, isLoading } = useSelector(
         (state) => state.appearance);
-    
+
     const viewCategories = appearanceCategoriesData?.data?.categories
-    
-    
+
+
     React.useEffect(() => {
         dispatch(getAppearanceCategories())
     }, [dispatch])
 
-    
+
 
     return (
         <div style={{ marginTop: 20 }}>
@@ -86,17 +86,31 @@ export default function ViewCategories() {
                             }}>
                             Categories
                         </Typography>
-                        
+
                     </Box>
-                    
-                    <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%' }}>
-                        {viewCategories?.map((item, index) => (
-                            <div className={appearancStyle.categoriesStyle} key={index}>
-                                <div className={appearancStyle.textStyle}>{item.name} </div>
-                                <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
-                            </div>
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <>
+                            {viewCategories?.length > 0 ? (
+
+                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%' }}>
+                                    {viewCategories?.map((item, index) => (
+                                        <div className={appearancStyle.categoriesStyle} key={index}>
+                                            <div className={appearancStyle.textStyle}>{item.name} </div>
+                                            <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div>
+                                    Categories not found
+                                </div>
+                            )}
+                        </>
+                    )}
                 </AccordionDetails>
             </CustomAccordion>
         </div >

@@ -241,22 +241,43 @@ export default function OffersBanner() {
                                                 Drag and drop image here, or click add image
                                             </p>
                                         </div>
+                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                id="bannerImageFile"
+                                                style={{ display: 'none' }}
+                                                onChange={handleImageChange}
+                                            />
+                                            <label htmlFor="bannerImageFile" className={productStyle.uploadBox}>
+                                                Add Image
+                                            </label>
+                                        </div>
 
                                     </>
                                 )
                                 }
-                                <div className={productStyle.pixel} style={{ marginTop: 10 }}>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        id="bannerImageFile"
-                                        style={{ display: 'none' }}
-                                        onChange={handleImageChange}
-                                    />
-                                    <label htmlFor="bannerImageFile" className={productStyle.uploadBox}>
-                                        Add Image
-                                    </label>
-                                </div>
+                                {values?.image?.length > 0 && (
+                                    <>
+                                        <div>
+                                            <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                Drag and drop image here, or click add image
+                                            </p>
+                                        </div>
+                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                id="bannerImageFile"
+                                                style={{ display: 'none' }}
+                                                onChange={handleImageChange}
+                                            />
+                                            <label htmlFor="bannerImageFile" className={productStyle.uploadBox}>
+                                                Change Image
+                                            </label>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
                         {

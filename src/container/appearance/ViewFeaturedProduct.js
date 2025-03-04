@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, MenuItem, Select } from '@mui/material';
+import { Box, Button, CircularProgress, MenuItem, Select } from '@mui/material';
 import { custom, saveChanges, SelectStyle } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
@@ -28,19 +28,19 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 export default function ViewFeaturedProducts() {
     const dispatch = useDispatch();
 
-    const { featurerdProductsData } = useSelector(
+    const { featurerdProductsData,isLoading } = useSelector(
         (state) => state.appearance);
-    
-    const viewCategories = featurerdProductsData?.data;
-    console.log('viewCategories',viewCategories);
-    
-    
-    
+
+    const featurerdProducts = featurerdProductsData?.data;
+    console.log('featurerdProducts', featurerdProducts);
+
+
+
     React.useEffect(() => {
         dispatch(getFeaturerdProducts())
     }, [dispatch])
 
-   
+
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -83,14 +83,29 @@ export default function ViewFeaturedProducts() {
                     >
                         You can select min 8 products
                     </Typography>
-                    <div style={{display:'flex',justifyContent:'flex-start',alignItems:'center',gap:10,width:'100%',flexWrap:'wrap'}}>
-                        {viewCategories?.products?.map((item, index) => (
-                            <div className={appearancStyle.categoriesStyle} key={index}>
-                                <div className={appearancStyle.textStyle}>{item.productName} </div>
-                                <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
-                            </div>
-                        ))}
-                    </div>
+                    {isLoading ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <>
+                            {featurerdProducts?.products?.length > 0 ? (
+
+                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%', flexWrap: 'wrap' }}>
+                                    {featurerdProducts?.products?.map((item, index) => (
+                                        <div className={appearancStyle.categoriesStyle} key={index}>
+                                            <div className={appearancStyle.textStyle}>{item.productName} </div>
+                                            <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <div>
+                                    Products not found
+                                </div>
+                            )}
+                        </>
+                    )}
                 </AccordionDetails>
             </CustomAccordion>
         </div >
