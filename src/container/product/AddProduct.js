@@ -170,30 +170,30 @@ const AddProduct = () => {
                         type === "POLKI" ? schema.min(1, "Polki per carat is required") : schema
                     ),
             }),
-            gst: yup.object().shape({
-                value: yup
-                    .number()
-                    .typeError("GST must be a number")
-                    .when("status", (status, schema) =>
-                        status === "active" ? schema.required("GST is required") : schema
-                    ),
-            }),
-            finalSalePrice: yup.object().shape({
-                value: yup
-                    .number()
-                    .typeError("Final sale price must be a number")
-                    .when("status", (status, schema) =>
-                        status === "active" ? schema.required("Final sale price is required") : schema
-                    ),
-            }),
-            makingCharges: yup.object().shape({
-                value: yup
-                    .number()
-                    .typeError("Making charges must be a number")
-                    .when("status", (status, schema) =>
-                        status === "active" ? schema.required("Making charges is required") : schema
-                    ),
-            }),
+            // gst: yup.object().shape({
+            //     value: yup
+            //         .number()
+            //         .typeError("GST must be a number")
+            //         .when("status", (status, schema) =>
+            //             status === "active" ? schema.required("GST is required") : schema
+            //         ),
+            // }),
+            // finalSalePrice: yup.object().shape({
+            //     value: yup
+            //         .number()
+            //         .typeError("Final sale price must be a number")
+            //         .when("status", (status, schema) =>
+            //             status === "active" ? schema.required("Final sale price is required") : schema
+            //         ),
+            // }),
+            // makingCharges: yup.object().shape({
+            //     value: yup
+            //         .number()
+            //         .typeError("Making charges must be a number")
+            //         .when("status", (status, schema) =>
+            //             status === "active" ? schema.required("Making charges is required") : schema
+            //         ),
+            // }),
         }),
         category: yup.object().shape({
             productCategory: yup.string().required("Category is required"),
@@ -332,7 +332,7 @@ const AddProduct = () => {
                 productSubcategory: null
             },
             gold: {
-                type: "",
+                type: null,
                 orderType: ""
             },
             featurerdImage: "",
@@ -1473,9 +1473,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {
+                                {/* {
                                     errors?.pricing?.makingCharges?.value && touched?.pricing?.makingCharges?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.makingCharges?.value}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
@@ -1780,9 +1780,9 @@ const AddProduct = () => {
                                     sx={fieldText}
 
                                 />
-                                {
+                                {/* {
                                     errors?.pricing?.gst?.value && touched?.pricing?.gst?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.gst?.value}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '67%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
@@ -1828,9 +1828,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {
+                                {/* {
                                     errors?.pricing?.finalSalePrice?.value && touched?.pricing?.finalSalePrice?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.finalSalePrice?.value}</p>
-                                }
+                                } */}
                             </div>
                         </div>
                         <div className={productStyle.noteTextStyle}>Note: Select checkbox to show in website</div>
@@ -2140,7 +2140,7 @@ const AddProduct = () => {
                                 value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}
                             >
-                                <MenuItem value="">Select</MenuItem>
+                                <MenuItem value={null}>Select</MenuItem>
                                 {filteredSubcategory?.map((category) => (
                                     <MenuItem key={category._id} value={category._id}>
                                         {category.name}
@@ -2175,12 +2175,12 @@ const AddProduct = () => {
                                     <ArrowDropDownIcon {...props} style={{ fontSize: "18px" }} />
                                 )}
                                 displayEmpty
-                                defaultValue=''
+                                // defaultValue=''
                                 name='gold.type'
                                 value={values.gold.type}
                                 onChange={handleChange}
                             >
-                                <MenuItem value="">Select</MenuItem>
+                                <MenuItem value={null}>Select</MenuItem>
                                 <MenuItem value="k22">22k</MenuItem>
                                 <MenuItem value="k18">18k</MenuItem>
 

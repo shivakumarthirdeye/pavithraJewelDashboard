@@ -203,10 +203,10 @@ export const getFeaturerdProducts = createAsyncThunk('getFeaturerdProducts', asy
 export const addFeaturerdProducts = createAsyncThunk('addFeaturerdProducts', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.addFeaturerdProducts(body);
-        if (status === 200) {
+        if (status === 201) {
             // render otp screen
             dispatch(setAddFeaturerdProducts(body));
-            Toastify.success("Brand sliders added successfully");
+            Toastify.success("Featurerd Products added successfully");
             dispatch(setRefresh());
         }
         return data.data

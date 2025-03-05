@@ -224,7 +224,7 @@ export default function FeaturedProducts() {
                             color: '#777980'
                         }}
                     >
-                        You can select min 6 products
+                        You can select min 8 products
                     </Typography>
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
                         {selectedProducts?.map((item, index) => (

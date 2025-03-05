@@ -17,9 +17,8 @@ export const MadeToOrderDetails = () => {
     const { id } = useParams();
 
     const dispatch = useDispatch();
-    const { ordersDetailsData, isRefresh,updateStatusData } = useSelector((state) => state.orders);
-    // console.log('ordersDetailsData', ordersDetailsData);
-    // console.log('updateStatusData', updateStatusData);
+    const { ordersDetailsData, isRefresh } = useSelector((state) => state.orders);
+    console.log('ordersDetailsData', ordersDetailsData);
 
 
     useEffect(() => {
@@ -193,11 +192,13 @@ export const MadeToOrderDetails = () => {
                                         {/* 13 January 2023, 14:00 */}
                                     </div>
                                 </div>
+                                {ordersDetailsData?.singleProduct?.productId?.metalType[0] === 'GOLD' && (
                                 <div className={orderStyle.goldRateStyle}>
                                     Gold rate 18k: <span> ₹{ordersDetailsData?.data?.goldRate18k}/g </span>
                                     <br />
                                     Gold rate 22k: <span> ₹{ordersDetailsData?.data?.goldRate22k}/g </span>
                                 </div>
+                                )}
                                 <div
                                     style={{
                                         backgroundColor: lastValue?.name === 'NEW' ? "#4A4C561A"
@@ -267,14 +268,14 @@ export const MadeToOrderDetails = () => {
                                                 {ordersDetailsData?.singleProduct?.productId?.productName}
                                             </p>
                                             <p className={orderStyle.categoryStyle}>
-                                                {ordersDetailsData?.singleProduct?.productId?.features?.stoneColor}
+                                                {ordersDetailsData?.singleProduct?.productId?.features?.stoneColor?.value}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className={orderStyle.skuText} >{ordersDetailsData?.singleProduct?.productId?.inventory?.sku}</div>
                                 <div className={orderStyle.qytText}>{ordersDetailsData?.singleProduct?.quantity} pcs <br /><p> {ordersDetailsData?.singleProduct?.totalWeight}gm</p></div>
-                                <div className={orderStyle.pendingAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice} </div>
+                                <div className={orderStyle.pendingAmountStyle}>₹{(ordersDetailsData?.singleProduct?.sellingPrice)?.toFixed(2)} </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.quantity} </div>
 
                             </div>
@@ -444,7 +445,7 @@ export const MadeToOrderDetails = () => {
                                     displayEmpty
                                     defaultValue=""
                                     name="status"
-                                    value={values.status}
+                                    value={values.status || lastValue?.name}
                                     onChange={handleStatusChange} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>

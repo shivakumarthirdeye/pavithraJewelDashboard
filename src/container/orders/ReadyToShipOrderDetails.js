@@ -419,7 +419,6 @@ export const ReadyToShipOrderDetails = () => {
                                     <MenuItem value="PROCESSING">Processing</MenuItem>
                                     <MenuItem value="SHIPPED">Shipped</MenuItem>
                                     <MenuItem value="DELIVERED">Delivered</MenuItem>
-                                    <MenuItem value="READY TO SHIP">Ready to ship</MenuItem>
                                 </Select>
                             </div>
                         </>
