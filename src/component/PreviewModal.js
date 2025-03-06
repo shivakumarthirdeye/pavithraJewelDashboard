@@ -3,20 +3,41 @@ import Styles from '../component/styles.module.css';
 import { Box, Modal } from '@mui/material';
 import { CancelIcon, DownloadIcon } from '../svg';
 import orderStyle from '../container/orders/orders.module.css';
+import { saveAs } from 'file-saver'
+
 
 const PreviewModal = ({ open, onClose, data }) => {
   console.log('data', data);
 
   const pancardUrl = '/pancard.png'; // Image URL
 
-  const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = data; // Set the image URL
-    link.download = 'pancard.png'; // File name for download
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const handleDownload = (e) => {
+    // e.preventDefault(); // Prevent default behavior (if needed)
+    
+    // const imageUrl = e.target.href; // Get the image URL
+    // window.open(imageUrl, "_blank"); // Open in a new tab
+    console.log(e.target.href);
+    fetch(e.target.href, {
+      method: "GET",
+      headers: {}
+    })
+      .then(response => {
+        response.arrayBuffer().then(function (buffer) {
+          const url = window.URL.createObjectURL(new Blob([buffer]));
+          const link = document.createElement("a");
+          link.href = url;
+          link.setAttribute("download", "image.png"); //or any other extension
+          document.body.appendChild(link);
+          link.click();
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
+  const downloadImage = () => {
+    saveAs(data, 'image.jpg') // Put your image URL here.
+  }
 
   const style = {
     position: "absolute",
@@ -52,13 +73,15 @@ const PreviewModal = ({ open, onClose, data }) => {
           </div>
         </div>
 
-        <div
+        <a
           style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}
           className={orderStyle.downloadingButtonStyle}
-          onClick={handleDownload}
+          href={data}
+          // download
+          onClick={e => handleDownload(e)}
         >
           <DownloadIcon /> Download
-        </div>
+        </a>
         <img src={data} style={{ width: '100%', height: "300px", objectFit: 'cover', minHeight: '20vh' }} alt='Pancard' />
       </Box>
     </Modal>

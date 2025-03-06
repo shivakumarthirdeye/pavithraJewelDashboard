@@ -12,6 +12,8 @@ import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { editPendingPrice } from '../../redux/ordersSlice';
 
 const EditPriceModal = ({ open, onClose, data }) => {
+    console.log('data================',data);
+    
     const dispatch = useDispatch()
     
 
@@ -97,7 +99,7 @@ const EditPriceModal = ({ open, onClose, data }) => {
                     </div>
                 </div>
                 <div className={orderStyle.jwelleryDetails}>
-                    <img src={data?.singleProduct?.productId?.featurerdImage} alt='Jwellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                    <img src={data?.singleProduct?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
                     <div>
                         <p className={orderStyle.jwelleryText}>{data?.singleProduct?.productId?.productName}</p>
                         <p className={orderStyle.priceText}>₹{data?.singleProduct?.sellingPrice}</p>
@@ -173,7 +175,7 @@ const EditPriceModal = ({ open, onClose, data }) => {
                     }
                 </div>
                 <div className={orderStyle.buttonStyle} style={{ marginTop: 10 }}>
-                    <Button sx={cancle} variant="contained" onClick={resetForm} disableElevation={true}>Clear</Button>
+                    <Button sx={cancle} variant="contained" onClick={resetForm} disableElevation={true}>Cancel</Button>
 
                     <Button sx={saveData} variant="contained" onClick={handleSubmit} disableElevation={true}>Update</Button>
                 </div>

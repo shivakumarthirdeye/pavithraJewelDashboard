@@ -375,6 +375,7 @@
     text-underline-position: from-font;
     text-decoration-skip-ink: none;
     color: #101011;
+    text-transform: uppercase;
 }
 
 .declaration {

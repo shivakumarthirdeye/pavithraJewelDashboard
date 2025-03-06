@@ -66,7 +66,7 @@ export const CustomerReview = () => {
             <div className={productStyle.container}>
                 <div>
                     <div>
-                        <h2 className={productStyle.categoryText}> Order #{ordersDetailsData?._id}</h2>
+                        <h2 className={productStyle.categoryText}> Order #{id}</h2>
                     </div>
                     <div className={productStyle.home} style={{ marginTop: 10 }}>
                         Orders <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
@@ -75,12 +75,12 @@ export const CustomerReview = () => {
                         </span>
                         <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
                         <span style={{ marginLeft: 10 }}>
-                            Order #{ordersDetailsData?._id}
+                            Order #{id}
                         </span>
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
-                    <div className={productStyle.buttonStyle} onClick={() => navigate('/orders/ReadyToShipOrders')}>
+                    <div className={productStyle.buttonStyle} onClick={() => navigate(-1)}>
                         <div className={productStyle.addcategoryText}>Back to details</div>
                     </div>
                 </div>

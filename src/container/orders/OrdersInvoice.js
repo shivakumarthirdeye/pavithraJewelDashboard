@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getOrdersDetails } from "../../redux/ordersSlice";
 import { formatDate } from "../../helper/FormatDate";
 import { getGoldRate } from "../../redux/dashboardSlice";
+import numberToWords from "number-to-words";
 
 const OrdersInvoice = () => {
     const { id } = useParams();
@@ -30,11 +31,11 @@ const OrdersInvoice = () => {
                     <img src="/jewelsLogo.png" className={invoiceStyles.imageStyle} alt="Logo" />
                     <div>
                         <h1 className={invoiceStyles.invoiceText}>INVOICE</h1>
-                        <p className={invoiceStyles.companyText}>COMPANY LLC</p>
+                        <p className={invoiceStyles.companyText}>Pavithra Jewel's</p>
                     </div>
                 </div>
                 <div>
-                    <p className={invoiceStyles.invoiceNumber}>#2023-00</p>
+                    <p className={invoiceStyles.invoiceNumber}>#{ordersDetailsData?.data?._id}</p>
                     <p className={invoiceStyles.invoiceNumberText}>INVOICE NUMBER</p>
                 </div>
             </header>
@@ -114,40 +115,40 @@ const OrdersInvoice = () => {
                 <div className={invoiceStyles.tableData}>
                     <div className={invoiceStyles.slNoStyle}>{index + 1}.</div>
                     <div className={invoiceStyles.nameStyle}>{item?.productId?.productName}<br />
-                        <span className={invoiceStyles.charges}>Making charges: {item?.makingCharges}%</span>
+                        <span className={invoiceStyles.charges}>Making charges: {item?.productId?.pricing?.makingCharges?.value}%</span>
                     </div>
                     <div className={invoiceStyles.hsnStyle} style={{ fontSize: 9, color: '#101011' }}>{item?.productId?.inventory?.sku}</div>
-                    <div className={invoiceStyles.qtyStyle} style={{ fontSize: 9, color: '#101011' }}>{item?.totalWeight}</div>
+                    <div className={invoiceStyles.qtyStyle} style={{ fontSize: 9, color: '#101011' }}>{item?.productId?.pricing?.totalWeight?.value}</div>
                     <div className={invoiceStyles.goldRateStyle} style={{ fontSize: 9, color: '#101011' }}>₹{item?.productId?.gold?.type === 'k22' ? goldRate?.k22 : goldRate?.k18}</div>
-                    <div className={invoiceStyles.totalStyle} style={{ fontSize: 9, color: '#101011', fontWeight: 600 }}>₹2000</div>
+                    <div className={invoiceStyles.totalStyle} style={{ fontSize: 9, color: '#101011', fontWeight: 600 }}>₹{item?.totalPrice}</div>
                 </div>
             ))}
             <div className={invoiceStyles.totalAmount} >
                 <div className={invoiceStyles.invoiceGstText} style={{ fontSize: 12 }}>Total Amount before tax GST ( SGST / UGST / CGST / IGST )</div>
-                <div className={invoiceStyles.invoiceGstText}>₹2000</div>
+                <div className={invoiceStyles.invoiceGstText}>₹{(ordersDetailsData?.data?.subTotal)?.toFixed(2)}</div>
             </div>
             <div className={invoiceStyles.bottomLine} />
-            <div className={invoiceStyles.gstHeaderStyle} >
+            {/* <div className={invoiceStyles.gstHeaderStyle} >
                 <div className={invoiceStyles.invoiceGst} >IGST (3%) </div>
                 <div className={invoiceStyles.invoiceGstText}>₹0</div>
             </div>
             <div className={invoiceStyles.gstHeaderStyle} >
                 <div className={invoiceStyles.invoiceGst}>SGST (1.5%) </div>
                 <div className={invoiceStyles.invoiceGstText}>₹0</div>
-            </div>
+            </div> */}
             <div className={invoiceStyles.gstHeaderStyle} >
-                <div className={invoiceStyles.invoiceGst}>CGST (1.5%) </div>
-                <div className={invoiceStyles.invoiceGstText}>₹0</div>
+                <div className={invoiceStyles.invoiceGst}>GST </div>
+                <div className={invoiceStyles.invoiceGstText}>{ordersDetailsData?.data?.gst}%</div>
             </div>
             <div className={invoiceStyles.totalAmount} >
                 <div className={invoiceStyles.invoiceGstText} style={{ fontSize: 12 }}>Total Amount Payable inclusive of  GST tax ( SGST / UGST / CGST / IGST)</div>
                 <div className={invoiceStyles.invoiceTotalAmount} >TOTAL AMOUNT</div>
-                <div className={invoiceStyles.invoiceGstText} style={{ fontSize: 14, fontWeight: 700 }}>₹2000</div>
+                <div className={invoiceStyles.invoiceGstText} style={{ fontSize: 14, fontWeight: 700 }}>₹{(ordersDetailsData?.data?.total)?.toFixed(2)}</div>
             </div>
             <div className={invoiceStyles.bottomLine} />
             <div className={invoiceStyles.inwordsStyle}>
                 <div className={invoiceStyles.inWords}>Inwords:</div>
-                <div className={invoiceStyles.numInWords}>INR SIX THOUSAND FOUR HUNDRED EIGTY </div>
+                <div className={invoiceStyles.numInWords}>INR {numberToWords.toWords(Number(ordersDetailsData?.data?.total))} </div>
             </div>
             <div className={invoiceStyles.bottomLine} />
             <section className={invoiceStyles.summary}>

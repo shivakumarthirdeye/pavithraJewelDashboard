@@ -11,6 +11,7 @@ import { formselect } from '../../MaterialsUI';
 import { MenuItem, Select } from '@mui/material';
 import { useFormik } from 'formik';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
+import { getGoldRate } from '../../redux/dashboardSlice';
 
 export const MadeToOrderDetails = () => {
     const navigate = useNavigate()
@@ -18,12 +19,17 @@ export const MadeToOrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh } = useSelector((state) => state.orders);
+    const { goldRateData } = useSelector((state) => state.dashboard);
     console.log('ordersDetailsData', ordersDetailsData);
 
 
     useEffect(() => {
         dispatch(getOrdersDetails(id))
     }, [dispatch, id, isRefresh])
+
+    useEffect(() => {
+        dispatch(getGoldRate())
+    }, [dispatch])
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isEditPriceModalOpen, setIsEditPriceModalOpen] = useState(false);
@@ -79,7 +85,7 @@ export const MadeToOrderDetails = () => {
         const selectedStatus = event.target.value;
         if (selectedStatus) {
             setFieldValue("status", selectedStatus); // Update Formik state
-            dispatch(updateStatus({ val: { status: selectedStatus } , id: id, })); // Trigger API call
+            dispatch(updateStatus({ val: { status: selectedStatus }, id: id, })); // Trigger API call
         }
     };
 
@@ -130,7 +136,7 @@ export const MadeToOrderDetails = () => {
         }
     };
     const arr = ordersDetailsData?.data?.status;
-    const lastValue = arr?.at(-1); 
+    const lastValue = arr?.at(-1);
 
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
@@ -193,11 +199,18 @@ export const MadeToOrderDetails = () => {
                                     </div>
                                 </div>
                                 {ordersDetailsData?.singleProduct?.productId?.metalType[0] === 'GOLD' && (
-                                <div className={orderStyle.goldRateStyle}>
-                                    Gold rate 18k: <span> ₹{ordersDetailsData?.data?.goldRate18k}/g </span>
-                                    <br />
-                                    Gold rate 22k: <span> ₹{ordersDetailsData?.data?.goldRate22k}/g </span>
-                                </div>
+                                    <div className={orderStyle.goldRateStyle}>
+                                        {ordersDetailsData?.singleProduct?.productId?.gold?.type === 'k18' ? (
+                                            <>
+                                                Gold rate 18k: <span> ₹{goldRateData?.data?.k18}/g </span>
+                                                <br />
+                                            </>
+                                        ) : (
+                                            <>
+                                                Gold rate 22k: <span> ₹{goldRateData?.data?.k22}/g </span>
+                                            </>
+                                        )}
+                                    </div>
                                 )}
                                 <div
                                     style={{
@@ -214,7 +227,10 @@ export const MadeToOrderDetails = () => {
                                         justifyContent: 'center',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        padding: 5,
+                                        paddingTop: 5,
+                                        paddingBottom: 5,
+                                        paddingLeft:10,
+                                        paddingRight:10,
                                         alignSelf: 'center',
                                         marginLeft: 10
                                     }}
@@ -230,13 +246,13 @@ export const MadeToOrderDetails = () => {
                                                 : lastValue?.name === 'PROCESSING' ? '#F86624'
                                                     : lastValue?.name === 'SHIPPED' ? '#2BB2FE'
                                                         : lastValue?.name === "DELIVERED" ? "#1A9882"
-                                                                : "#c723ca",
+                                                            : "#c723ca",
                                         }}
                                     >{lastValue?.name === 'NEW' ? "New"
                                         : lastValue?.name === 'PROCESSING' ? 'Processing'
                                             : lastValue?.name === 'SHIPPED' ? 'Shipped'
                                                 : lastValue?.name === "DELIVERED" ? "Delivered"
-                                                        : 'Ready to ship'
+                                                    : 'Ready to ship'
                                         }</span>
                                 </div>
                             </div>
@@ -268,7 +284,7 @@ export const MadeToOrderDetails = () => {
                                                 {ordersDetailsData?.singleProduct?.productId?.productName}
                                             </p>
                                             <p className={orderStyle.categoryStyle}>
-                                                {ordersDetailsData?.singleProduct?.productId?.features?.stoneColor?.value}
+                                                {ordersDetailsData?.singleProduct?.productId?.pricing?.stoneType?.value}
                                             </p>
                                         </div>
                                     </div>
@@ -290,12 +306,32 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
+                            {ordersDetailsData?.singleProduct?.productId?.metalType[0] === 'GOLD' && (
+                                <div className={orderStyle.info} >
+                                    <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                    <div className={orderStyle.skuText} ></div>
+                                    <div className={orderStyle.qytText}></div>
+                                    <div className={orderStyle.pendingAmountStyle}>Gold Weight</div>
+                                    <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.productId?.pricing?.goldWeight?.value}gm</div>
+                                </div>
+                            )}
+                            <div className={orderStyle.bottomLineStyle} />
+                            {ordersDetailsData?.singleProduct?.productId?.metalType[0] === 'GOLD' && (
+                                <div className={orderStyle.info} >
+                                    <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                    <div className={orderStyle.skuText} ></div>
+                                    <div className={orderStyle.qytText}></div>
+                                    <div className={orderStyle.pendingAmountStyle}>Gold Rate</div>
+                                    <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.productId?.pricing?.goldRate?.value}</div>
+                                </div>
+                            )}
+
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
+                                <div className={orderStyle.pendingAmountStyle}>Making charges </div>
+                                <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.makingCharges || 0}%</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -303,16 +339,18 @@ export const MadeToOrderDetails = () => {
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
                                 <div className={orderStyle.pendingAmountStyle}>Stone charges </div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.stoneCharges}</div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.stoneCharges || 0}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>Making charges </div>
-                                <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.makingCharges}%</div>
+                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
                             </div>
+
+
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
@@ -453,8 +491,6 @@ export const MadeToOrderDetails = () => {
                                     <MenuItem value="PROCESSING">Processing</MenuItem>
                                     <MenuItem value="SHIPPED">Shipped</MenuItem>
                                     <MenuItem value="DELIVERED">Delivered</MenuItem>
-                                    <MenuItem value="CONFIRMED">Confirmed</MenuItem>
-                                    <MenuItem value="READY TO SHIP">Ready to ship</MenuItem>
                                 </Select>
                             </div>
                         </>
