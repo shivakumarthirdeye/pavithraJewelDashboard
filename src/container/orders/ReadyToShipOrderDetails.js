@@ -11,6 +11,7 @@ import { MenuItem, Select } from '@mui/material';
 import { formselect } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
+import { getGoldRate } from '../../redux/dashboardSlice';
 
 export const ReadyToShipOrderDetails = () => {
     const navigate = useNavigate()
@@ -19,6 +20,7 @@ export const ReadyToShipOrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh, } = useSelector((state) => state.orders);
+    const { goldRateData } = useSelector((state) => state.dashboard);
     console.log('ordersDetailsData', ordersDetailsData);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [datas, setData] = useState([]);
@@ -37,6 +39,10 @@ export const ReadyToShipOrderDetails = () => {
     useEffect(() => {
         dispatch(getCustomerReviews(id))
     }, [isRefresh, id, dispatch])
+
+    useEffect(() => {
+        dispatch(getGoldRate())
+    }, [dispatch])
 
     const openModal = (data) => {
         setData(data);
@@ -114,6 +120,23 @@ export const ReadyToShipOrderDetails = () => {
     const arr = ordersDetailsData?.data?.status;
     const lastValue = arr?.at(-1); 
     console.log(lastValue); // Output: 50
+
+    // Variables to store total price and GST details
+    let totalPriceBeforeGst = 0;
+
+    // Iterate through products to extract price before GST and GST amounts
+    const productsWithGst = ordersDetailsData?.data?.products?.map((item) => {
+        const totalPriceWithGst = item?.totalPrice || 0;
+        const gstInPercentage = item?.gst || 0;
+
+        // Calculate price before GST for each product
+        const priceBeforeGst = totalPriceWithGst / (1 + gstInPercentage / 100);
+        
+        // Calculate the GST amount for each product
+        
+        // Accumulate the total price before GST and total GST amount
+        totalPriceBeforeGst += priceBeforeGst;
+    });
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
@@ -192,9 +215,9 @@ export const ReadyToShipOrderDetails = () => {
                                     </div>
                                 </div>
                                 <div className={orderStyle.goldRateStyle}>
-                                    Gold rate 18k: <span> ₹{ordersDetailsData?.data?.goldRate18k}/g </span>
+                                    Gold rate 18k: <span> ₹{goldRateData?.data?.k18}/g </span>
                                     <br />
-                                    Gold rate 22k: <span> ₹{ordersDetailsData?.data?.goldRate22k}/g </span>
+                                    Gold rate 22k: <span> ₹{goldRateData?.data?.k22}/g </span>
                                 </div>
                                 <div
                                     style={{
@@ -284,18 +307,28 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.priceStyle}>Subtotal </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.subTotal?.toFixed(2)}</div>
                             </div>
-                            {/* <div className={orderStyle.info} >
-                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
-                                <div className={orderStyle.skuText} ></div>
-                                <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>Gold weight</div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100}</div>
-                            </div> */}
+                            <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
+                                <div className={orderStyle.priceStyle}>Gold weight</div>
+                                <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.data?.products[0]?.productId?.pricing?.goldWeight?.value}g</div>
+                            </div>
+                            <div className={orderStyle.bottomLineStyle} />
+                            <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.priceStyle}>Gold rate({ordersDetailsData?.data?.products[0]?.productId?.gold?.type === 'k18' ? '18k' : '22k'})</div>
+                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.products[0]?.productId?.pricing?.goldRate?.value}</div>
+                            </div>
+                            <div className={orderStyle.bottomLineStyle} />
+                            <div className={orderStyle.info} >
+                                <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
+                                <div className={orderStyle.skuText} ></div>
+                                <div className={orderStyle.qytText}></div>
+                                <div className={orderStyle.priceStyle}>GST ({ordersDetailsData?.singleProduct?.gst}%) </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{(ordersDetailsData?.singleProduct?.sellingPrice * ordersDetailsData?.singleProduct?.gst / 100).toFixed(2)}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
@@ -303,7 +336,7 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>Stone charges </div>
+                                <div className={orderStyle.priceStyle}>Stone charges </div>
                                 <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.singleProduct?.stoneCharges}</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
@@ -311,7 +344,7 @@ export const ReadyToShipOrderDetails = () => {
                                 <div className={orderStyle.productTextStyle} style={{ width: '40%' }}></div>
                                 <div className={orderStyle.skuText} ></div>
                                 <div className={orderStyle.qytText}></div>
-                                <div className={orderStyle.pendingAmountStyle}>Making charges </div>
+                                <div className={orderStyle.priceStyle}>Making charges </div>
                                 <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.makingCharges}%</div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />

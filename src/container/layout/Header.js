@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setLogOut } from '../../redux/userSlice';
 import customerStyle from '../customer/customer.module.css'
 import { getNotification } from '../../redux/notificationSlice';
+import LogoutModal from '../../component/LogoutModal';
 
 
 const Header = ({ children }) => {
@@ -23,27 +24,18 @@ const Header = ({ children }) => {
     }, [dispatch])
 
 
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    // const [isLogout, setIsLogout] = useState(false);
+    const [isLogout, setIsLogout] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
 
     const [data, setData] = useState(null);
-    const openModal = (data) => {
-        setData(data)
-        setIsModalOpen(true);
+    
+    const logoutOpenModal = (data) => {
+        setIsLogout(true);
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const logoutCloseModal = () => {
+        setIsLogout(false);
     };
-
-    // const logoutOpenModal = (data) => {
-    //     setIsLogout(true);
-    // };
-
-    // const logoutCloseModal = () => {
-    //     setIsLogout(false);
-    // };
 
     const handleClick = (event) => {
         setAnchorEl(event.currentTarget);
@@ -56,16 +48,7 @@ const Header = ({ children }) => {
     const id = open ? 'simple-popover' : undefined;
 
 
-    // useEffect(() => {
-    //     initializeLoginData(dispatch);
-    // }, [dispatch]);
-
-    // useEffect(() => {
-    //     if (isRefresh || !notifications.notificationData) {
-    //         dispatch(getNotification());
-    //     }
-    // }, [dispatch, isRefresh, notifications.notificationData]);
-
+    
 
     const logout = async () => {
         try {
@@ -149,7 +132,7 @@ const Header = ({ children }) => {
                         }}>
                             <div
                                 className={layoutStyles.settingStyle}
-                                onClick={logout}
+                                onClick={() => logoutOpenModal()}
                             >
                                 <p style={{ marginLeft: 10 }}>Logout</p>
                             </div>
@@ -161,6 +144,11 @@ const Header = ({ children }) => {
             <div className={layoutStyles.main}>
                 {children}
             </div>
+            <LogoutModal
+                open={isLogout}
+                closeModal={logoutCloseModal}
+                data={data}
+            />
         </div>
     )
 }

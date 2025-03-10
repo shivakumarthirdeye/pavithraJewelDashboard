@@ -193,7 +193,7 @@ const ProductViewDetails = () => {
                                 alt="Product"
                                 width={300}
                                 height={300}
-                                style={{ borderRadius: 5 }}
+                                style={{ borderRadius: 5,objectFit:'contain',backgroundColor:'#000' }}
                             />
                             <div
                                 className={productStyle.zoomStyle}
@@ -281,7 +281,7 @@ const ProductViewDetails = () => {
                             </div> */}
                         </div>
                         <div className={productStyle.dollarSyle}>
-                            ₹{(productsDetail?.productsDetailsData?.sellingPrice)?.toFixed(2)} <span> ₹{productsDetail?.productsDetailsData?.totalPrice}</span>
+                            ₹{(productsDetail?.productsDetailsData?.sellingPrice)?.toFixed(2)} <span> ₹{productsDetail?.productsDetailsData?.totalPrice?.toFixed(2)}</span>
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Description:

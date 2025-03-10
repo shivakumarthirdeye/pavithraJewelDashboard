@@ -312,7 +312,7 @@ export const MadeToOrderDetails = () => {
                                     <div className={orderStyle.skuText} ></div>
                                     <div className={orderStyle.qytText}></div>
                                     <div className={orderStyle.pendingAmountStyle}>Gold Weight</div>
-                                    <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.productId?.pricing?.goldWeight?.value}gm</div>
+                                    <div className={orderStyle.totalAmountStyle}>{ordersDetailsData?.singleProduct?.productId?.pricing?.goldWeight?.value}g</div>
                                 </div>
                             )}
                             <div className={orderStyle.bottomLineStyle} />

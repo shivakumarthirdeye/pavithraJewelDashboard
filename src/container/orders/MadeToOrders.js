@@ -29,7 +29,7 @@ console.log('ordersData==============',ordersData);
     //Main data
 
     const [value, setValue] = useState([
-        { val: "All Date", id: 0 },
+        { val: "All Dates", id: 0 },
         { val: "12 Months", id: 1 },
         { val: "30 Days", id: 2 },
         { val: "7 Days", id: 3 },

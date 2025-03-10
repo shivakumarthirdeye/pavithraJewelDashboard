@@ -1,10 +1,12 @@
 .invoiceContainer {
     font-family: Arial, sans-serif;
-    width: 100%;
-    /* margin: 0 auto; */
-    padding: 58px;
-    /* border: 1px solid #ddd; */
+    padding: 20px;
+    margin: 88px;
+    border: 1px solid #ddd;
     background-color: #fff;
+    border-radius: 8px;
+    box-shadow: -1px -5px 8px 7px rgba(0, 0, 0, 0.1);
+    width: 80%;
 }
 
 .logoStyle {
