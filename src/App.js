@@ -40,6 +40,7 @@ import Notifications from './container/notification/Notification';
 import EditProfile from './container/settings/EditProfile';
 import { TrashMadeToOrders } from './container/orders/TrashMadeToOrders';
 import ViewHomePageBuilder from './container/appearance/ViewHomePageBuilder';
+import AddTermsCondition from './container/termsAndCondition/AddTermsCondition';
 
 function App() {
   return (
@@ -90,6 +91,7 @@ function App() {
             <Route path='/country/Country' element={<Country />} />
             <Route path='/notification/Notifications' element={<Notifications />} />
             <Route path='/settings/EditProfile' element={<EditProfile />} />
+            <Route path='/termsAndCondition/AddTermsCondition' element={<AddTermsCondition />} />
           </Routes>
         </Layout>
       </BrowserRouter>

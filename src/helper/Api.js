@@ -324,6 +324,14 @@ class Api {
         return this.init().put(`/admin/readedNotification/${data}`)
     }
 
+    //getTermsCondition
+    getTermsCondition = (data) => {
+        return this.init().get('/admin/getTermsAndCondition')
+    }
+    addTermsCondition = (data) => {
+        return this.init().post('/admin/addTermsAndCondition',data)
+    }
+
 }
 
 const api = new Api();

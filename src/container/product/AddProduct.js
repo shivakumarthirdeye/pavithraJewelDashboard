@@ -200,7 +200,7 @@ const AddProduct = () => {
             // productSubcategory: yup.string().required("Subcategory is required"),
         }),
         inventory: yup.object().shape({
-            sku: yup.string().required("Sku is required"),
+            // sku: yup.string().required("Sku is required"),
             totalstock: yup.number().typeError("Total stock must be a number").min(1, "Total stock is required"),
         }),
         gold: yup.object().shape({
@@ -1976,9 +1976,9 @@ const AddProduct = () => {
                                     sx={fieldText}
 
                                 />
-                                {
+                                {/* {
                                     errors?.inventory?.sku && touched?.inventory?.sku && <p style={{ color: "red", fontSize: "12px" }}>{errors?.inventory?.sku}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >

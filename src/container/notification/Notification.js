@@ -10,8 +10,6 @@ import { useNavigate } from "react-router-dom";
 
 
 
-
-
 const Notifications = () => {
     const dispatch = useDispatch()
     const navigate = useNavigate();

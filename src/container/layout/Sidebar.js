@@ -260,6 +260,29 @@ const Sidebar = ({ children }) => {
                         }
                     </div>
                 </div>
+                <div onClick={() => navigate('/termsAndCondition/AddTermsCondition')} className={path === 'termsAndCondition' ? `${Styles.width} ${Styles.active}` : Styles.width}>
+                    <div>
+                        {path === 'termsAndCondition' ?
+                            (
+                                <div style={{ width: 30, marginTop: 5 }}>
+                                    <ProductInActive color='#fff' outline='#E87819' />
+                                </div>
+                            )
+                            :
+                            <div style={{ width: 30, marginTop: 5 }}>
+                                <ProductInActive outline='#fff' color='#858D9D' />
+                            </div>
+                        }
+                        {path === 'termsAndCondition' ? (
+                            <p className={Styles.dashboardText} style={{ color: '#fff' }}>
+                                Terms&Condition
+                            </p>
+                        ) : <p className={Styles.dashboardText}>
+                            Terms&Condition
+                        </p>
+                        }
+                    </div>
+                </div>
                 <div
                     onClick={() => navigate('/notification/Notifications')}
                     className={path === 'notification' ? `${Styles.width} ${Styles.active}` : Styles.width}

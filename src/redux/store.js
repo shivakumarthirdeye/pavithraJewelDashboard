@@ -12,6 +12,7 @@ import couponSlice from "./couponSlice";
 import countrySlice from "./countrySlice";
 import settingSlice from "./settingSlice";
 import appearanceSlice from "./appearanceSlice";
+import termsConditionSlice from "./terms&ConditionSlice";
 
 
 export const store = configureStore({
@@ -28,6 +29,7 @@ export const store = configureStore({
         coupons: couponSlice,
         country: countrySlice,
         settings: settingSlice,
-        appearance:appearanceSlice
+        appearance:appearanceSlice,
+        termscondition:termsConditionSlice
     }
 })
