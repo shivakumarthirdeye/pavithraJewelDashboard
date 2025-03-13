@@ -316,7 +316,7 @@ const AddProduct = () => {
                 discountEnddate: null,
             },
             inventory: {
-                sku: '',
+                sku: null,
                 totalstock: 0,
             },
             status: "",
@@ -347,6 +347,9 @@ const AddProduct = () => {
         }
 
     })
+
+    console.log('valuesssssssssss',values);
+    
 
     const handleSubject = async (value) => {
         try {

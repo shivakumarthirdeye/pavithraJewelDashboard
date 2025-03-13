@@ -327,7 +327,7 @@ const EditProduct = () => {
                 discountEnddate: null,
             },
             inventory: {
-                sku: '',
+                sku: null,
                 totalstock: 0,
             },
             status: "",
