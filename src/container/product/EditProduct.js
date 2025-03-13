@@ -127,7 +127,6 @@ const EditProduct = () => {
                 value: yup
                     .number()
                     .typeError("Total weight must be a number")
-                    .min(1, "Total weight is required")
                     .when("status", (status, schema) =>
                         status === "active" ? schema.required("Total weight is required") : schema
                     ),
@@ -2085,7 +2084,7 @@ const EditProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 20 }}>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >
-                                    <span>Product ID</span>
+                                    <span>Product ID(optional)</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'

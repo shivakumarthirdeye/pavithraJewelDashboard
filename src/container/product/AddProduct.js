@@ -117,7 +117,6 @@ const AddProduct = () => {
                 value: yup
                     .number()
                     .typeError("Total weight must be a number")
-                    .min(1, "Total weight is required")
                     .when("status", (status, schema) =>
                         status === "active" ? schema.required("Total weight is required") : schema
                     ),
@@ -204,7 +203,7 @@ const AddProduct = () => {
             totalstock: yup.number().typeError("Total stock must be a number").min(1, "Total stock is required"),
         }),
         gold: yup.object().shape({
-            // type: yup.string().required("Gold type is required"),
+            type: yup.string().required("Gold type is required"),
             orderType: yup.string().required("Order type is required"),
         }),
     });
@@ -1329,9 +1328,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {
+                                {/* {
                                     errors?.pricing?.totalWeight?.value && touched?.pricing?.totalWeight?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.totalWeight?.value}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
@@ -1964,7 +1963,7 @@ const AddProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 20 }}>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >
-                                    <span>Product ID*</span>
+                                    <span>Product ID(optional)</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -2159,7 +2158,7 @@ const AddProduct = () => {
                             <h6 className={productStyle.variationText}>Gold</h6>
                         </div>
                         <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Gold Type</label>
+                            <label className={productStyle.label}>Gold Type*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2186,11 +2185,11 @@ const AddProduct = () => {
 
                             </Select>
                         </div>
-                        {/* {
+                        {
                             errors?.gold?.type && touched?.gold?.type && <p style={{ color: "red", fontSize: "12px" }}>{errors?.gold?.type}</p>
-                        } */}
+                        }
                         <div style={{ marginTop: 10 }}>
-                            <label className={productStyle.label}>Order Type</label>
+                            <label className={productStyle.label}>Order Type*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2226,7 +2225,7 @@ const AddProduct = () => {
                     <div className={productStyle.thumbanilStyle} style={{ marginTop: 20 }}>
                         <h6 className={productStyle.variationText}>Featured image</h6>
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Photo</label>
+                            <label className={productStyle.label}>Photo*</label>
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
@@ -2280,7 +2279,7 @@ const AddProduct = () => {
                             </div>
                         </div>
                         <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Product Status</label>
+                            <label className={productStyle.label}>Product Status*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
