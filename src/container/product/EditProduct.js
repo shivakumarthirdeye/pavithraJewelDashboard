@@ -384,7 +384,7 @@ const EditProduct = () => {
                 },
                 category: {
                     productCategory: data?.category?.productCategory?._id || '',
-                    productSubcategory: data?.category?.productSubcategory?._id || '',
+                    productSubcategory: data?.category?.productSubcategory?._id || null,
                 },
                 gold: {
                     type: data?.gold?.type || '',
@@ -2260,7 +2260,7 @@ const EditProduct = () => {
                                 value={values.category.productSubcategory}
                                 onChange={handleSubcategoryChange}
                             >
-                                <MenuItem value="">Select</MenuItem>
+                                <MenuItem value={null}>Select</MenuItem>
                                 {filteredSubcategory?.map((category) => (
                                     <MenuItem key={category._id} value={category._id}>
                                         {category.name}
