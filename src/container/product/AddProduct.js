@@ -2214,8 +2214,8 @@ const AddProduct = () => {
                                 onChange={handleChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                <MenuItem value="Ready to ship orders">Ready to ship orders</MenuItem>
-                                <MenuItem value="Made to orders">Made to orders</MenuItem>
+                                <MenuItem value="Ready to ship orders">Ready to ship</MenuItem>
+                                <MenuItem value="Made to orders">Made to order</MenuItem>
 
                             </Select>
                         </div>

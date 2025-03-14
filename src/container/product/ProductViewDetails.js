@@ -281,7 +281,7 @@ const ProductViewDetails = () => {
                             </div> */}
                         </div>
                         <div className={productStyle.dollarSyle}>
-                            ₹{(productsDetail?.productsDetailsData?.sellingPrice)?.toFixed(2)} <span> ₹{productsDetail?.productsDetailsData?.totalPrice?.toFixed(2)}</span>
+                            ₹{productsDetail?.productsDetailsData?.sellingPrice?.toLocaleString("en-IN")} <span> ₹{productsDetail?.productsDetailsData?.totalPrice?.toLocaleString("en-IN")}</span>
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Description:

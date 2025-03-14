@@ -461,7 +461,7 @@ const Product = () => {
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={productStyle.priceStyle}>
-                                                    Rs. {item?.sellingPrice?.toFixed(2)}
+                                                    Rs. {item?.sellingPrice?.toLocaleString("en-IN")}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div
