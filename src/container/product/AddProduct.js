@@ -73,10 +73,10 @@ const AddProduct = () => {
             ),
         // featurerdImage: yup.array().min(1, "At least one image is required"),
         featurerdImage: yup.string().required("Image is required"),
-        media: yup.object().shape({
-            photo: yup.array().min(1, "At least one image is required"),
-            // video: yup.array().min(1, "At least one video is required")
-        }),
+        // media: yup.object().shape({
+        //     photo: yup.array().min(1, "At least one image is required"),
+        //     // video: yup.array().min(1, "At least one video is required")
+        // }),
         // discount: yup.object().shape({
         //     discountValue: yup.number().typeError("Discount Value must be a number").min(1, "Discount Value is required"),
         //     discountStartdate: yup.date().required("Start Date is required"),
@@ -1152,7 +1152,7 @@ const AddProduct = () => {
                         <h6 className={productStyle.variationText}>Media</h6>
                         {/* Photos */}
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Photo*</label>
+                            <label className={productStyle.label}>Photo</label>
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
@@ -1207,9 +1207,9 @@ const AddProduct = () => {
 
                                 </div>
                             </div>
-                            {
+                            {/* {
                                 errors?.media?.photo && touched?.media?.photo && <p style={{ color: "red", fontSize: "12px" }}>{errors?.media?.photo}</p>
-                            }
+                            } */}
                         </div>
                         {/* video */}
                         <div style={{ marginTop: 20 }}>
