@@ -563,7 +563,7 @@ const Product = () => {
                 closeModal={closeDeleteModal}
                 open={isDeleteModalOpen}
                 data={data}
-                desc={'Do you want to delete this product? '}
+                description={'Do you want to delete this product? '}
                 handleSubject={deletedData}
             />
         </div>

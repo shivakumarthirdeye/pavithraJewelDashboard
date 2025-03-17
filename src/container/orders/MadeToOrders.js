@@ -35,7 +35,7 @@ console.log('ordersData==============',ordersData);
         { val: "7 Days", id: 3 },
         { val: "24 Hour", id: 4 },
     ]);
-    const [selected, setSelected] = useState('');
+    const [selected, setSelected] = useState(0);
     const [search, setSearch] = useState('');
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [datas, setData] = useState([]);
@@ -50,7 +50,8 @@ console.log('ordersData==============',ordersData);
 
 
     const changeID = (id) => {
-        setSelected(id.val);
+        setSelected(id.id);
+        dispatch(setFilterValues({filter: id.val,page: 1}))
     };
 
 

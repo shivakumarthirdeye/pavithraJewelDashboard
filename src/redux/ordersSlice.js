@@ -26,7 +26,8 @@ const initialState = {
         order: '',
         sortBy: '',
         limit: 10,
-        orderType:''
+        orderType:'',
+        filter:""
     },
     errorMsg: "",
     isError: false

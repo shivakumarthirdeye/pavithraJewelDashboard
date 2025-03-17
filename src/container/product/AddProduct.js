@@ -98,6 +98,7 @@ const AddProduct = () => {
                 value: yup
                     .number()
                     .typeError("Product length must be a number")
+                    .min(1, "Product length is required")
                     .when("status", (status, schema) =>
                         status === "active" ? schema.required("Product length is required") : schema
                     ),
@@ -117,7 +118,7 @@ const AddProduct = () => {
                 value: yup
                     .number()
                     .typeError("Total weight must be a number")
-                    .when("status", (status, schema) =>
+                    .when("$status", (status, schema) =>
                         status === "active" ? schema.required("Total weight is required") : schema
                     ),
             }),
@@ -125,82 +126,79 @@ const AddProduct = () => {
                 value: yup
                     .number()
                     .typeError("Gold weight must be a number")
-                    .when("metalType", (type, schema) =>
-                        type === "GOLD" ? schema.min(1, "Gold weight is required") : schema
+                    .when("$metalType", (metalType, schema) =>
+                        Array.isArray(metalType) && metalType.includes("GOLD")
+                            ? schema.required("Gold weight is required")
+                            : schema
                     ),
             }),
             goldRate: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Gold rate must be a number")
-                    .when("metalType", (type, schema) =>
-                        type === "GOLD" ? schema.min(1, "Gold rate is required") : schema
+                    .when("$metalType", (metalType, schema) =>
+                        Array.isArray(metalType) && metalType.includes("GOLD")
+                            ? schema.required("Gold rate is required")
+                            : schema
                     ),
             }),
             diamondCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Diamond carat must be a number")
-                    .when("metalType", (type, schema) =>
-                        type === "DIAMOND" ? schema.min(1, "Diamond carat is required") : schema
+                    .when("$metalType", (metalType, schema) =>
+                        Array.isArray(metalType) && metalType.includes("DIAMOND")
+                            ? schema.required("Diamond carat is required")
+                            : schema
                     ),
             }),
             diamondPerCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Diamond per carat must be a number")
-                    .when("metalType", (type, schema) =>
-                        type === "DIAMOND" ? schema.min(1, "Diamond per carat is required") : schema
+                    .when("$metalType", (metalType, schema) =>
+                        Array.isArray(metalType) && metalType.includes("DIAMOND")
+                            ? schema.required("Diamond per carat is required")
+                            : schema
                     ),
             }),
             polkiCarat: yup.object().shape({
                 value: yup
                     .number()
                     .typeError("Polki carat must be a number")
-                    .when("metalType", (type, schema) =>
-                        type === "POLKI" ? schema.min(1, "Polki carat is required") : schema
+                    .when("$metalType", (metalType, schema) =>
+                        Array.isArray(metalType) && metalType.includes("POLKI")
+                            ? schema.required("Polki carat is required")
+                            : schema
                     ),
             }),
             polkiPerCarat: yup.object().shape({
                 value: yup
                     .number()
-                    .typeError("Polki cost must be a number")
-                    .when("metalType", (type, schema) =>
-                        type === "POLKI" ? schema.min(1, "Polki per carat is required") : schema
+                    .typeError("Polki per carat must be a number")
+                    .when("$metalType", (metalType, schema) =>
+                        Array.isArray(metalType) && metalType.includes("POLKI")
+                            ? schema.required("Polki per carat is required")
+                            : schema
                     ),
             }),
-            // gst: yup.object().shape({
-            //     value: yup
-            //         .number()
-            //         .typeError("GST must be a number")
-            //         .when("status", (status, schema) =>
-            //             status === "active" ? schema.required("GST is required") : schema
-            //         ),
-            // }),
-            // finalSalePrice: yup.object().shape({
-            //     value: yup
-            //         .number()
-            //         .typeError("Final sale price must be a number")
-            //         .when("status", (status, schema) =>
-            //             status === "active" ? schema.required("Final sale price is required") : schema
-            //         ),
-            // }),
-            // makingCharges: yup.object().shape({
-            //     value: yup
-            //         .number()
-            //         .typeError("Making charges must be a number")
-            //         .when("status", (status, schema) =>
-            //             status === "active" ? schema.required("Making charges is required") : schema
-            //         ),
-            // }),
+            gst: yup.object().shape({
+                value: yup
+                    .number()
+                    .typeError("GST must be a number")
+                    .when("$status", (status, schema) =>
+                        status === "active" ? schema.required("GST is required") : schema
+                    ),
+            }),
         }),
+
         category: yup.object().shape({
             productCategory: yup.string().required("Category is required"),
-            // productSubcategory: yup.string().required("Subcategory is required"),
         }),
+
         inventory: yup.object().shape({
             // sku: yup.string().required("Sku is required"),
-            totalstock: yup.number().typeError("Total stock must be a number").min(1, "Total stock is required"),
+            totalstock: yup.number().typeError("Total stock must be a number").min(0, "Total stock is required"),
         }),
         gold: yup.object().shape({
             type: yup.string().required("Gold type is required"),
@@ -348,8 +346,8 @@ const AddProduct = () => {
 
     })
 
-    console.log('valuesssssssssss',values);
-    
+    console.log('valuesssssssssss', values);
+
 
     const handleSubject = async (value) => {
         try {
@@ -805,29 +803,29 @@ const AddProduct = () => {
             values?.pricing?.stoneCharges?.value ||
             values?.pricing?.makingCharges?.value ||
             values?.pricing?.diamondCost?.value ||
-            values?.pricing?.polkiCost?.value 
+            values?.pricing?.polkiCost?.value
         ) {
             // ✅ Calculate gold price
             const goldRate = values?.pricing?.goldRate?.value || 0;
             // const goldPrice = goldWeight * goldRate; // ✅ Corrected
-    
+
             // ✅ Calculate making charges (percentage of goldPrice, NOT goldRate)
             const makingChargesPercentage = values?.pricing?.makingCharges?.value || 0;
             const makingCharges = (goldRate * makingChargesPercentage) / 100;
-    
+
             // ✅ Calculate subtotal (before GST)
             const stoneCharges = values?.pricing?.stoneCharges?.value || 0;
             const diamondCost = values?.pricing?.diamondCost?.value || 0;
             const polkiCost = values?.pricing?.polkiCost?.value || 0;
-    
+
             const subtotal = goldRate + makingCharges + stoneCharges + diamondCost + polkiCost;
-    
+
             // ✅ Apply GST correctly
             const gstPercentage = values?.pricing?.gst?.value || 0;
             const gstAmount = (subtotal * gstPercentage) / 100; // ✅ Corrected GST calculation
-    
+
             const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
-    
+
             // ✅ Update form values
             setFieldValue('pricing.finalSalePrice.value', finalSalePrice.toFixed(2));
         }
@@ -841,7 +839,7 @@ const AddProduct = () => {
         values?.pricing?.gst?.value,
         setFieldValue
     ]);
-    
+
 
 
     return (
@@ -1017,7 +1015,7 @@ const AddProduct = () => {
                                 } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckStoneColor} checked={values.features.stoneColor.status} /> <span>Stone color/type</span>
                                 </div>
                                 <TextField
@@ -1036,7 +1034,7 @@ const AddProduct = () => {
                         </div>
                         <div className={productStyle.itemsStyle}>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckProductWidth} checked={values.features.productWidth.status} /> <span>Product Width</span>
                                 </div>
                                 <TextField
@@ -1082,7 +1080,7 @@ const AddProduct = () => {
                                 } */}
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length*</span>
                                 </div>
                                 <TextField
@@ -1128,7 +1126,7 @@ const AddProduct = () => {
                                 }
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
-                            <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
+                                <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
                                     <CustomizedCheckbox handleCheck={handleCheckFeature} checked={values.features.feature.status} /> <span>Feature</span>
                                 </div>
                                 <TextField
@@ -1331,9 +1329,9 @@ const AddProduct = () => {
 
                                     }}
                                 />
-                                {/* {
+                                {
                                     errors?.pricing?.totalWeight?.value && touched?.pricing?.totalWeight?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.totalWeight?.value}</p>
-                                } */}
+                                }
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
@@ -1990,7 +1988,7 @@ const AddProduct = () => {
                                     placeholder='Enter'
                                     type={'number'}
                                     name="inventory.totalstock"
-                                    value={values.inventory.totalstock || ''}
+                                    value={values.inventory.totalstock || 0}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
