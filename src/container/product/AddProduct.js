@@ -98,7 +98,7 @@ const AddProduct = () => {
                 value: yup
                     .number()
                     .typeError("Product length must be a number")
-                    .min(1, "Product length is required")
+                    // .min(1, "Product length is required")
                     .when("status", (status, schema) =>
                         status === "active" ? schema.required("Product length is required") : schema
                     ),
