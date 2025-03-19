@@ -210,7 +210,7 @@ const EditProduct = () => {
         }),
         inventory: yup.object().shape({
             // sku: yup.string().required("Sku is required"),
-            totalstock: yup.number().typeError("Total stock must be a number").min(1, "Total stock is required"),
+            totalstock: yup.number().typeError("Total stock must be a number").min(0, "Total stock is required"),
         }),
         gold: yup.object().shape({
             type: yup.string().required("Gold type is required"),
@@ -2108,7 +2108,7 @@ const EditProduct = () => {
                                     placeholder='Enter'
                                     type={'number'}
                                     name="inventory.totalstock"
-                                    value={values.inventory.totalstock || ''}
+                                    value={values.inventory.totalstock || 0}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
