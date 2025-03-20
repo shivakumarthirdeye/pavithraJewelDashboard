@@ -13,8 +13,8 @@ const getToken = async () => {
 class Api {
     constructor() {
         this.client = null;
-        // this.api_url = process.env.NODE_ENV === "development" ? "https://backend.pavithra.nagalikardiagnostic.com/api" : `https://backend.pavithra.nagalikardiagnostic.com/api`;
-        this.api_url = process.env.NODE_ENV === "development" ? "http://localhost:4000/api" : `http://localhost:4000/api`;
+        this.api_url = process.env.NODE_ENV === "development" ? "https://backend.pavithra.nagalikardiagnostic.com/api" : `https://backend.pavithra.nagalikardiagnostic.com/api`;
+        // this.api_url = process.env.NODE_ENV === "development" ? "http://localhost:4000/api" : `http://localhost:4000/api`;
         
     }
 
