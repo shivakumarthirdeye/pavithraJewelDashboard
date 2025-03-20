@@ -2225,7 +2225,7 @@ const EditProduct = () => {
                                 onChange={handleCategoryChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
+                                {categoriesExportData?.data?.length > 0 && categoriesExportData?.data?.map((category) => (
                                     <MenuItem
                                         key={category._id}
                                         value={category._id}

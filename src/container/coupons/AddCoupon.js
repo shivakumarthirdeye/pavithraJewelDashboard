@@ -436,7 +436,7 @@ const AddCoupon = () => {
                     </div>
                 </div>
                 <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
-                    <Button sx={cancle} onClick={handleSubmit} variant="contained" disableElevation={true}>Cancel</Button>
+                    <Button sx={cancle} onClick={resetForm} variant="contained" disableElevation={true}>Cancel</Button>
                     <div>
                         <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save</Button>
                     </div>

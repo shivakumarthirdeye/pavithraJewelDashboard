@@ -72,6 +72,7 @@ export const Dashboard = () => {
         touched,
         handleChange,
         handleBlur,
+        setValues
     } = useFormik({
         initialValues: {
             k22: "",
@@ -83,6 +84,16 @@ export const Dashboard = () => {
         }
 
     })
+
+    useEffect(() => {
+        if (goldRateData) {
+            setValues({
+                k22: goldRateData?.data?.k22 || "",
+                k18: goldRateData?.data?.k18 || '',
+            });
+        }
+    }, [goldRateData, setValues]);
+
     const handleSubject = async (values) => {
         dispatch(updateGoldRate(values));
     };
@@ -126,9 +137,9 @@ export const Dashboard = () => {
                             <TextField
                                 type='text'
                                 onBlur={handleBlur}
-                                placeholder="Rs."
+                                placeholder="Enter"
                                 name='k22' // Map to Formik's skillsGained array
-                                value={values.k22 || goldRateData?.data?.k22}
+                                value={values.k22 || ''}
                                 onChange={handleChange}
                                 sx={fieldText}
                                 InputProps={{
@@ -205,9 +216,9 @@ export const Dashboard = () => {
                             <TextField
                                 type='text'
                                 onBlur={handleBlur}
-                                placeholder="Rs."
+                                placeholder="Enter"
                                 name='k18' // Map to Formik's skillsGained array
-                                value={values.k18 || goldRateData?.data?.k18}
+                                value={values.k18 || ''}
                                 onChange={handleChange}
                                 sx={fieldText}
                                 InputProps={{

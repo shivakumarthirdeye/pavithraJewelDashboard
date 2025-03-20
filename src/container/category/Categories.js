@@ -94,7 +94,7 @@ const Categories = () => {
     const exportToExcel = async () => { 
         const result = await dispatch(getCategoriesExport()).unwrap();
         console.log("result", result);
-        const excelData = result?.map((item) => ({
+        const excelData = result?.data?.map((item) => ({
             Category: item?.name || "_",
             Sales: item?.sales || 0,
             Description: item?.description || "",

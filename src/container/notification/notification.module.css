@@ -118,14 +118,14 @@
 }
 
 .notificationList {
-    max-height: 500px;
-    overflow: hidden;
-    scrollbar-gutter: stable;
+    /* max-height: 500px; */
+    /* overflow: hidden; */
+    /* scrollbar-gutter: stable; */
     /* position: fixed; */
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
-.notificationList::-webkit-scrollbar {
+/* .notificationList::-webkit-scrollbar {
     background-color: transparent;
     width: 0px;
     position: absolute;
@@ -148,7 +148,7 @@
         top: 0;
         right: 0;
     }
-}
+} */
 .notificationItem {
     display: flex;
     padding: 20px;

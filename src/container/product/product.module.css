@@ -567,7 +567,7 @@ input {
 }
 
 .productMainStyle {
-    width: 25%;
+    width: 33%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;
@@ -599,7 +599,7 @@ input {
 }
 
 .catStyle {
-    width: 20%;
+    width: 18%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;
@@ -625,7 +625,7 @@ input {
 }
 
 .skuStyle {
-    width: 16%;
+    width: 10%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;

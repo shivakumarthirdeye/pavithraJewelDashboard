@@ -796,6 +796,9 @@ const AddProduct = () => {
         }
     }, [values.pricing.polkiCarat.value, values.pricing.polkiPerCarat.value, setFieldValue]);
 
+    console.log('values?.pricing?.goldRate?.value ||',values?.pricing?.goldRate?.value );
+    
+
     useEffect(() => {
         if (
             values?.pricing?.goldWeight?.value ||
@@ -2105,7 +2108,7 @@ const AddProduct = () => {
                                 onChange={handleCategoryChange}
                             >
                                 <MenuItem value="">Select</MenuItem>
-                                {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
+                                {categoriesExportData?.data?.length > 0 && categoriesExportData?.data?.map((category) => (
                                     <MenuItem
                                         key={category._id}
                                         value={category._id}

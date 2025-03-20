@@ -19,7 +19,7 @@ const Notifications = () => {
 
     const incomingNotification = notificationData?.data?.notifications || []
 
-    console.log(incomingNotification, "incoming");
+    console.log(incomingNotification.length, "incoming");
 
     const [viewAll, setViewAll] = useState(false);
     const [page, setPage] = useState(1);
@@ -51,14 +51,10 @@ const Notifications = () => {
 
     // Fetch notifications when `page` changes
     useEffect(() => {
-        if (!viewAll) { // Only paginate if View All is NOT clicked
-            let data = `?page=${page}&limit=5`;
+            let data = `page=1&limit=5`;
     
-            dispatch(getNotification(data)).then(() => {
-                setLoading(false);
-            });
-        }
-    }, [dispatch, page, isRefresh, viewAll]);
+            dispatch(getNotification(data))
+    }, [dispatch]);
     
     const formattedDate = (date = new Date()) => {
         const dateFromMongoDB = new Date(date);
@@ -82,8 +78,8 @@ const Notifications = () => {
     };
     const handleViewAll = () => {
         setViewAll(true); // Indicate that "View All" is active
-        setPage(1); // Reset page to start fresh
-        dispatch(getNotification(`?page=1&limit=9999`)); // Fetch all notifications
+        // setPage(1); // Reset page to start fresh
+        dispatch(getNotification(`?page=${page}&limit=99999999`)); // Fetch all notifications
     };
     
 

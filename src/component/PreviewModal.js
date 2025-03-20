@@ -9,35 +9,28 @@ import { saveAs } from 'file-saver'
 const PreviewModal = ({ open, onClose, data }) => {
   console.log('data', data);
 
-  const pancardUrl = '/pancard.png'; // Image URL
-
-  const handleDownload = (e) => {
-    // e.preventDefault(); // Prevent default behavior (if needed)
-    
-    // const imageUrl = e.target.href; // Get the image URL
-    // window.open(imageUrl, "_blank"); // Open in a new tab
-    console.log(e.target.href);
-    fetch(e.target.href, {
-      method: "GET",
-      headers: {}
-    })
-      .then(response => {
-        response.arrayBuffer().then(function (buffer) {
-          const url = window.URL.createObjectURL(new Blob([buffer]));
-          const link = document.createElement("a");
-          link.href = url;
-          link.setAttribute("download", "image.png"); //or any other extension
-          document.body.appendChild(link);
-          link.click();
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
+  // Function to handle image download
+  const handleDownload = async () => {
+    try {
+      const response = await fetch(data);
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      
+      // Create a temporary link
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.setAttribute("download", "image.jpg"); // Set file name
+      document.body.appendChild(link);
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Download failed:", error);
+    }
   };
-  const downloadImage = () => {
-    saveAs(data, 'image.jpg') // Put your image URL here.
-  }
+
 
   const style = {
     position: "absolute",
@@ -73,15 +66,18 @@ const PreviewModal = ({ open, onClose, data }) => {
           </div>
         </div>
 
-        <a
+        {/* <a
           style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}
           className={orderStyle.downloadingButtonStyle}
           href={data}
-          // download
+          download
           onClick={e => handleDownload(e)}
         >
           <DownloadIcon /> Download
-        </a>
+        </a> */}
+         <div onClick={handleDownload} className={orderStyle.downloadingButtonStyle} style={{ marginTop: 20, marginBottom: 20, cursor: 'pointer' }}>
+          <DownloadIcon /> Download
+        </div>
         <img src={data} style={{ width: '100%', height: "300px", objectFit: 'cover', minHeight: '20vh' }} alt='Pancard' />
       </Box>
     </Modal>

@@ -44,9 +44,9 @@ export const getCategoriesExport = createAsyncThunk('getCategories', async (body
         const { data, status } = await api.getCategoriesExport(body);
         if (status === 200) {
             //get categories data
-            dispatch(setCategoriesExport(data.data))
+            dispatch(setCategoriesExport(data))
         }
-        return data.data
+        return data
     } catch (err) {
         // Toastify.error(err.response.data.message)
         return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")

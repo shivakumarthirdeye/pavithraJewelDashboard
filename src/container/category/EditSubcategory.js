@@ -176,7 +176,7 @@ const EditSubcategory = () => {
                             onChange={handleChange}
                         >
                             <MenuItem value="" sx={{ color: "#858D9D" }}>Select</MenuItem>
-                            {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
+                            {categoriesExportData?.data?.length > 0 && categoriesExportData?.data?.map((category) => (
                                 <MenuItem
                                     key={category._id}
                                     value={category._id}
@@ -232,7 +232,7 @@ const EditSubcategory = () => {
                     <div className={categoryStyle.buttons} style={{ marginTop: 20 }}>
                         <Button sx={cancle} onClick={handleCancel} variant="contained" disableElevation={true}>Cancel</Button>
                         <div>
-                            <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save</Button>
+                            <Button sx={saveData} onClick={handleSubmit} variant="contained" disableElevation={true}>Save Changes</Button>
                         </div>
                     </div>
                 </div>

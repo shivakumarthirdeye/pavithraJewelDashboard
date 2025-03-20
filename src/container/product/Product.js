@@ -42,7 +42,7 @@ const Product = () => {
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
-    // console.log('categoriesExportData', categoriesExportData);
+    console.log('productsData=======================', productsData);
 
 
     const calculateShowingRange = () => {
@@ -136,10 +136,11 @@ const Product = () => {
 
         const result = await dispatch(getExportProducts()).unwrap()
         const excelData = result?.data?.map((item) => ({
-            Product: item?.productdetails?.productName || '_',
-            Sku: item?.productdetails?.inventory?.sku || '_',
+            Product_Name: item?.productdetails?.productName || '_',
+            SKU: item?.productdetails?.inventory?.sku || '_',
             Product_ID: item?.productdetails?._id || '_',
-            SubCategory: item?.productdetails?.category?.productSubcategory?.name || '-',
+            Category: item?.productdetails?.category?.productCategory?.name || '-',
+            Sub_Category: item?.productdetails?.category?.productSubcategory?.name || '-',
             Stock: item?.productdetails?.inventory?.totalstock || '-',
             Sale_Price: item?.sellingPrice || '-',
             Date: moment(item?.productdetails?.createdAt).format('MMM DD,YYYY, HH:MMA'),
@@ -190,9 +191,9 @@ const Product = () => {
             >
                 <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#822D32', marginLeft: 12, marginRight: 1, fontFamily: 'Poppins' }}> Clear All</Typography>
             </Box>
-            {categoriesExportData?.length > 0 ? (
+            {categoriesExportData?.data?.length > 0 ? (
             < >
-            {categoriesExportData?.map((cat) => (
+            {categoriesExportData?.data?.map((cat) => (
                 <Box
                     key={cat._id} // Use cat._id as key for better optimization
                     onClick={() => handleCategorySelect({ target: { value: cat?._id } })}
@@ -442,25 +443,25 @@ const Product = () => {
                                                 {/* <CustomizedCheckbox /> */}
                                                 <div className={productStyle.productMainStyle}>
 
-                                                    <img src={item?.productdetails?.featurerdImage} style={{height:40,width:40,objectFit:'cover',borderRadius: 5}} alt='featurerdImage' />
+                                                    <img src={item?.productdetails?.featurerdImage} style={{height:30,width:30,objectFit:'cover',borderRadius: 5}} alt='featurerdImage' />
                                                     <div>
-                                                        <span style={{ marginLeft: 5 }}>{item?.productdetails?.productName && item?.productdetails?.productName?.length > 10 ? `${item?.productdetails?.productName?.substring(0, 10)}...` : item?.productdetails?.productName}</span>
+                                                        <span style={{ marginLeft: 5,fontSize:12 }}>{item?.productdetails?.productName && item?.productdetails?.productName?.length > 28 ? `${item?.productdetails?.productName?.substring(0, 28)}...` : item?.productdetails?.productName}</span>
                                                         <br />
                                                         <p style={{ marginLeft: 5 }} className={productStyle.description}>{item?.productdetails?.inventory?.sku} </p>
                                                     </div>
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
-                                                <div className={productStyle.skuStyle}>
+                                                <div className={productStyle.skuStyle} style={{fontSize:12 }}>
                                                     {item?.productdetails?._id}
                                                 </div>
-                                                <div className={productStyle.catStyle} style={{ color: '#667085' }}>
+                                                <div className={productStyle.catStyle} style={{ color: '#667085',fontSize:12 }}>
                                                     {item?.productdetails?.category?.productCategory?.name}
                                                 </div>
-                                                <div className={productStyle.stockStyle}>
+                                                <div className={productStyle.stockStyle} style={{ color: '#667085',fontSize:12 }}>
                                                     {item?.productdetails?.inventory?.totalstock}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
-                                                <div className={productStyle.priceStyle}>
+                                                <div className={productStyle.priceStyle} style={{ color: '#667085',fontSize:12 }}>
                                                     Rs. {item?.sellingPrice?.toLocaleString("en-IN")}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
@@ -494,7 +495,7 @@ const Product = () => {
                                                     </span>
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
-                                                <div className={productStyle.addedStyle} style={{ color: '#667085' }}>
+                                                <div className={productStyle.addedStyle} style={{ color: '#667085',fontSize:12 }}>
                                                     {formatDate(item?.productdetails?.createdAt)}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
