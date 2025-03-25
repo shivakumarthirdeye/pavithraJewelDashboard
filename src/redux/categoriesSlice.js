@@ -39,7 +39,7 @@ export const getCategories = createAsyncThunk('getCategories', async (body, { re
     }
 }
 )
-export const getCategoriesExport = createAsyncThunk('getCategories', async (body, { rejectWithValue, dispatch }) => {
+export const getCategoriesExport = createAsyncThunk('getCategoriesExport', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.getCategoriesExport(body);
         if (status === 200) {
@@ -161,6 +161,19 @@ export const categoriesSlice = createSlice({
             state.categoriesData = action.payload
         })
         builder.addCase(getCategories.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+        // Categories
+        builder.addCase(getCategoriesExport.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(getCategoriesExport.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.categoriesExportData = action.payload
+        })
+        builder.addCase(getCategoriesExport.rejected, (state, action) => {
             state.isLoading = false
             state.errorMsg = action.payload
         })

@@ -48,7 +48,7 @@ const Appearance = () => {
                         </div>
                     </div>
                 </div>
-                <div className={appearanceStyle.info} style={{ paddingLeft: 20 }}>
+                {/* <div className={appearanceStyle.info} style={{ paddingLeft: 20 }}>
                     <div className={appearanceStyle.idStyle}> 2 </div>
                     <div className={productStyle.dropdownStyle} />
                     <div className={appearanceStyle.pageStyle} style={{ color: '#1D1F2C' }}>
@@ -69,7 +69,7 @@ const Appearance = () => {
                             <EditIcon />
                         </div>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div >
     )

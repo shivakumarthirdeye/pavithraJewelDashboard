@@ -5,7 +5,7 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { styled } from "@mui/material/styles";
-import { Box, Button, Checkbox, ListItemText, MenuItem, Select } from '@mui/material';
+import { Box, Button, Checkbox, CircularProgress, ListItemText, MenuItem, Select } from '@mui/material';
 import { custom, saveChanges, formselect, SelectStyle } from '../../MaterialsUI';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
@@ -43,10 +43,12 @@ export default function Categories() {
     }, [dispatch])
 
 
-    const { categoriesExportData } = useSelector(
+    const { categoriesExportData,isLoading } = useSelector(
         (state) => state.categories);
 
+    
 
+    
     const [selectedCategories, setSelectedCategories] = React.useState([]);
 
     const schema = yup.object().shape({
@@ -103,7 +105,7 @@ export default function Categories() {
     const handleCategoryChange = (event) => {
         const selectedCategoryIds = event.target.value; // Get selected category IDs
         // Find the full category objects based on selected IDs
-        const selectedCategoriesData = categoriesExportData?.filter((category) =>
+        const selectedCategoriesData = categoriesExportData?.data?.filter((category) =>
             selectedCategoryIds?.includes(category?._id)
         );
 
@@ -122,7 +124,20 @@ export default function Categories() {
         setFieldValue('categories', updatedCategories?.map(cat => cat._id), true);
     };
     
-
+    if(isLoading) {
+        return (
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+              <CircularProgress />
+            </div>
+          )
+    }
+    if (categoriesExportData?.data?.length <= 0) {
+        return (
+            <div>
+                No Categories found
+            </div>
+        )
+    }
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -181,12 +196,12 @@ export default function Categories() {
                             onChange={handleCategoryChange}
                             renderValue={(selected) =>
                                 selected?.length > 0
-                                    ? categoriesExportData?.filter(category => selected?.includes(category?._id))?.map(category => category?.name).join(', ')
+                                    ? categoriesExportData?.data?.filter(category => selected?.includes(category?._id))?.map(category => category?.name).join(', ')
                                     : "Select Category"
                             }
                         >
                             <MenuItem value="">Select</MenuItem>
-                            {categoriesExportData?.length > 0 && categoriesExportData?.map((category) => (
+                            {categoriesExportData?.data?.length > 0 && categoriesExportData?.data?.map((category) => (
                                 <MenuItem key={category._id} value={category._id}>
                                     {/* <Checkbox checked={categoriesExportData.some(cat => cat._id === category._id)} /> */}
                                     <ListItemText

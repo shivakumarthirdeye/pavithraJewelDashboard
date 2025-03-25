@@ -49,10 +49,12 @@ export default function FeaturedProducts() {
     const viewProductsData = exportProductsData?.data
 
     const [selectedProducts, setSelectedProduct] = React.useState([]);
+    console.log('selectedProducts',selectedProducts);
+    
 
     const schema = yup.object().shape({
         products: yup.array()
-        .min(6, "You must select at least 6 products")
+        .max(8, "You can select only 8 products")
         .required("Product is required"),
     });
 
@@ -114,20 +116,24 @@ export default function FeaturedProducts() {
         setFieldValue('products', selectedProductIds, true); // Store only the IDs in Formik
     };
     const handleRemoveProduct = (productId) => {
-        // Filter out the removed product
-        const updatedProducts = selectedProducts?.filter(
-            (product) => product?.productdetails?._id !== productId
+        if (!selectedProducts || selectedProducts.length === 0) return; // Ensure list is not empty
+    
+        const updatedProducts = selectedProducts.filter(
+            (product) => product?._id !== productId
         );
+    
+        console.log("Updated Products:", updatedProducts); // Debugging step
     
         setSelectedProduct(updatedProducts); // Update state
     
-        // Update Formik's field value to remove the product
+        // Ensure Formik gets updated correctly
         setFieldValue(
             'products',
-            updatedProducts.map(product => product?.productdetails?._id),
+            updatedProducts.map(product => product?._id),
             true
         );
     };
+    
     
 
     return (
@@ -184,7 +190,7 @@ export default function FeaturedProducts() {
                             defaultValue=''
                             multiple
                             name='products'
-                            value={selectedProducts.map(product => product?.productdetails?._id)}
+                            value={selectedProducts.map(product => product?.productdetails?._id) || selectedProducts?.map(i => i?._id)}
                             onChange={handleProductChange}
                             renderValue={(selected) =>
                                 selected?.length > 0
@@ -192,7 +198,7 @@ export default function FeaturedProducts() {
                                         ?.filter(product => selected.includes(product?.productdetails?._id))
                                         .map(product => product?.productdetails?.productName)
                                         .join(', ')
-                                    : "Select Category"
+                                    : "Select Products"
                             }
                         >
                             <MenuItem value="">Select</MenuItem>
@@ -229,8 +235,8 @@ export default function FeaturedProducts() {
                     <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
                         {selectedProducts?.map((item, index) => (
                             <div className={appearancStyle.categoriesStyle} key={index}>
-                                <div className={appearancStyle.textStyle}>{item?.productdetails?.productName} </div>
-                                <div style={{ marginTop: 5 }} onClick={() => handleRemoveProduct(item?.productdetails?._id)}><CancelCateIcon /></div>
+                                <div className={appearancStyle.textStyle}>{item?.productdetails?.productName || item?.productName} </div>
+                                <div style={{ marginTop: 5 }} onClick={() => handleRemoveProduct(item?._id)}><CancelCateIcon /></div>
                             </div>
                         ))}
                     </div>
