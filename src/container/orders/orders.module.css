@@ -1,5 +1,5 @@
 .orderMainStyle {
-    width: 20%;
+    width: 12%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;
@@ -15,7 +15,7 @@
 }
 
 .productNameStyle {
-    width: 30%;
+    width: 36%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;
@@ -32,7 +32,7 @@
 }
 
 .productMainStyle {
-    width: 24%;
+    width: 30%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;
@@ -1306,4 +1306,60 @@
 }
 .goldRateStyle span{
     color: #1D1F2C;
+}
+.tabViewSwitchTab{
+    display: none;
+}
+.filterBoxStyle{
+    display: none;
+}
+@media (min-width:820px) and (max-width:1024px) {
+    .container{
+        display: none;
+    }
+    .tabViewSwitchTab{
+        display: flex;
+        margin-top: 20px;
+        gap: 40px;
+    }
+    .filterBoxStyle{
+        display: flex;
+        justify-content: flex-start;
+        gap: 40px;
+        margin-top: 20px;
+    }
+    .exportStyle {
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .addcategoryText {
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .search input {
+        font-size: 12px;
+    }
+    
+    .search {
+        width: 100%;
+    }
+    
+    .scrollContainer {
+        min-width: 1000px; /* Ensures the container remains scrollable */
+        height: auto;
+        overflow-x: auto; /* Enables horizontal scrolling */
+        white-space: nowrap; /* Prevents line breaks */
+        /* scrollbar-gutter: stable; */
+    }
+
+    /* Custom Scrollbar */
+    .scrollContainer::-webkit-scrollbar {
+        height: 5px; /* Thin scrollbar */
+    }
+
+    .scrollContainer::-webkit-scrollbar-thumb {
+        background-color: #1D1F2C; /* Dark scrollbar color */
+        border-radius: 2px;
+    }
+    
 }

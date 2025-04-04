@@ -35,11 +35,11 @@ const HomePageBuilder = () => {
             <Categories />
             <AboutUs />
             {/* <Slider /> */}
-            <BrandSlider />
+            {/* <BrandSlider /> */}
             <FeaturedProducts />
             <OffersBanner/>
             <Testimonials/>
-            <Counters/>
+            {/* <Counters/> */}
             <Instagram/>
         </div >
     )

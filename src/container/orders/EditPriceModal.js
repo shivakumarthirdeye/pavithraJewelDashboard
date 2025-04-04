@@ -11,8 +11,9 @@ import orderStyle from './orders.module.css'
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { editPendingPrice } from '../../redux/ordersSlice';
 
-const EditPriceModal = ({ open, onClose, data }) => {
+const EditPriceModal = ({ open, onClose, data,item }) => {
     console.log('data================',data);
+    console.log('item================',item);
     
     const dispatch = useDispatch()
     
@@ -50,15 +51,23 @@ const EditPriceModal = ({ open, onClose, data }) => {
     })
 
     useEffect(() => {
-        if (data) {
+        if (data?.data?.isMutlipleOrder === false ) {
             setValues({
-                pendingAmount:data?.data?.pendingAmount
+                pendingAmount:data?.data?.pendingAmount?.toLocaleString("en-IN")
+            })
+        } else {
+            setValues({
+                pendingAmount:data?.pendingAmount?.toLocaleString("en-IN")
             })
         }
     }, [data, setValues])
 
     const handleEdit = (val) => {
+        if (data?.data?.isMutlipleOrder === false ) {
         dispatch(editPendingPrice({ url: `${data?.data?._id}`, val }))
+        } else {
+            dispatch(editPendingPrice({ url: `${data?._id}`, val }))
+        }
     }
 
 
@@ -98,13 +107,23 @@ const EditPriceModal = ({ open, onClose, data }) => {
                         <CancelIcon />
                     </div>
                 </div>
+                {data?.data?.isMutlipleOrder === false ? (
                 <div className={orderStyle.jwelleryDetails}>
-                    <img src={data?.singleProduct?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                    <img src={data?.data?.products[0]?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
                     <div>
-                        <p className={orderStyle.jwelleryText}>{data?.singleProduct?.productId?.productName}</p>
-                        <p className={orderStyle.priceText}>₹{data?.singleProduct?.sellingPrice}</p>
+                        <p className={orderStyle.jwelleryText}>{data?.data?.products[0]?.productId?.productName}</p>
+                        <p className={orderStyle.priceText}>₹{data?.data?.grandTotal?.toLocaleString("en-IN")}</p>
                     </div>
                 </div>
+                ): (
+                    <div className={orderStyle.jwelleryDetails}>
+                    <img src={data?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                    <div>
+                        <p className={orderStyle.jwelleryText}>{data?.productId?.productName}</p>
+                        <p className={orderStyle.priceText}>₹{data?.sellingPrice?.toLocaleString("en-IN")}</p>
+                    </div>
+                </div>  
+                )}
                 <div style={{ marginTop: 10 }}>
                     <label className={productStyle.label}>Weight</label>
                     <br />

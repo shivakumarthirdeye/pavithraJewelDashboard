@@ -41,6 +41,9 @@ import EditProfile from './container/settings/EditProfile';
 import { TrashMadeToOrders } from './container/orders/TrashMadeToOrders';
 import ViewHomePageBuilder from './container/appearance/ViewHomePageBuilder';
 import AddTermsCondition from './container/termsAndCondition/AddTermsCondition';
+import { Orders } from './container/orders/Orders';
+import { OrderDetails } from './container/orders/OrderDetails';
+import { MultiProductOrderDetails } from './container/orders/MultiProdOrders';
 
 function App() {
   return (
@@ -71,6 +74,9 @@ function App() {
             <Route path='/product/Product/AddProduct' element={<AddProduct />} />
             <Route path='/product/Product/EditProduct/:id' element={<EditProduct />} />
             <Route path='/product/Product/ProductViewDetails/:id' element={<ProductViewDetails />} />
+            <Route path='/orders/Orders' element={<Orders />} />
+            <Route path='/orders/Orders/OrderDetails/:id' element={<OrderDetails />} />
+            <Route path='/orders/Orders/MultiProductOrderDetails/:id' element={<MultiProductOrderDetails />} />
             <Route path='/orders/ReadyToShipOrders' element={<ReadyToShipOrders />} />
             <Route path='/orders/MadeToOrders' element={<MadeToOrders />} />
             <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/:id' element={<ReadyToShipOrderDetails />} />

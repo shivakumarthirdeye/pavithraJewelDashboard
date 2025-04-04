@@ -57,7 +57,8 @@ export const CustomersDetails = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [selectedDate, setSelectedDate] = useState(null);
     const [selectedFilter, setSelectedFilter] = useState(null);
-    const [status, setStatus] = useState("");
+    const [copied, setCopied] = useState(false);
+    const [copiedPhone, setCopiedPhone] = useState(false);
 
     // useEffect(() => {
     //     dispatch(getCustomersDetail(id))
@@ -89,8 +90,8 @@ export const CustomersDetails = () => {
     };
 
     const handleFilterSelection = (e) => {
-        console.log('e------------',e);
-        
+        console.log('e------------', e);
+
         setSelectedFilter(e)
         dispatch(setFilterValues({ status: e, page: 1 }));
     }
@@ -102,13 +103,13 @@ export const CustomersDetails = () => {
     useEffect(() => {
         const getAllCustomer = async () => {
             try {
-                await dispatch(getCustomersDetail({...filterOptions, id:id}));
+                await dispatch(getCustomersDetail({ ...filterOptions, id: id }));
             } catch (error) {
                 console.log(error);
             }
         };
         getAllCustomer();
-    }, [dispatch, filterOptions, isRefresh,id]);
+    }, [dispatch, filterOptions, isRefresh, id]);
 
 
     //Delete Modal
@@ -206,23 +207,7 @@ export const CustomersDetails = () => {
                     borderBottomWidth: '100%',
                 }}
             >
-                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#2F2F2F', fontFamily: 'Poppins', marginLeft: 5, marginRight: 10 }}>  {selectedFilter === "SHIPPED" && <CheckIcon fontSize="small" />}  Shipped</Typography>
-            </Box>
-            <Box
-                onClick={() => handleFilterSelection("EXCHANGE REQUEST")}
-                sx={{
-                    display: "flex",
-                    padding: "8px 0px",
-                    alignItems: "center",
-                    justifyContent: "flex-start",
-                    backgroundColor:
-                        selectedFilter === "EXCHANGE REQUEST" ? "#F7F7F7" : "#FFFFFF",
-                    cursor: "pointer",
-                    borderBottom: '1px solid #E0E2E7',
-                    borderBottomWidth: '100%',
-                }}
-            >
-                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#2F2F2F', fontFamily: 'Poppins', marginLeft: 5, marginRight: 10 }}>  {selectedFilter === "EXCHANGE REQUEST" && <CheckIcon fontSize="small" />}  Exchange Request</Typography>
+                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#2F2F2F', fontFamily: 'Poppins', marginLeft: 5, marginRight: 10 }}>  {selectedFilter === "SHIPPED" && <CheckIcon fontSize="small" />}Out for delivery</Typography>
             </Box>
             <Box
                 onClick={() => handleFilterSelection("DELIVERED")}
@@ -238,54 +223,42 @@ export const CustomersDetails = () => {
                     borderBottomWidth: '100%',
                 }}
             >
-                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#2F2F2F', fontFamily: 'Poppins', marginLeft: 5, marginRight: 10 }}>  {selectedFilter === "DELIVERED" && <CheckIcon fontSize="small" />}  Delivered</Typography>
+                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#2F2F2F', fontFamily: 'Poppins', marginLeft: 5, marginRight: 10 }}>  {selectedFilter === "DELIVERED" && <CheckIcon fontSize="small" />}Delivered</Typography>
 
             </Box>
-            {/* <Box
-                onClick={() => handleFilterSelection("EXCHANGED")}
-                sx={{
-                    display: "flex",
-                    padding: "8px 2px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor:
-                        selectedFilter === "EXCHANGED" ? "#F7F7F7" : "#FFFFFF",
-                    cursor: "pointer",
-                    borderRadius: "8px",
-                    borderBottom:'1px solid #F7F7F7',
-                    borderBottomWidth:'100%',
-                }}
-            >
-                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center" }}>  {selectedFilter === "EXCHANGED" && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}  Exchanged</Typography>
 
-            </Box>
-            <Box
-                onClick={() => handleFilterSelection("EXCHANGE REJECTED")}
-                sx={{
-                    display: "flex",
-                    padding: "8px 2px",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor:
-                        selectedFilter === "EXCHANGE REJECTED" ? "#F7F7F7" : "#FFFFFF",
-                    cursor: "pointer",
-                    borderRadius: "8px",
-                }}
-            >
-                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center" }}>  {selectedFilter === "EXCHANGE REJECTED" && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}  Exchange Rejected</Typography>
-
-            </Box> */}
         </div>
     );
 
 
-
+    const handleCopyEmail = () => {
+        const email = customerDetails?.email;
+        if (email) {
+            navigator.clipboard.writeText(email)
+                .then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
+    const handleCopyPhone = () => {
+        const phone = customerDetails?.phone
+        if (phone) {
+            navigator.clipboard.writeText(phone)
+                .then(() => {
+                    setCopiedPhone(true);
+                    setTimeout(() => setCopiedPhone(false), 2000); // Reset after 2 sec
+                })
+                .catch(err => console.error("Failed to copy:", err));
+        }
+    };
     return (
         <div style={{ padding: 20, marginTop: 60 }}>
             <div className={productStyle.container}>
                 <div>
                     <h2 className={productStyle.categoryText}>Customers details</h2>
-                    <CustomSeparator dashboard={'Dashboard'} type='Customers' subType='Customers Details'/>
+                    <CustomSeparator dashboard={'Dashboard'} type='Customers' subType='Customers Details' />
                 </div>
                 <div
                     className={orderStyle.exportStyle}
@@ -295,7 +268,7 @@ export const CustomersDetails = () => {
                     Back to list
                 </div>
             </div>
-            <div className={orderStyle.cardWrap}>
+            <div className={customerStyle.cardWrap}>
                 <div className={customerStyle.infoCardStyle}>
                     <div
                         className={orderStyle.generalInfoStyle}
@@ -326,7 +299,7 @@ export const CustomersDetails = () => {
                             </p>
                         </div> */}
                         <div
-                            className={orderStyle.proNameText}
+                            className={customerStyle.proNameText}
                             style={{ marginLeft: 50, marginTop: 10 }}
                         >
                             {customerDetails?.customerId}
@@ -343,7 +316,7 @@ export const CustomersDetails = () => {
                             </p>
                         </div>
                         <div
-                            className={orderStyle.proNameText}
+                            className={customerStyle.proNameText}
                             style={{ marginLeft: 45, marginTop: 10 }}
                         >
                             {customerDetails?.firstName}{" "}
@@ -384,14 +357,15 @@ export const CustomersDetails = () => {
                                 </p>
                             </div>
                             <div
-                                className={orderStyle.proNameText}
+                                className={customerStyle.proNameText}
                                 style={{ marginLeft: 30, marginTop: 10 }}
                             >
                                 {customerDetails?.email}
                             </div>
                         </div>
-                        <div style={{ marginTop: 20 }}>
+                        <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyEmail}>
                             <CopyIcon />
+                            {copied && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                         </div>
                     </div>
                     <div
@@ -409,19 +383,20 @@ export const CustomersDetails = () => {
                                 </p>
                             </div>
                             <div
-                                className={orderStyle.proNameText}
+                                className={customerStyle.proNameText}
                                 style={{ marginLeft: 30, marginTop: 10 }}
                             >
                                 {customerDetails?.phone}
                             </div>
                         </div>
-                        <div style={{ marginTop: 20 }}>
+                        <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPhone}>
                             <CopyIcon />
+                            {copiedPhone && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                         </div>
                     </div>
                 </div>
             </div>
-            <div className={orderStyle.cardWrap} style={{ marginBottom: 20 }}>
+            <div className={customerStyle.cardWrap} style={{ marginBottom: 20 }}>
                 <div className={customerStyle.infoCardStyle}>
                     <div
                         className={orderStyle.generalInfoStyle}
@@ -434,7 +409,7 @@ export const CustomersDetails = () => {
                             className={orderStyle.generalInfoTextStyle}
                             style={{ paddingLeft: 10 }}
                         >
-                            Payment
+                            Billing Address
                         </div>
                     </div>
                     <div
@@ -453,7 +428,7 @@ export const CustomersDetails = () => {
                         </div>
                         {customerDetails?.billingAddress?.map((item) => (
                             <div
-                                className={orderStyle.proNameText}
+                                className={customerStyle.proNameText}
                                 style={{ marginLeft: 50, marginTop: 10 }}
                             >
                                 {item?.firstName} {item?.lastName}
@@ -466,7 +441,7 @@ export const CustomersDetails = () => {
                             </div>
                         ))}
                         {/* <div
-                            className={orderStyle.proNameText}
+                            className={customerStyle.proNameText}
                             style={{ marginLeft: 50, marginTop: 10 }}
                         >
                             Supriya Raj
@@ -506,10 +481,10 @@ export const CustomersDetails = () => {
                         </div>
                         {customerDetails?.shippingAddress?.map((item) => (
                             <div
-                                className={orderStyle.proNameText}
-                                style={{ marginLeft: 50, marginTop: 10 }}
+                                className={customerStyle.proNameText}
+                                style={{ marginLeft: 50, marginTop: 5 }}
                             >
-                                {item?.companyName} {item?.lastName}
+                                {item?.firstName} {item?.lastName}
                                 {","}
                                 <br />
                                 {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
@@ -580,7 +555,7 @@ export const CustomersDetails = () => {
                                 content={dateContent}
                             />
                         </div> */}
-                        <div className={productStyle.filter}>
+                        <div className={productStyle.filter} style={{width:'40%'}}>
                             <PopoverComponent
                                 icon={<FilterIcon />}
                                 label="Status"
@@ -589,211 +564,213 @@ export const CustomersDetails = () => {
                         </div>
                     </div>
                 </div>
-                <div className={productStyle.header} style={{ paddingLeft: 20 }}>
-                    <div className={orderStyle.orderMainStyle}> Order Id </div>
+                <div className={productStyle.scrollContainer} >
+                    <div className={productStyle.header} style={{ paddingLeft: 20 }}>
+                        <div className={orderStyle.orderMainStyle}> Order Id </div>
 
-                    <div className={customerStyle.productMainStyle}> Product </div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "productName" } })}>
-                        {" "}
-                        <Drop color="#858D9D" /> {" "}
+                        <div className={customerStyle.productMainStyle}> Product </div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "productName" } })}>
+                            {" "}
+                            <Drop color="#858D9D" /> {" "}
+                        </div>
+                        <div className={orderStyle.dateStyle}>Date</div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "date" } })}>
+                            {" "}
+                            <Drop color="#858D9D" /> {" "}
+                        </div>
+                        <div className={orderStyle.totalStyle}>Total </div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "total" } })}>
+                            {" "}
+                            <Drop color="#858D9D" /> {" "}
+                        </div>
+                        <div className={orderStyle.paymentStyle}>Payment</div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "payment" } })}>
+                            {" "}
+                            <Drop color="#858D9D" /> {" "}
+                        </div>
+                        <div className={orderStyle.status}>Status</div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "status" } })}>
+                            {" "}
+                            <Drop color="#858D9D" /> {" "}
+                        </div>
+                        <div className={customerStyle.actionStyle}>Action</div>
                     </div>
-                    <div className={orderStyle.dateStyle}>Date</div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "date" } })}>
-                        {" "}
-                        <Drop color="#858D9D" /> {" "}
-                    </div>
-                    <div className={orderStyle.totalStyle}>Total </div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "total" } })}>
-                        {" "}
-                        <Drop color="#858D9D" /> {" "}
-                    </div>
-                    <div className={orderStyle.paymentStyle}>Payment</div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "payment" } })}>
-                        {" "}
-                        <Drop color="#858D9D" /> {" "}
-                    </div>
-                    <div className={orderStyle.status}>Status</div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "status" } })}>
-                        {" "}
-                        <Drop color="#858D9D" /> {" "}
-                    </div>
-                    <div className={customerStyle.actionStyle}>Action</div>
-                </div>
-                {customerDetailOrders && customerDetailOrders?.length > 0 ? (
-                    <>
-                        <div>
-                            {customerDetailOrders?.map((item, index) => {
-                                const arr = item?.status;
-                                const lastValue = arr?.at(-1); 
-                                return (
-                                    <div
-                                        className={productStyle.info}
-                                        key={index}
-                                        style={{ paddingLeft: 20 }}
-                                    >
+                    {customerDetailOrders && customerDetailOrders?.length > 0 ? (
+                        <>
+                            <div>
+                                {customerDetailOrders?.map((item, index) => {
+                                    const arr = item?.status;
+                                    const lastValue = arr?.at(-1);
+                                    return (
                                         <div
-                                            className={orderStyle.orderMainStyle}
-                                            style={{ color: "#1D1F2C" }}
+                                            className={productStyle.info}
+                                            key={index}
+                                            style={{ paddingLeft: 20 }}
                                         >
-                                            {item?._id}
-                                        </div>
-                                        <div className={customerStyle.productMainStyle}>
-                                            <img
-                                                width={40}
-                                                height={40}
-                                                src={item?.productDetails[0]?.featurerdImage}
-                                                alt="Featured"
-                                            />
-                                            <div>
-                                                <span style={{ marginLeft: 5, color: "#1D1F2C" }}>
-                                                    {item?.productDetails[0]?.productName}
-                                                </span>
-                                                <br />
-                                                {item?.productDetails?.length > 1 ? (
-                                                    <p
-                                                        style={{ marginLeft: 5 }}
-                                                        className={productStyle.description}
-                                                    >
-                                                        +{item?.productDetails?.length - 1} Other
-                                                        Products
-                                                    </p>
-                                                ) : null}
+                                            <div
+                                                className={orderStyle.orderMainStyle}
+                                                style={{ color: "#1D1F2C" }}
+                                            >
+                                                {item?._id}
                                             </div>
-                                        </div>
-                                        <div className={productStyle.dropdownStyle} />
-                                        <div
-                                            className={orderStyle.dateStyle}
-                                            style={{ color: "#667085" }}
-                                        >
-                                            {formatDate(item?.createdAt)}
-                                        </div>
-                                        <div
-                                            className={productStyle.dropdownStyle}
-                                        // style={{ marginLeft: 10 }}
-                                        />
-                                        <div className={orderStyle.totalStyle}>
-                                            {item?.grandTotal}
-                                        </div>
-                                        <div className={productStyle.dropdownStyle} />
-                                        <div
-                                            className={orderStyle.paymentStyle}
-                                            style={{ color: "#667085", }}
-                                        >
-                                            {item?.payment?.status}
-                                        </div>
-                                        <div className={productStyle.dropdownStyle} />
-                                        <div
-                                            style={{
-                                                backgroundColor:
-                                                lastValue?.name === "NEW"
-                                                        ? "#c7c8ca"
-                                                        : lastValue?.name === "PROCCESSING"
-                                                            ? "#F439391A"
-                                                            : lastValue?.name === "SHIPPED"
-                                                                ? "#EAF8FF"
-                                                                : "#E9FAF7",
-                                                width: "14%",
-                                                borderRadius: 10,
-                                                height: 30,
-                                                padding: "5PX",
-                                                alignContent: "center",
-                                                justifyContent: "center",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                // marginLeft: 20,
-                                                alignSelf: "center",
-                                            }}
-                                        >
-                                            <span
+                                            <div className={customerStyle.productMainStyle}>
+                                                <img
+                                                    width={40}
+                                                    height={40}
+                                                    src={item?.productDetails[0]?.featurerdImage}
+                                                    alt="Featured"
+                                                />
+                                                <div>
+                                                    <span style={{ marginLeft: 5, color: "#1D1F2C" }}>
+                                                        {item?.productDetails[0]?.productName}
+                                                    </span>
+                                                    <br />
+                                                    {item?.productDetails?.length > 1 ? (
+                                                        <p
+                                                            style={{ marginLeft: 5 }}
+                                                            className={productStyle.description}
+                                                        >
+                                                            +{item?.productDetails?.length - 1} Other
+                                                            Products
+                                                        </p>
+                                                    ) : null}
+                                                </div>
+                                            </div>
+                                            <div className={productStyle.dropdownStyle} />
+                                            <div
+                                                className={orderStyle.dateStyle}
+                                                style={{ color: "#667085" }}
+                                            >
+                                                {formatDate(item?.createdAt)}
+                                            </div>
+                                            <div
+                                                className={productStyle.dropdownStyle}
+                                            // style={{ marginLeft: 10 }}
+                                            />
+                                            <div className={orderStyle.totalStyle}>
+                                                {item?.grandTotal}
+                                            </div>
+                                            <div className={productStyle.dropdownStyle} />
+                                            <div
+                                                className={orderStyle.paymentStyle}
+                                                style={{ color: "#667085", }}
+                                            >
+                                                {item?.payment?.status}
+                                            </div>
+                                            <div className={productStyle.dropdownStyle} />
+                                            <div
                                                 style={{
-                                                    fontFamily: "DM Sans",
-                                                    fontSize: 12,
-                                                    fontWeight: "600",
-
-                                                    letterSpacing: 0.5,
-                                                    textTransform: "capitalize",
-                                                    textAlign: "center",
-                                                    color:
-                                                    lastValue?.name === "NEW"
-                                                            ? "#4A4C56"
+                                                    backgroundColor:
+                                                        lastValue?.name === "NEW"
+                                                            ? "#c7c8ca"
                                                             : lastValue?.name === "PROCCESSING"
-                                                                ? "#F86624"
+                                                                ? "#F439391A"
                                                                 : lastValue?.name === "SHIPPED"
-                                                                    ? "#2BB2FE"
-                                                                    : "#1A9882",
+                                                                    ? "#EAF8FF"
+                                                                    : "#E9FAF7",
+                                                    width: "14%",
+                                                    borderRadius: 10,
+                                                    height: 30,
+                                                    padding: "5PX",
+                                                    alignContent: "center",
+                                                    justifyContent: "center",
+                                                    display: "flex",
+                                                    alignItems: "center",
+                                                    // marginLeft: 20,
+                                                    alignSelf: "center",
                                                 }}
                                             >
-                                                {lastValue?.name === 'NEW' ? 'New' : lastValue?.name === 'PROCCESSING' ? 'Processing' : lastValue?.name === 'SHIPPED' ? 'Shipped' : 'Delivered'}
-                                            </span>
-                                        </div>
-                                        <div className={productStyle.dropdownStyle} />
-                                        <div className={customerStyle.actionStyle}>
-                                            {item?.orderType === 'Made to orders' ? (
-                                                <div
-                                                    onClick={() =>
-                                                        navigate(`/orders/MadeToOrders/MadeToOrderDetails/${item?._id}`)
-                                                    }
+                                                <span
+                                                    style={{
+                                                        fontFamily: "DM Sans",
+                                                        fontSize: 12,
+                                                        fontWeight: "600",
+
+                                                        letterSpacing: 0.5,
+                                                        textTransform: "capitalize",
+                                                        textAlign: "center",
+                                                        color:
+                                                            lastValue?.name === "NEW"
+                                                                ? "#4A4C56"
+                                                                : lastValue?.name === "PROCCESSING"
+                                                                    ? "#F86624"
+                                                                    : lastValue?.name === "SHIPPED"
+                                                                        ? "#2BB2FE"
+                                                                        : "#1A9882",
+                                                    }}
                                                 >
-                                                    <ViewIcon />
-                                                </div>
-                                            ) : (
+                                                    {lastValue?.name === 'NEW' ? 'New' : lastValue?.name === 'PROCCESSING' ? 'Processing' : lastValue?.name === 'SHIPPED' ? 'Shipped' : 'Delivered'}
+                                                </span>
+                                            </div>
+                                            <div className={productStyle.dropdownStyle} />
+                                            <div className={customerStyle.actionStyle}>
+                                                {item?.orderType === 'Made to orders' ? (
+                                                    <div
+                                                        onClick={() =>
+                                                            navigate(`/orders/MadeToOrders/MadeToOrderDetails/${item?._id}`)
+                                                        }
+                                                    >
+                                                        <ViewIcon />
+                                                    </div>
+                                                ) : (
+                                                    <div
+                                                        onClick={() =>
+                                                            navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/${item?._id}`)
+                                                        }
+                                                    >
+                                                        <ViewIcon />
+                                                    </div>
+                                                )}
                                                 <div
-                                                    onClick={() =>
-                                                        navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/${item?._id}`)
-                                                    }
+                                                    style={{ marginLeft: 12 }}
+                                                    onClick={() => openDeleteModal(item?._id)}
                                                 >
-                                                    <ViewIcon />
+                                                    <DeleteIcon />
                                                 </div>
-                                            )}
-                                            <div
-                                                style={{ marginLeft: 12 }}
-                                                onClick={() => openDeleteModal(item?._id)}
-                                            >
-                                                <DeleteIcon />
                                             </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                        <div
-                            className={catStyle.entryView}
-                            style={{ padding: 20 }}
-                        >
-                            <div className={catStyle.showingText}>
-                                Showing {start}-{end} from {customersDetailData?.totalItems}{" "}
+                                    );
+                                })}
                             </div>
-                            <Pagination
-                                count={customersDetailData?.totalPages}
-                                page={filterOptions?.page}
-                                onChange={handlePageChange}
-                                shape="rounded"
-                                siblingCount={1} // Show one sibling page (previous and next)
-                                boundaryCount={0} // Do not show first and last buttons
-                                sx={{
-                                    "& .MuiPaginationItem-root": {
-                                        margin: "0 4px",
-                                        //   color: "#512DA8",
-                                        border: "1px solid #E0E2E7",
-                                        borderRadius: "6px",
-                                        fontSize: "14px",
-                                        fontFamily: `'Public Sans', sans-serif`,
-                                    },
-                                    "& .Mui-selected": {
-                                        color: "#fff",
-                                        backgroundColor: "#E87819  !important", // custom color for selected page
-                                    },
-                                    "& .MuiPaginationItem-root:hover": {
-                                        color: "#fff",
-                                        backgroundColor: "#E87819", // custom hover color
-                                    },
-                                }}
-                            />
-                        </div>
-                    </>
-                ) : (
-                    <ErrorPage />
-                )}
+                            <div
+                                className={catStyle.entryView}
+                                style={{ padding: 20 }}
+                            >
+                                <div className={catStyle.showingText}>
+                                    Showing {start}-{end} from {customersDetailData?.totalItems}{" "}
+                                </div>
+                                <Pagination
+                                    count={customersDetailData?.totalPages}
+                                    page={filterOptions?.page}
+                                    onChange={handlePageChange}
+                                    shape="rounded"
+                                    siblingCount={1} // Show one sibling page (previous and next)
+                                    boundaryCount={0} // Do not show first and last buttons
+                                    sx={{
+                                        "& .MuiPaginationItem-root": {
+                                            margin: "0 4px",
+                                            //   color: "#512DA8",
+                                            border: "1px solid #E0E2E7",
+                                            borderRadius: "6px",
+                                            fontSize: "14px",
+                                            fontFamily: `'Public Sans', sans-serif`,
+                                        },
+                                        "& .Mui-selected": {
+                                            color: "#fff",
+                                            backgroundColor: "#E87819  !important", // custom color for selected page
+                                        },
+                                        "& .MuiPaginationItem-root:hover": {
+                                            color: "#fff",
+                                            backgroundColor: "#E87819", // custom hover color
+                                        },
+                                    }}
+                                />
+                            </div>
+                        </>
+                    ) : (
+                        <ErrorPage />
+                    )}
+                </div>
             </div>
             <DeleteModal
                 heading={"Delete Order"}

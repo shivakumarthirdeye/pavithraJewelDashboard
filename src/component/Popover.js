@@ -18,7 +18,7 @@ const PopoverComponent = ({ icon, label, content,value }) => {
     return (
         <>
             <div onClick={handleClick} style={{ cursor: 'pointer', display: 'flex',justifyContent:"center",alignItems:"center",width:"100%",gap:'10px'}}>
-                <span >{icon}</span>  <span>{label}</span>
+                <span >{icon}</span>  <span style={{fontSize:14}}>{label}</span>
             </div>
             <Popover
                 id={id}

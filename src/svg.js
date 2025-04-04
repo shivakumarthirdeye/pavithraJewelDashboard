@@ -390,7 +390,7 @@ export const DeleteRedIcon = () => {
 }
 export const EditBlackIcon = () => {
     return (
-        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <svg width="10" height="10" viewBox="0 0 13 13" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M0.781328 9.7459C0.281196 10.2459 0.000145311 10.9241 -5.72205e-06 11.6312L-5.72205e-06 12.9999H1.36866C2.07585 12.9997 2.75401 12.7187 3.25399 12.2186L12.1493 3.32325L9.67666 0.850586L0.781328 9.7459Z" fill="#1D1F2C" />
         </svg>
     )

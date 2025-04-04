@@ -125,7 +125,7 @@ const Sidebar = ({ children }) => {
                         }
                     </div>
                 </div>
-                <div onClick={() => navigate('/orders/ReadyToShipOrders')} className={path === 'orders' ? `${Styles.width} ${Styles.active}` : Styles.width}>
+                <div onClick={() => navigate('/orders/Orders')} className={path === 'orders' ? `${Styles.width} ${Styles.active}` : Styles.width}>
                     <div>
                         {path === 'orders' ?
                             (
@@ -149,14 +149,14 @@ const Sidebar = ({ children }) => {
 
 
                     </div>
-                    {path === 'orders' ? (
+                    {/* {path === 'orders' ? (
                         <div>
                             <Drop color='#fff' />
                         </div>
                     ) : <Drop color="#858D9D" />
-                    }
+                    } */}
                 </div>
-                {
+                {/* {
                     path === 'orders' ?
                         <div className={Styles.subpaths}>
                             <div onClick={() => navigate('/orders/ReadyToShipOrders')} className={subpath === 'ReadyToShipOrders' ? Styles.submenu : Styles.menuText}>
@@ -167,7 +167,7 @@ const Sidebar = ({ children }) => {
                             </div>
 
                         </div> : ''
-                }
+                } */}
                 <div onClick={() => navigate('/customer/Customers')} className={path === 'customer' ? `${Styles.width} ${Styles.active}` : Styles.width}>
                     <div>
                         {path === 'customer' ?
@@ -214,7 +214,7 @@ const Sidebar = ({ children }) => {
                         }
                     </div>
                 </div>
-                <div onClick={() => navigate('/coupons/Coupons')} className={path === 'coupons' ? `${Styles.width} ${Styles.active}` : Styles.width}>
+                {/* <div onClick={() => navigate('/coupons/Coupons')} className={path === 'coupons' ? `${Styles.width} ${Styles.active}` : Styles.width}>
                     <div>
                         {path === 'coupons' ?
                             (
@@ -236,7 +236,7 @@ const Sidebar = ({ children }) => {
                         </p>
                         }
                     </div>
-                </div>
+                </div> */}
                 <div onClick={() => navigate('/country/Country')} className={path === 'country' ? `${Styles.width} ${Styles.active}` : Styles.width}>
                     <div>
                         {path === 'country' ?

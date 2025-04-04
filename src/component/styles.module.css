@@ -1,7 +1,7 @@
 .tabView {
-    width: fit-content;
+    width: 100%;
     height: 40px;
-    gap: 10px;
+    /* gap: 10px; */
     border-radius: 8px;
     background: #FFFFFF;
     flex-direction: row;
@@ -14,7 +14,7 @@
 }
 
 .active {
-    width: fit-content;
+    width: 50%;
     height: 28px;
     gap: 8px;
     border-radius: 6px;
@@ -34,6 +34,7 @@
     padding-left: 10px;
     padding-right: 10px;
     cursor: pointer;
+    width: 50%;
 }
 
 .activeText {

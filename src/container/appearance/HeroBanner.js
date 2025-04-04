@@ -51,7 +51,7 @@ export default function HeroBanner() {
                 image: yup.string().required("At least one image is required"),
                 description: yup.string().required("Description is required"),
                 buttonText: yup.string().required("Button text is required"),
-                buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
+                // buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
             })
         ).min(1, "At least one slider is required"), // Ensure there's at least one slider
     });
@@ -364,9 +364,9 @@ export default function HeroBanner() {
                                     sx={InputURL}
                                 />
 
-                                {errors.banner?.[index]?.buttonLink && touched.banner?.[index]?.buttonLink && (
+                                {/* {errors.banner?.[index]?.buttonLink && touched.banner?.[index]?.buttonLink && (
                                     <div style={{ color: "red" }}>{errors.banner[index].buttonLink}</div>
-                                )}
+                                )} */}
                             </div>
                         </Box>
 

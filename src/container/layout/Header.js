@@ -15,6 +15,7 @@ const Header = ({ children }) => {
     const navigate = useNavigate()
     const { user } = useSelector((state) => state.user)
     const {notificationData} = useSelector((state) => state.notification)
+console.log('user============',user);
 
     const notificationCount = notificationData?.data?.unReadedNotifications || 0
 
@@ -90,7 +91,7 @@ const Header = ({ children }) => {
                     </div>
                     <Divider orientation="vertical" variant="middle" flexItem sx={{ marginLeft: '10px', marginRight: '10px' }} />
                     <div>
-                        {user?.profileImg > 0 ? (
+                        {user?.profileImg?.length > 0 ? (
                             <img src={user?.profileImg} alt='Avatar' style={{ width: 30, height: 30, borderRadius: 15 }} />
                         ) :
                             <div className={customerStyle.profileStyle}>

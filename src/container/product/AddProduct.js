@@ -213,7 +213,8 @@ const AddProduct = () => {
         handleChange,
         setFieldValue,
         handleBlur,
-        resetForm
+        resetForm,
+        setValues
     } = useFormik({
         initialValues: {
             productName: "",
@@ -348,6 +349,11 @@ const AddProduct = () => {
 
     console.log('valuesssssssssss', values);
 
+    useEffect(() => {
+        if (goldRates?.gst !== undefined) {
+            setFieldValue("pricing.gst.value", goldRates.gst);
+        }
+    }, [goldRates, setFieldValue]);
 
     const handleSubject = async (value) => {
         try {
@@ -753,6 +759,7 @@ const AddProduct = () => {
             setGoldRates({
                 k22: data.k22,
                 k18: data.k18,
+                gst: data.gst
             });
         } catch (error) {
             console.error("Error fetching gold rates:", error);
@@ -796,7 +803,6 @@ const AddProduct = () => {
         }
     }, [values.pricing.polkiCarat.value, values.pricing.polkiPerCarat.value, setFieldValue]);
 
-    console.log('values?.pricing?.goldRate?.value ||',values?.pricing?.goldRate?.value );
     
 
     useEffect(() => {
@@ -824,7 +830,7 @@ const AddProduct = () => {
             const subtotal = goldRate + makingCharges + stoneCharges + diamondCost + polkiCost;
 
             // ✅ Apply GST correctly
-            const gstPercentage = values?.pricing?.gst?.value || 0;
+            const gstPercentage = goldRates?.gst || 0;
             const gstAmount = (subtotal * gstPercentage) / 100; // ✅ Corrected GST calculation
 
             const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
@@ -839,7 +845,7 @@ const AddProduct = () => {
         values?.pricing?.polkiCost?.value,
         values?.pricing?.makingCharges?.value,
         values?.pricing?.stoneCharges?.value,
-        values?.pricing?.gst?.value,
+        goldRates?.gst,
         setFieldValue
     ]);
 
@@ -1775,13 +1781,13 @@ const AddProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'number'}
-                                    name="pricing.gst.value"
+                                    // type={'number'}
+                                    // name="pricing.gst.value"
                                     value={values.pricing.gst.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
-
+                                
                                 />
                                 {/* {
                                     errors?.pricing?.gst?.value && touched?.pricing?.gst?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.gst?.value}</p>
@@ -1794,11 +1800,12 @@ const AddProduct = () => {
                                 <TextField
                                     placeholder='auto'
                                     type={'number'}
-                                    name="pricing.finalSalePrice.value"
+                                    // name="pricing.finalSalePrice.value"
                                     value={values.pricing.finalSalePrice.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
+                                    // disabled
                                     fullWidth
                                     InputProps={{
                                         startAdornment: (

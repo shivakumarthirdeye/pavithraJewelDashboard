@@ -62,7 +62,8 @@ export const Dashboard = () => {
 
     const schema = yup.object().shape({
         k22: yup.string().required("Price is required"),
-        k18: yup.string().required("price is required"),
+        k18: yup.string().required("Price is required"),
+        gst: yup.string().required("GST is required"),
     })
 
     const {
@@ -77,6 +78,7 @@ export const Dashboard = () => {
         initialValues: {
             k22: "",
             k18: "",
+            gst: ""
         },
         validationSchema: schema,
         onSubmit: async (values) => {
@@ -90,6 +92,7 @@ export const Dashboard = () => {
             setValues({
                 k22: goldRateData?.data?.k22 || "",
                 k18: goldRateData?.data?.k18 || '',
+                gst: goldRateData?.data?.gst || '',
             });
         }
     }, [goldRateData, setValues]);
@@ -113,9 +116,9 @@ export const Dashboard = () => {
             <div className={dashboardStyle.mainStyle} style={{ marginTop: 20 }}>
                 <div style={{ marginTop: 40 }}>
                     <h3 className={dashboardStyle.welcomeText}>Welcome Back!</h3>
-                    <p className={dashboardStyle.description}>Lorem ipsum dolor si amet welcome back johny</p>
+                    {/* <p className={dashboardStyle.description}>Lorem ipsum dolor si amet welcome back johny</p> */}
                 </div>
-                <div style={{ marginTop: 65 }}>
+                <div style={{ marginTop: 65,width:'45%' }}>
                     <SwitchTab
                         value={value}
                         selected={selected}
@@ -285,6 +288,85 @@ export const Dashboard = () => {
                         </div>
                         {
                             errors.k18 && touched.k18 && <p style={{ color: "red", fontSize: "12px" }}>{errors.k18}</p>
+                        }
+                    </div>
+                    <div>
+                        <label className={dashboardStyle.labelStyle}>
+                            GST in %
+                        </label>
+                        <div className={dashboardStyle.goldRateStyle}>
+                            <TextField
+                                type='text'
+                                onBlur={handleBlur}
+                                placeholder="Enter"
+                                name='gst' // Map to Formik's skillsGained array
+                                value={values.gst || ''}
+                                onChange={handleChange}
+                                sx={fieldText}
+                                InputProps={{
+                                    startAdornment: (
+                                        <InputAdornment position="flex-start" sx={{
+                                            backgroundColor: 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                // edge="end"
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    // padding: '8px',
+                                                    border: "none",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-start",
+                                                    fontSize: '14px',
+                                                    color: '#000000',
+                                                    marginLeft: '-10px',
+                                                    marginRight: '-15px',
+                                                    // marginBottom: '20px'
+                                                }}
+                                                disableRipple // disables ripple effect for a cleaner loo
+                                            >
+                                                Rs.
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                    endAdornment: (
+                                        <InputAdornment position="flex-end" sx={{
+                                            backgroundColor: 'transparent',
+                                            '&:hover': {
+                                                backgroundColor: 'transparent'
+                                            }
+                                        }}>
+                                            <IconButton
+                                                // edge="end"
+                                                style={{
+                                                    backgroundColor: 'transparent',
+                                                    // padding: '8px',
+                                                    border: "none",
+                                                    display: 'flex',
+                                                    justifyContent: "flex-end",
+                                                    fontSize: '14px',
+                                                    fontWeight: '400',
+                                                    fontFamily: 'Public Sans',
+                                                    marginRight: '-10px'
+                                                    // marginBottom: '20px'
+                                                }}
+                                                disableRipple // disables ripple effect for a cleaner loo
+                                            >
+                                                /g
+                                            </IconButton>
+                                        </InputAdornment>
+                                    ),
+                                }}
+                            />
+                            <div
+                                className={dashboardStyle.changesStyke}
+                                onClick={handleSubmit}
+                            >Change</div>
+                        </div>
+                        {
+                            errors.gst && touched.gst && <p style={{ color: "red", fontSize: "12px" }}>{errors.gst}</p>
                         }
                     </div>
                 </div>

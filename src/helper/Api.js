@@ -161,8 +161,8 @@ class Api {
     
     
     // Order
-    orderStatistics = (data) => {
-        return this.init().get(`/admin/getOrderStatistics${data}`, data)
+    orderStatistics = () => {
+        return this.init().get(`/admin/getOrderStatistics`,)
     }
     getOrders = (data) => {
         return this.init().get(`/admin/orders?${data}`, data)
@@ -199,7 +199,7 @@ class Api {
     updateStatus = (data) => {
         console.log('url',data);
         
-        return this.init().put(`/admin/updateOrderstatus/${data?.id}`, data?.val);  
+        return this.init().put(`/admin/updateOrderstatus/${data?.id}`, {...data?.val, orderType: data?.orderType});  
     } 
 
     // Customer 

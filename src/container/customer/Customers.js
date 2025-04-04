@@ -127,6 +127,7 @@ export const Customers = () => {
                 />
             </div>
             <div className={productStyle.productStockContainer} style={{ marginTop: 10 }}>
+            <div className={productStyle.scrollContainer} >
                 <div className={productStyle.header} style={{ paddingLeft: 20 }}>
                     <div className={customerStyle.customerStyle}> Customer </div>
                     <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "firstName" } })}>
@@ -258,6 +259,7 @@ export const Customers = () => {
                         )}
                     </>
                 )}
+                </div>
             </div>
             <DeleteModal
                 heading={"Delete Customer"}

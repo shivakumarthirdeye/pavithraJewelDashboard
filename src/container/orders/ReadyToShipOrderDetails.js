@@ -100,7 +100,8 @@ export const ReadyToShipOrderDetails = () => {
 
     const {
         setFieldValue,
-        values
+        values,
+        setValues
     } = useFormik({
         initialValues: {
             status: "",
@@ -119,7 +120,14 @@ export const ReadyToShipOrderDetails = () => {
     };
     const arr = ordersDetailsData?.data?.status;
     const lastValue = arr?.at(-1); 
-    console.log(lastValue); // Output: 50
+
+    useEffect(() => {
+        if (lastValue) {
+            setValues({
+                status: lastValue.name
+            })
+        }
+    },[setValues,lastValue])
 
     // Variables to store total price and GST details
     let totalPriceBeforeGst = 0;
@@ -137,6 +145,7 @@ export const ReadyToShipOrderDetails = () => {
         // Accumulate the total price before GST and total GST amount
         totalPriceBeforeGst += priceBeforeGst;
     });
+
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
@@ -444,13 +453,13 @@ export const ReadyToShipOrderDetails = () => {
                                     displayEmpty
                                     defaultValue=""
                                     name="status"
-                                    value={values.status || lastValue?.name}
+                                    value={values.status}
                                     onChange={handleStatusChange} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>
                                     <MenuItem value="NEW">New</MenuItem>
                                     <MenuItem value="PROCESSING">Processing</MenuItem>
-                                    <MenuItem value="SHIPPED">Shipped</MenuItem>
+                                    <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                     <MenuItem value="DELIVERED">Delivered</MenuItem>
                                 </Select>
                             </div>

@@ -18,6 +18,7 @@ const initialState = {
     orderExportData: {},
     updateStatusData: {},
     filterOptions: {
+        isMutlipleOrder:false,
         status: "",
         search: "",
         startDate: "",
@@ -25,8 +26,7 @@ const initialState = {
         page: 1,
         order: '',
         sortBy: '',
-        limit: 10,
-        orderType:'',
+        limit: 10,        
         filter:""
     },
     errorMsg: "",
@@ -38,7 +38,7 @@ const initialState = {
 
 export const orderStatistics = createAsyncThunk('orderStatistics', async (body, { rejectWithValue, dispatch }) => {
     try {
-        const { data, status } = await api.orderStatistics(body);
+        const { data, status } = await api.orderStatistics();
         
         if (status === 200) {
                 //get categories data
@@ -214,11 +214,9 @@ export const approveReject = createAsyncThunk('approveReject', async ({ url, val
         return rejectWithValue(err.response?.data?.message || "Something went wrong.");
     }
 });
-export const updateStatus = createAsyncThunk('updateStatus', async ({ id, val }, { rejectWithValue, dispatch }) => {
-    console.log('valuessssssssss=======:', val);  // Check if URL is properly constructed
-    console.log('idsssssssssssssssss=========:', id);  // Ensure the value is correct
-    try {
-        const { data, status } = await api.updateStatus({val, id});  // Make sure url and val are passed correctly
+export const updateStatus = createAsyncThunk('updateStatus', async ({ id, val, orderType }, { rejectWithValue, dispatch }) => {
+     try {
+        const { data, status } = await api.updateStatus({val, id, orderType});  // Make sure url and val are passed correctly
 
         if (status === 200) {
             dispatch(setUpdateStatus(data.data));

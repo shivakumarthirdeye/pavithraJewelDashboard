@@ -25,7 +25,7 @@ export const ReadyToShipOrders = () => {
     const { ordersData, filterOptions, isLoading, isRefresh, orderStatisticsData } = useSelector((state) => state.orders);
 
     //Main data
-    console.log('orderStatisticsData==================', orderStatisticsData);
+    console.log('ordersData==================', ordersData);
 
     const [value, setValue] = useState([
         { val: "All Dates", id: 0 },
@@ -417,7 +417,7 @@ export const ReadyToShipOrders = () => {
                 })}
             </div>
             <div className={productStyle.container} style={{ marginTop: 20 }}>
-                <div >
+                <div style={{ width: '50%' }}>
                     <SwitchTab
                         value={value}
                         selected={selected}

@@ -1,0 +1,697 @@
+.productStockContainer {
+    width: 100%;
+    height: fit-content;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+    /* overflow-x: auto; */
+    /* white-space: nowrap; */
+}
+
+.scrollContainer {
+    display: inline-block;
+    min-width: 100%;
+    white-space: nowrap;
+}
+
+/* Custom Scrollbar */
+.scrollContainer::-webkit-scrollbar {
+    height: 5px;
+    /* Thin scrollbar */
+}
+
+.scrollContainer::-webkit-scrollbar-thumb {
+    background-color: #1D1F2C;
+    /* Dark scrollbar color */
+    border-radius: 2px;
+}
+
+.cardWrap {
+    display: flex;
+    justify-content: flex-start;
+    gap: 13px;
+    width: 100%;
+}
+.dateStyle {
+    display: flex;
+    justify-content: flex-start;
+    gap: 8px;
+}
+
+.skuText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.goldTypeText {
+    width: 16%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.goldWeightText {
+    width: 19%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.goldRateText {
+    width: 17%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.makingChargesText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.stoneChargesText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.diamondCaratText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.diamondPerCaratText {
+    width: 25%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.diamondCostText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.polkiCarateText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.polkiPerCaratText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.polkiCostText {
+    width: 20%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.gstText {
+    width: 5%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.qytText {
+    width: 34%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.priceStyle {
+    width: 25%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.pendingAmountStyle {
+    width: 45%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+}
+
+.backgroundStyle {
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    gap: 8px;
+    border-radius: 100px;
+    background: #E878191A;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.generalInfoStyle {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    flex-direction: row;
+}
+
+.generalInfoTextStyle {
+    font-family: Public Sans;
+    font-size: 20px;
+    font-weight: 600;
+    line-height: 30px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+}
+
+.lineStyle {
+    width: 312px;
+    height: 0px;
+    border-bottom: 1px solid #E0E2E7
+}
+
+.textStyle {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.statusStyling {
+    width: 282px;
+    height: 40px;
+    padding: 10px 12px 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+}
+
+.shipingCardStyle {
+    width: 331px;
+    height: fit-content;
+    /* padding: 24px; */
+    gap: 16px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+}
+
+.orderDateStyle {
+    font-family: Inter;
+    font-size: 19.17px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    color: #667085;
+}
+
+.orderDateStyle span {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 600;
+    line-height: 32.86px;
+    text-align: left;
+    color: #1D2939;
+}
+
+.dummyLineStyle {
+    width: 0px;
+    height: 25px;
+    border: 1.37px solid #D0D5DD
+}
+
+.estimateDeliveryStyle {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 600;
+    line-height: 32.86px;
+    text-align: left;
+    color: #12B76A;
+}
+
+.bottomLine {
+    width: 1150px;
+    /* height: 1px; */
+    border: 1.37px solid #D0D5DD;
+    margin-top: 20px;
+}
+
+
+
+.prizeText {
+    font-family: Inter;
+    font-size: 27.38px;
+    font-weight: 600;
+    line-height: 41.07px;
+    text-align: right;
+    color: #1D2939;
+}
+
+.qtyText {
+    font-family: Inter;
+    font-size: 21.91px;
+    font-weight: 400;
+    line-height: 32.86px;
+    text-align: right;
+    color: #667085;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 20px;
+}
+
+.paymentInfo {
+    /* background-color: #f5f5f5; */
+    padding-top: 10px;
+    border-radius: 8px;
+}
+
+.paymentCard {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 10px;
+}
+
+.cardIcon {
+    font-family: Inter;
+    font-size: 19.17px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    color: #667085;
+}
+
+.deliveryInfo p {
+    font-family: Inter;
+    font-size: 24.64px;
+    font-weight: 500;
+    line-height: 38.34px;
+    text-align: left;
+    color: #667085;
+}
+
+.deliveryInfo span {
+    font-family: Inter;
+    font-size: 19.17px;
+    font-weight: 400;
+    line-height: 27.38px;
+    text-align: left;
+    color: #667085;
+}
+
+
+.exportStyle {
+    width: fit-content;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    gap: 4px;
+    border-radius: 8px;
+    background: #F0F1F3;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.productStyle {
+    flex-direction: row;
+    justify-content: space-between;
+    display: flex;
+}
+
+.filterTextStyle {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.header {
+    width: 100%;
+    height: 42px;
+    padding: 12px 20px 12px 20px;
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    background: #F5F6F9;
+    /* margin-top: 10px; */
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    /* gap: 40px; */
+}
+
+.proNameText {
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    text-transform: capitalize;
+}
+
+.categoryStyle {
+    font-family: Public Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #667085;
+}
+
+.totalAmountStyle {
+    width: 64%;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: right;
+}
+
+.downloadingButtonStyle {
+    width: 118px;
+    height: 40px;
+    padding: 10px 14px 10px 14px;
+    gap: 4px;
+    border-radius: 8px;
+    background: #F0F1F3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: center;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #1D1F2C;
+}
+
+.productContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.productCard {
+    padding: 10px;
+    /* border: 1px solid #E5E7EB; */
+    border-radius: 10px;
+    box-shadow: 3px 3px 14px 5px #00000014;
+    background-color: #fff;
+}
+
+.productsInfo {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+
+}
+
+.productHeading {
+    font-family: Rubik;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 19.2px;
+    text-align: center;
+    color: #232323;
+}
+
+.productImage {
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
+}
+
+.productPrice {
+    font-family: Rubik;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 14px;
+    text-align: left;
+    color: #000000;
+    margin-top: 10px;
+}
+
+.productTextStyle {
+    width: 700px;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #4A4C56;
+    text-align: left;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.info {
+    padding: 0px 20px;
+    color: var(--Gray-900, #191B1C);
+    font-family: "Public Sans";
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    display: flex;
+    text-transform: capitalize;
+    align-items: center;
+    position: sticky;
+    height: 100px;
+    /* gap: 40px; */
+}
+
+.bottomLineStyle {
+    width: 100%;
+    border-bottom: 1px solid #E5E7E8;
+}
+
+.nameStyle {
+    font-family: Public Sans;
+    font-size: 16px;
+    font-weight: 500;
+    line-height: 24px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #777980;
+}
+
+.numStyle {
+    font-family: Public Sans;
+    font-size: 32px;
+    font-weight: 600;
+    line-height: 37.6px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    color: #1D1F2C;
+    margin-top: 5px;
+}
+
+.viewCardStyle {
+    width: 337px;
+    height: fit-content;
+    gap: 16px;
+    border-radius: 8px;
+    border: 1px solid #E0E2E7;
+    background-color: #FFFFFF;
+}
+
+.iconStyle {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.goldRateStyle {
+    font-family: Public Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    text-align: left;
+    text-underline-position: from-font;
+    text-decoration-skip-ink: none;
+    color: #4A4C56;
+}
+
+.goldRateStyle span {
+    color: #1D1F2C;
+}
+
+.orderTypeStyle {
+    width: fit-content;
+    /* height: 15; */
+    border-radius: 1px;
+    background: #E878190D;
+    padding: 5px 10px;
+    font-family: Poppins;
+    font-weight: 400;
+    font-size: 8px;
+    line-height: 150%;
+    letter-spacing: 0%;
+    text-align: center;
+    vertical-align: middle;
+    color: #E87819;
+
+}
+
+.pendingAmount {
+    display: flex;
+    align-items: center;
+    font-family: Public Sans;
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0.5%;
+    color: #F92929;
+}
+.fullyPaid {
+    width: 45%;
+    font-family: Public Sans;
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #07da5f;
+    text-align: left;
+}
+.exWeighttyle{
+    font-family: Public Sans;
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    color: #F92929;
+    text-transform: capitalize;
+}
+.tabViewCard{
+    display: none;
+}
+@media (max-width: 1024px) {
+    .cardWrap {
+        display: none;
+    }
+    .tabViewCard{
+        display: flex;
+        gap: 25px;
+    }
+}

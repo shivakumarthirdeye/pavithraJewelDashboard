@@ -45,7 +45,7 @@ const EditProduct = () => {
     const { productsDetailsData } = useSelector((state) => state.products)
 
     const data = productsDetailsData?.data;
-    console.log('productsDetailsData==============', productsDetailsData);
+    // console.log('productsDetailsData==============', productsDetailsData);
 
 
     const { categoriesExportData } = useSelector(
@@ -57,7 +57,10 @@ const EditProduct = () => {
 
     //State
     const [filteredSubcategory, setFilteredSubcategory] = useState([]);
-    console.log('filteredSubcategory==============', filteredSubcategory);
+    const [goldRates, setGoldRates] = useState({});
+    // console.log('goldRates', goldRates);
+
+    // console.log('filteredSubcategory==============', filteredSubcategory);
 
     useEffect(() => {
         dispatch(getCategoriesExport())
@@ -179,14 +182,14 @@ const EditProduct = () => {
                         type === "Polki" ? schema.min(1, "Polki per carat is required") : schema
                     ),
             }),
-            gst: yup.object().shape({
-                value: yup
-                    .number()
-                    .typeError("GST must be a number")
-                    .when("status", (status, schema) =>
-                        status === "active" ? schema.required("GST is required") : schema
-                    ),
-            }),
+            // gst: yup.object().shape({
+            //     value: yup
+            //         .number()
+            //         .typeError("GST must be a number")
+            //         .when("status", (status, schema) =>
+            //             status === "active" ? schema.required("GST is required") : schema
+            //         ),
+            // }),
             finalSalePrice: yup.object().shape({
                 value: yup
                     .number()
@@ -487,6 +490,11 @@ const EditProduct = () => {
 
     }
 
+    useEffect(() => {
+        if (goldRates?.gst !== undefined) {
+            setFieldValue("pricing.gst.value", goldRates.gst);
+        }
+    }, [goldRates, setFieldValue]);
     // handleCategoryChange
     const handleCategoryChange = (event) => {
         const selectedCategoryId = event.target.value;
@@ -823,9 +831,7 @@ const EditProduct = () => {
         },
     ]
 
-    const [goldRates, setGoldRates] = useState({});
-    console.log('goldRates', goldRates);
-
+    
 
     // Assuming you fetch the gold rates from your API and update the state
     const fetchGoldRates = async () => {
@@ -837,6 +843,7 @@ const EditProduct = () => {
             setGoldRates({
                 k22: data.k22,
                 k18: data.k18,
+                gst: data.gst
             });
         } catch (error) {
             console.error("Error fetching gold rates:", error);
@@ -902,7 +909,7 @@ const EditProduct = () => {
             const subtotal = goldRate + makingCharges + stoneCharges + diamondCost + polkiCost;
 
             // ✅ Apply GST correctly
-            const gstPercentage = values?.pricing?.gst?.value || 0;
+            const gstPercentage = goldRates?.gst || 0;
             const gstAmount = (subtotal * gstPercentage) / 100; // ✅ Corrected GST calculation
 
             const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
@@ -917,7 +924,7 @@ const EditProduct = () => {
         values?.pricing?.polkiCost?.value,
         values?.pricing?.makingCharges?.value,
         values?.pricing?.stoneCharges?.value,
-        values?.pricing?.gst?.value,
+        goldRates?.gst,
         setFieldValue
     ]);
 
@@ -1897,11 +1904,11 @@ const EditProduct = () => {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
-
+                                    // disabled
                                 />
-                                {
+                                {/* {
                                     errors?.pricing?.gst?.value && touched?.pricing?.gst?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.gst?.value}</p>
-                                }
+                                } */}
                             </div>
                             <div style={{ width: '67%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
@@ -1910,12 +1917,13 @@ const EditProduct = () => {
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
-                                    name="pricing.finalSalePrice.value"
+                                    // name="pricing.finalSalePrice.value"
                                     value={values.pricing.finalSalePrice.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
                                     fullWidth
+                                    // disabled
                                     InputProps={{
                                         startAdornment: (
                                             <InputAdornment position="flex-start" sx={{

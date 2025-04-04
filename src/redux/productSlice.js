@@ -13,6 +13,7 @@ const initialState = {
         startDate: "",
         endDate: "",
         category: "",
+        subCategory: "",
         page: 1,
         order: '',
         sortBy: '',

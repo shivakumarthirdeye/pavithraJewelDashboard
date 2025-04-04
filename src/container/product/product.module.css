@@ -151,8 +151,13 @@
     border-radius: 8px;
     border: 1px solid #E0E2E7;
     background-color: #FFFFFF;
+    overflow-x: auto;
+    white-space: nowrap;
 }
-
+.scrollContainer {
+    display: inline-block;
+    min-width: 100%;
+}
 .stockMainStyle {
     width: 10%;
     font-family: Public Sans;
@@ -180,7 +185,7 @@
 }
 
 .header {
-    width: 100%;
+    min-width: 100%;
     height: 42px;
     padding: 12px 20px 12px 20px;
     flex-direction: row;
@@ -190,6 +195,9 @@
     border-bottom: 1px solid #E5E7E8;
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 .productTextStyle {
@@ -295,17 +303,12 @@
 .info {
     padding: 15px 20px 15px 20px;
     background-color: #FFF;
-    color: var(--Gray-900, #191B1C);
-    font-family: "Public Sans";
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 20px;
-    /* 142.857% */
     display: flex;
     text-transform: capitalize;
     /* align-items: center; */
     border-bottom: 1px solid #E5E7E8;
-    width: 100%;
+    /* width: 100%; */
+    position: sticky;
 }
 
 .proNameText {
@@ -1411,4 +1414,50 @@ input {
     width: 100%;
     justify-content: space-between;
     gap: 10px;
+}
+@media (min-width:820px) and (max-width:1024px) {
+    .exportStyle {
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .addcategoryText {
+        font-size: 12px;
+        font-weight: 500;
+    }
+    .search input {
+        font-size: 12px;
+    }
+    .filterBoxStyle{
+        display: flex;
+        flex-direction: column;
+    }
+    .width {
+        display: flex;
+        justify-content: flex-end;
+        /* gap: 8px; */
+        width: 100%;
+        /* align-items: center; */
+    }
+    .search {
+        width: 100%;
+    }
+    
+    .scrollContainer {
+        min-width: 1000px; /* Ensures the container remains scrollable */
+        height: auto;
+        /* overflow-x: auto; Enables horizontal scrolling */
+        white-space: nowrap; /* Prevents line breaks */
+        /* scrollbar-gutter: stable; */
+    }
+
+    /* Custom Scrollbar */
+    .scrollContainer::-webkit-scrollbar {
+        height: 5px; /* Thin scrollbar */
+    }
+
+    .scrollContainer::-webkit-scrollbar-thumb {
+        background-color: #1D1F2C; /* Dark scrollbar color */
+        border-radius: 2px;
+    }
+    
 }

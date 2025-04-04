@@ -38,11 +38,11 @@ const ViewHomePageBuilder = () => {
             <ViewCategories />
             <ViewAboutUs />
             {/* <ViewSlider /> */}
-            <ViewBrandSlider />
+            {/* <ViewBrandSlider /> */}
             <ViewFeaturedProducts />
             <ViewOffersBanner/>
             <ViewTestimonials/>
-            <ViewCounters/>
+            {/* <ViewCounters/> */}
             <ViewInstagram/>
         </div >
     )
