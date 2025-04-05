@@ -11,9 +11,8 @@ import orderStyle from './orders.module.css'
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { editPendingPrice } from '../../redux/ordersSlice';
 
-const EditPriceModal = ({ open, onClose, data,item }) => {
+const EditPriceModal = ({ open, onClose, data, }) => {
     console.log('data================',data);
-    console.log('item================',item);
     
     const dispatch = useDispatch()
     
@@ -21,7 +20,7 @@ const EditPriceModal = ({ open, onClose, data,item }) => {
     const schema = yup.object().shape({
         weigthStatus: yup.string().required("Weigth status is required"),
         extraWeight: yup.string().required("Extra weight is required"),
-        pendingAmount: yup.string().required("Pending amount is required"),
+        pendingAmount: yup.number().typeError("Pending amount must be a number").min(0, "Pending amount is required"),
         customerNote: yup.string().required("Description is required"),
     })
 
@@ -39,7 +38,7 @@ const EditPriceModal = ({ open, onClose, data,item }) => {
         initialValues: {
             weigthStatus: "",
             extraWeight: "",
-            pendingAmount: "",
+            pendingAmount: 0,
             customerNote: "",
         },
         validationSchema: schema,
@@ -50,14 +49,15 @@ const EditPriceModal = ({ open, onClose, data,item }) => {
 
     })
 
+    console.log(typeof(values.pendingAmount) , "pendingg Amount")
     useEffect(() => {
         if (data?.data?.isMutlipleOrder === false ) {
             setValues({
-                pendingAmount:data?.data?.pendingAmount?.toLocaleString("en-IN")
+               pendingAmount: Number(data?.data?.pendingAmount?.toFixed(3))
             })
         } else {
             setValues({
-                pendingAmount:data?.pendingAmount?.toLocaleString("en-IN")
+                pendingAmount:Number(data?.pendingAmount?.toFixed(3))
             })
         }
     }, [data, setValues])
@@ -66,7 +66,7 @@ const EditPriceModal = ({ open, onClose, data,item }) => {
         if (data?.data?.isMutlipleOrder === false ) {
         dispatch(editPendingPrice({ url: `${data?.data?._id}`, val }))
         } else {
-            dispatch(editPendingPrice({ url: `${data?._id}`, val }))
+            dispatch(editPendingPrice({ url: `${data?.productId?._id}`, val }))
         }
     }
 
@@ -167,9 +167,9 @@ const EditPriceModal = ({ open, onClose, data,item }) => {
                     <label className={productStyle.label}>Pending Price*</label>
                     <TextField
                         placeholder='Enter'
-                        type={'text'}
+                        type='number'   
                         name="pendingAmount"
-                        value={values.pendingAmount || ''}
+                        value={values.pendingAmount || 0}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         sx={fieldText}

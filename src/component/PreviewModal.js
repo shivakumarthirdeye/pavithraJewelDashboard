@@ -12,14 +12,20 @@ const PreviewModal = ({ open, onClose, data }) => {
   // Function to handle image download
   const handleDownload = async () => {
     try {
-      const response = await fetch(data);
+      const response = await fetch(data, {
+        mode: 'cors'
+    });
+    console.log('response',response);
+    
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
+      console.log('blob',blob);
+      console.log('blobURL',blobUrl);
       
       // Create a temporary link
       const link = document.createElement("a");
       link.href = blobUrl;
-      link.setAttribute("download", "image.jpg"); // Set file name
+      link.setAttribute("download", "image.png"); // Set file name
       document.body.appendChild(link);
       link.click();
       
@@ -30,7 +36,20 @@ const PreviewModal = ({ open, onClose, data }) => {
       console.error("Download failed:", error);
     }
   };
+  // window.open(data, '_blank');
 
+  // const handleDownload = async () => {
+  //   try {
+  //     const response = await fetch(data);
+  //     console.log('response',response);
+      
+  //     const blob = await response.blob();
+  //     saveAs(blob, "image.jpg");
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //   }
+  // };
+  
 
   const style = {
     position: "absolute",

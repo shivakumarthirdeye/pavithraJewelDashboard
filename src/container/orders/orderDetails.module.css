@@ -694,4 +694,20 @@
         display: flex;
         gap: 25px;
     }
+    .pendingAmountStyle {
+        width: 60%;
+        font-family: Public Sans;
+        font-size: 12px;
+        font-weight: 400;
+    }
+    /* .totalAmountStyle {
+        width: 64%;
+        font-family: Public Sans;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: 20px;
+        letter-spacing: 0.005em;
+        color: #4A4C56;
+        text-align: right;
+    } */
 }

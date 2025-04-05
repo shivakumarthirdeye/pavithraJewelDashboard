@@ -282,8 +282,8 @@ export const MultiProductOrderDetails = () => {
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.qytText}>Status</div>
-                                    <div className={orderStyle.pendingAmountStyle}>Payment </div>
-                                    <div className={orderStyle.priceStyle}>Total </div>
+                                    <div className={orderStyle.pendingAmountStyle} style={{fontSize:14}}>Payment </div>
+                                    <div className={orderStyle.priceStyle} >Total </div>
                                 </div>
                                 <div>
                                     {ordersDetailsData?.data?.products?.map((item, index) => {

@@ -82,6 +82,10 @@ export const OrderDetails = () => {
         if (selectedStatus) {
             setFieldValue("status", selectedStatus); // Update Formik state
             dispatch(updateStatus({ val: { status: selectedStatus }, id: id, orderType: ordersDetailsData?.data?.orderType })); // Trigger API call
+        } else {
+            setValues({
+                status: selectedStatus
+            })
         }
     };
 
@@ -157,14 +161,7 @@ export const OrderDetails = () => {
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
-                    {/* <div className={orderStyle.exportStyle}>
-                        <ExportBlackIcon /> Export
-                    </div> */}
-                    {/* {ordersDetailsData?.status === 'DELIVERED' && (
-                        <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?._id}`)}>
-                            Customer reviews
-                        </div>
-                    )} */}
+
                     <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
@@ -273,7 +270,7 @@ export const OrderDetails = () => {
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.qytText}>Status</div>
-                                    <div className={orderStyle.pendingAmountStyle}>Payment </div>
+                                    <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 14 }}>Payment </div>
                                     <div className={orderStyle.priceStyle}>Total </div>
                                 </div>
                                 <div>
@@ -341,16 +338,17 @@ export const OrderDetails = () => {
                                         )
                                     })}
                                 </div>
-                            </div>
-                            <div className={orderStyle.bottomLineStyle} />
-                            <div className={orderStyle.info} >
-                                <div className={orderStyle.pendingAmountStyle}>Shipping Rate</div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.shippingRate} </div>
-                            </div>
-                            <div className={orderStyle.bottomLineStyle} />
-                            <div className={orderStyle.info} >
-                                <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹{ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+
+                                <div className={orderStyle.bottomLineStyle} />
+                                <div className={orderStyle.info} >
+                                    <div className={orderStyle.pendingAmountStyle}>Shipping Rate</div>
+                                    <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.shippingRate} </div>
+                                </div>
+                                <div className={orderStyle.bottomLineStyle} />
+                                <div className={orderStyle.info} >
+                                    <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
+                                    <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹{ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+                                </div>
                             </div>
                         </div>
                     </div>
