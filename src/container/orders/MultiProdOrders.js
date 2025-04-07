@@ -71,7 +71,9 @@ export const MultiProductOrderDetails = () => {
         setValues
     } = useFormik({
         initialValues: {
-            status: "",
+            // status: "",
+            readyToShipStatus: '',
+            madeToOrderStatus: ''
         },
         onSubmit: async (values) => {
             // dispatch(updateStatus({ values, id }));
@@ -81,14 +83,14 @@ export const MultiProductOrderDetails = () => {
     const handleStatusChange = (event) => {
         const selectedStatus = event.target.value;
         if (selectedStatus) {
-            setFieldValue("status", selectedStatus); // Update Formik state
+            setFieldValue("readyToShipStatus", selectedStatus); // Update Formik state
             dispatch(updateStatus({ val: { status: selectedStatus }, id: id, orderType: 'Ready to ship orders' })); // Trigger API call
         }
     };
     const handleStatusChangeForMadeOrder = (event) => {
         const selectedStatus = event.target.value;
         if (selectedStatus) {
-            setFieldValue("status", selectedStatus); // Update Formik state
+            setFieldValue("madeToOrderStatus", selectedStatus); // Update Formik state
             dispatch(updateStatus({ val: { status: selectedStatus }, id: id, orderType: 'Made to orders' })); // Trigger API call
         }
     };
@@ -255,7 +257,7 @@ export const MultiProductOrderDetails = () => {
                                                         {item?.productId?.pricing?.goldWeight?.value || '-'}g
                                                         <br />
                                                         {ordersDetailsData?.data?.extraWeight > 0 ? (
-                                                            <p className={orderStyle.exWeighttyle}>Ex:{ordersDetailsData?.data?.extraWeight}g</p>
+                                                            <p className={orderStyle.exWeighttyle}>Ex:{item?.extraWeight}g</p>
                                                         ) : null}
                                                     </div>
                                                     <div className={orderStyle.goldRateText}>₹{item?.productId?.pricing?.goldRate?.value?.toLocaleString("en-IN") || '-'}</div>
@@ -282,7 +284,7 @@ export const MultiProductOrderDetails = () => {
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.qytText}>Status</div>
-                                    <div className={orderStyle.pendingAmountStyle} style={{fontSize:14}}>Payment </div>
+                                    <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 14 }}>Payment </div>
                                     <div className={orderStyle.priceStyle} >Total </div>
                                 </div>
                                 <div>
@@ -336,7 +338,7 @@ export const MultiProductOrderDetails = () => {
                                                     {item?.selectedPaymentType === "Ad Paid" ? (
                                                         <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 10 }}>
                                                             Ad paid: ₹{item?.adPaymentAmount?.toLocaleString("en-IN")} <br />
-                                                            <p className={orderStyle.pendingAmount} onClick={() => openEditPriceModal(item)}>
+                                                            <p className={orderStyle.pendingAmount} onClick={() => openEditPriceModal({ data: item, id: id })}>
                                                                 Pending: ₹{item?.pendingAmount?.toLocaleString("en-IN")} <EditBlackIcon /></p>
                                                         </div>
                                                     ) : (
@@ -515,8 +517,8 @@ export const MultiProductOrderDetails = () => {
                                     )}
                                     displayEmpty
                                     defaultValue=""
-                                    name="status"
-                                    value={values.status}
+                                    name="readyToShipStatus"
+                                    value={values.readyToShipStatus}
                                     onChange={handleStatusChange} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>
@@ -547,8 +549,8 @@ export const MultiProductOrderDetails = () => {
                                     )}
                                     displayEmpty
                                     defaultValue=""
-                                    name="status"
-                                    value={values.status}
+                                    name="madeToOrderStatus"
+                                    value={values.madeToOrderStatus}
                                     onChange={handleStatusChangeForMadeOrder} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>
@@ -725,7 +727,7 @@ export const MultiProductOrderDetails = () => {
                                     {copiedPhone && <span style={{ marginLeft: 5, color: '#000', fontSize: 14, fontFamily: 'Poppins' }}>Copied!</span>}
                                 </div>
                             </div>
-                        </div>  
+                        </div>
                         <div className={orderStyle.shipingCardStyle} style={{ marginTop: 20, padding: 20 }}>
                             <div className={orderStyle.generalInfoStyle}>
                                 <div className={orderStyle.backgroundStyle}><LocationIcon /></div>
@@ -879,7 +881,7 @@ export const MultiProductOrderDetails = () => {
                         </div>
                     </div>
                 </div>
-               
+
             </div>
             <PreviewModal
                 // heading={"Delete Order"}

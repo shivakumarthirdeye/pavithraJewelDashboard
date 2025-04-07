@@ -198,6 +198,24 @@ export const editPendingPrice = createAsyncThunk('editPendingPrice', async ({url
     }
 }
 )
+export const editPendingPriceMultiProduct = createAsyncThunk('editPendingPriceMultiProduct', async ({url,productId,val}, { rejectWithValue, dispatch }) => {
+    try {
+        const { data, status } = await api.editPendingPriceMultiProduct({url,productId,val});
+
+        if (status === 200) {
+            // render otp screen
+            // dispatch(setEditPendingPrice({url,val}));
+            Toastify.success("Price Edited successfully");
+            dispatch(setRefresh());
+        }
+        return data.data
+
+    } catch (err) {
+        Toastify.error(err.response.data.message);
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
 export const approveReject = createAsyncThunk('approveReject', async ({ url, val }, { rejectWithValue, dispatch }) => {
     
     try {

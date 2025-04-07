@@ -111,7 +111,7 @@ export default function AboutUs() {
                 }
 
                 const { data, status } = await api.getPutSignedUrl(body);
-                console.log(data);
+                // console.log(data);
 
                 if (status === 200) {
                     await axios.put(data.data?.preSigned, file, {

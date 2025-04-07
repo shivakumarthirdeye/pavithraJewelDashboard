@@ -190,6 +190,9 @@ class Api {
     editPendingPrice = ({url,val}) => {
         return this.init().put(`/admin/updatePendingOrder/${url}`, val)
     } 
+    editPendingPriceMultiProduct = ({url,productId,val}) => {
+        return this.init().put(`/admin/order/update-multi-product/${url}/${productId}`, val)
+    } 
     editReviews = ({url,val}) => {
         return this.init().put(`/admin/reviews/${url}`, val)
     }

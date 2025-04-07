@@ -10,7 +10,7 @@ import { custom, saveChanges, SelectStyle, TextArea, TextInput } from '../../Mat
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { useFormik } from 'formik';
 import * as yup from "yup";
-import { AddIcon, CancelCateIcon } from '../../svg';
+import { AddIcon, CancelCateIcon, CrossIcon, ImageIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -20,6 +20,7 @@ import { toast } from 'react-toastify';
 import api from '../../helper/Api';
 import axios from 'axios';
 import Toastify from '../../helper/Toastify';
+import productStyle from '../product/product.module.css'
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -35,7 +36,7 @@ export default function Testimonials() {
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const { testimonialsData } = useSelector((state) => state.appearance);
-    const viewTestimonials = testimonialsData?.data?.testimonials;
+    const viewTestimonials = testimonialsData?.data;
     console.log('viewTestimonials', viewTestimonials);
 
 
@@ -45,14 +46,9 @@ export default function Testimonials() {
     }, [dispatch])
 
     const schema = yup.object().shape({
-        testimonials: yup.array().of(
-            yup.object().shape({
-                rating: yup.string().required("Rating is required"),
-                customerName: yup.string().required("Customer Name is required"),
-                customerRole: yup.string().required("Customer Role is required"),
-                testimony: yup.string().required("Testimony is required")
-            })
-        ).min(1, "At least one slider is required"), // Ensure there's at least one slider
+
+        image: yup.array().min(1, "At least one image is required")
+
     });
 
     const {
@@ -67,14 +63,8 @@ export default function Testimonials() {
         setValues
     } = useFormik({
         initialValues: {
-            testimonials: [
-                {
-                    rating: '',
-                    customerName: '',
-                    customerRole: '',
-                    testimony: '',
-                }
-            ]
+            customerName: '',
+            image: []
         },
         validationSchema: schema,
         onSubmit: async (values) => {
@@ -86,16 +76,12 @@ export default function Testimonials() {
     React.useEffect(() => {
         if (viewTestimonials) {
             setValues({
-                testimonials: viewTestimonials.map(item => ({
-                    rating: item?.rating || '',
-                    customerName: item?.customerName || '',
-                    customerRole: item?.customerRole || '',  // Ensure correct property name
-                    testimony: item?.testimony || '',
-                }))
-            });
+                customerName: viewTestimonials?.customerName || '',
+                image: viewTestimonials?.image || []
+            })
         }
     }, [viewTestimonials, setValues]);
-    
+
     const handleSubject = async (value) => {
         try {
             const resultAction = await dispatch(addTestimonials(value))
@@ -109,17 +95,120 @@ export default function Testimonials() {
 
     }
 
-    const handleAddTestimonial = () => {
-        setFieldValue('testimonials', [
-            ...values.testimonials,
-            { rating: '', customerName: '', customerRole: '', testimony: '', }
-        ]);
-    };
 
-    const handleDeleteHeroBanner = (index) => {
-        const updatedSliders = values.testimonials.filter((_, i) => i !== index);
-        setFieldValue('testimonials', updatedSliders);
+    const handleImageChange = async (e, index) => {
+        const files = e.target?.files; // Get all selected files
+        // if (!files) return;
+
+        try {
+            if (files) {
+                const uploadedImages = []; // Temporary array to store image URLs
+                for (let i = 0; i < files.length; i++) {
+                    const file = files[i];
+                    const body = {
+                        key: `${Date.now()}_${file.name}`,
+                        fileName: file.name,
+                    };
+
+                    const { data, status } = await api.getPutSignedUrl(body);
+
+                    console.log('data',data);
+                    
+                    if (status === 200) {
+                        await axios.put(data.data?.preSigned, file, {   
+                            headers: {
+                                "Content-Type": file.type,
+                            },
+                        });
+
+                        const imageUrl = data?.data?.url;
+                        uploadedImages.push(imageUrl); // Add uploaded image URL to the array
+                    }
+                }
+
+                // Update medias.photo by appending new images
+                setFieldValue('image', [...(values.image || []), ...uploadedImages]);
+                // setTimeout(() => {
+                //     e.target.value = null; // Reset input value
+                //   }, 100);
+            }   // Reset input value to allow selecting more images
+
+        } catch (err) {
+            console.error("error",err);
+            Toastify.error("Error uploading images");
+        }
     };
+  
+
+//     const handleImageChange = async (e, index) => {
+//     const files = e.target?.files;
+
+//     if (!files || files.length === 0) {
+//         console.warn("No files selected.");
+//         return;
+//     }
+
+//     try {
+//         const uploadedImages = [];
+
+//         for (let i = 0; i < files.length; i++) {
+//             const file = files[i];
+
+//             const body = {
+//                 key: `${Date.now()}_${file.name}`,
+//                 fileName: file.name,
+//             };
+
+//             try {
+//                 console.log("Requesting signed URL for:", file.name);
+
+//                 // Request pre-signed URL from your backend
+//                 const { data, status } = await api.getPutSignedUrl(body);
+
+//                 console.log("Signed URL response:", data);
+
+//                 if (status === 200) {
+//                     // Upload the file to S3 using the pre-signed URL
+//                     await axios.put(data.data?.preSigned, file, {
+//                         headers: {
+//                             "Content-Type": file.type,
+//                         },
+//                     });
+
+//                     const imageUrl = data?.data?.url;
+//                     console.log("Uploaded image URL:", imageUrl);
+
+//                     uploadedImages.push(imageUrl);
+//                 } else {
+//                     console.error("Failed to get signed URL for", file.name);
+//                 }
+//             } catch (uploadErr) {
+//                 console.error(`Error uploading ${file.name}:`, uploadErr);
+//                 Toastify.error(`Error uploading ${file.name}`);
+//             }
+//         }
+
+//         // Append uploaded images to form field
+//         setFieldValue('image', [...(values.image || []), ...uploadedImages]);
+//         console.log("Final uploaded image array:", [...(values.image || []), ...uploadedImages]);
+
+//     } catch (err) {
+//         console.error("Unexpected error while uploading images:", err);
+//         Toastify.error("Error uploading images");
+//     }
+// };
+
+  
+    const handleDeleteImage = (imageUrl, imgIndex) => {
+
+        // Remove the selected image by filtering it out from the media.photo array
+        const updatedImages = values.image.filter((_, index) => index !== imgIndex);
+
+        // Update the state with the new array
+        setFieldValue("image", updatedImages);
+    };
+    // console.log('log for image', values.image);
+
     return (
         <div style={{ marginTop: 20 }}>
             <CustomAccordion>
@@ -139,9 +228,9 @@ export default function Testimonials() {
                         letterSpacing: '0.005em',
                         textAlign: 'left'
 
-                    }}>Testimonials</Typography>
+                    }}>Happy Clients</Typography>
                 </AccordionSummary>
-                {values?.testimonials?.map((test, index) => (
+                {/* {values?.testimonials?.map((test, index) => (
                     <AccordionDetails
                         key={index}
                         sx={{
@@ -286,7 +375,101 @@ export default function Testimonials() {
                     <div className={appearancStyle.addButtonStyle} onClick={handleAddTestimonial}>
                         <AddIcon /> <span>Add another</span>
                     </div>
-                </Box>
+                </Box> */}
+                <div style={{ margin: "0px 20px 20px 19px" }}>
+                    <label className={productStyle.label}>Photo</label>
+                    <br />
+                    <div className={productStyle.imageUpload1}>
+                        <div className={productStyle.imageView}>
+                            <>
+                                {values?.image?.length > 0 ? (
+                                    <>
+                                        <div className={productStyle.imageContainer}>
+                                            {values?.image?.map((img, imgIndex) => (
+                                                <div key={imgIndex} className={productStyle.imageWrapper}>
+                                                    <div
+                                                        className={productStyle.deleteImageStyles}
+                                                        style={{ zIndex: 1 }}
+                                                        onClick={() => handleDeleteImage(img, imgIndex)} // Pass inventoryIndex and image URL to delete function
+                                                    >
+                                                        <CrossIcon />  {/* This is the delete icon */}
+                                                    </div>
+                                                    <img src={img} alt="Uploaded" className={productStyle.inventoryImage} />
+
+                                                </div>
+                                            ))}
+
+                                        </div>
+                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                id="imageProfileFile"
+                                                style={{ display: 'none' }}
+                                                onChange={handleImageChange}
+                                                // value={values.imageFile}
+                                                multiple
+                                            />
+                                            <label htmlFor="imageProfileFile" className={productStyle.uploadBox}>
+                                                Add Images
+                                            </label>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ImageIcon />
+                                        <div>
+                                            <p className={productStyle.uploadText} style={{ marginTop: 10 }}>
+                                                Drag and drop image here, or click add image
+                                            </p>
+                                        </div>
+                                        <div className={productStyle.pixel} style={{ marginTop: 10 }}>
+                                            <input
+                                                type="file"
+                                                accept="image/*"
+                                                id="imageProfileFile"
+                                                style={{ display: 'none' }}
+                                                onChange={handleImageChange}
+                                                // value={values.imageFile}
+                                                multiple
+                                            />
+                                            <label htmlFor="imageProfileFile" className={productStyle.uploadBox}>
+                                                Add Images
+                                            </label>
+                                        </div>
+                                    </>
+                                )}
+                            </>
+
+                        </div>
+                    </div>
+                    {
+                        errors?.image && touched?.image && <p style={{ color: "red", fontSize: "12px" }}>{errors?.image}</p>
+                    }
+                </div>
+                <div style={{ width: '100%', padding: 20 }}>
+                    <Typography
+                        sx={{
+                            fontWeight: '500',
+                            fontFamily: 'Public Sans',
+                            fontSize: '14px',
+                            lineHeight: '28px',
+                            letterSpacing: '0.005em',
+                            textAlign: 'left',
+                            color: '#777980'
+                        }}>
+                        Customer Name
+                    </Typography>
+                    <TextField
+                        placeholder='Enter'
+                        type={'text'}
+                        name={`customerName`}
+                        value={values.customerName || ''}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        sx={TextInput}
+                    />
+                </div>
                 <Box sx={{
                     marginBottom: '20px',
                     marginRight: '20px',

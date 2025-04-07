@@ -9,10 +9,11 @@ import { useDispatch } from 'react-redux';
 import productStyle from '../../container/product/product.module.css';
 import orderStyle from './orders.module.css'
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
-import { editPendingPrice } from '../../redux/ordersSlice';
+import { editPendingPrice, editPendingPriceMultiProduct } from '../../redux/ordersSlice';
 
-const EditPriceModal = ({ open, onClose, data, }) => {
+const EditPriceModal = ({ open, onClose, data,id }) => {
     console.log('data================',data);
+    console.log('id================',id);
     
     const dispatch = useDispatch()
     
@@ -57,7 +58,7 @@ const EditPriceModal = ({ open, onClose, data, }) => {
             })
         } else {
             setValues({
-                pendingAmount:Number(data?.pendingAmount?.toFixed(3))
+                pendingAmount:Number(data?.data?.pendingAmount?.toFixed(3))
             })
         }
     }, [data, setValues])
@@ -66,7 +67,7 @@ const EditPriceModal = ({ open, onClose, data, }) => {
         if (data?.data?.isMutlipleOrder === false ) {
         dispatch(editPendingPrice({ url: `${data?.data?._id}`, val }))
         } else {
-            dispatch(editPendingPrice({ url: `${data?.productId?._id}`, val }))
+            dispatch(editPendingPriceMultiProduct({ url: `${data?.id}`,productId:`${data?.data?.productId?._id}`, val }))
         }
     }
 
@@ -117,10 +118,10 @@ const EditPriceModal = ({ open, onClose, data, }) => {
                 </div>
                 ): (
                     <div className={orderStyle.jwelleryDetails}>
-                    <img src={data?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                    <img src={data?.data?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
                     <div>
-                        <p className={orderStyle.jwelleryText}>{data?.productId?.productName}</p>
-                        <p className={orderStyle.priceText}>₹{data?.sellingPrice?.toLocaleString("en-IN")}</p>
+                        <p className={orderStyle.jwelleryText}>{data?.data?.productId?.productName}</p>
+                        <p className={orderStyle.priceText}>₹{data?.data?.sellingPrice?.toLocaleString("en-IN")}</p>
                     </div>
                 </div>  
                 )}
