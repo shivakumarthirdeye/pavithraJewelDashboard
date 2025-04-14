@@ -26,7 +26,7 @@ export const Orders = () => {
     console.log('ordersData=======', ordersData);
 
     //Main data
-    console.log('orderStatisticsData==================', orderStatisticsData);
+    // console.log('orderStatisticsData==================', orderStatisticsData);
 
     const [value, setValue] = useState([
         { val: "All Dates", id: 0 },
@@ -565,51 +565,78 @@ export const Orders = () => {
                                                         <div className={productStyle.dropdownStyle} />
                                                         <div className={orderStyle.paymentStyle} style={{ color: '#667085' }}>
                                                             <div>
-                                                                Razorpay
+                                                                {item?.payment?.method}
                                                                 <br />
                                                                 {/* <span className={orderStyle.adPayment} style={{ color: '#F92929' }}>{item?.payment?.status}</span> */}
                                                             </div>
                                                         </div>
                                                         <div className={productStyle.dropdownStyle} />
-                                                        <div
-                                                            style={{
-                                                                backgroundColor: lastValue?.name === 'NEW'
-                                                                    ? "#4A4C561A" : lastValue?.name === 'PROCESSING'
-                                                                        ? '#F439391A' : lastValue?.name === 'DELIVERED'
-                                                                            ? '#EAF8FF' : '#3250FF1A',
-                                                                width: '15%',
-                                                                borderRadius: 10,
-                                                                height: 30,
-                                                                alignContent: 'center',
-                                                                justifyContent: 'center',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                // marginLeft: 20,
-                                                                alignSelf: 'center',
-                                                                paddingLeft: 7,
-                                                                paddingRight: 7
-                                                            }}
-                                                        >
-                                                            <span
+                                                        {item?.payment?.method === 'HDFC' ? (
+                                                            <div
                                                                 style={{
-                                                                    fontFamily: 'DM Sans',
-                                                                    fontSize: 12,
-                                                                    fontWeight: '600',
-                                                                    lineHeight: 18.23,
-                                                                    letterSpacing: 0.1,
-                                                                    textAlign: 'center',
-                                                                    // textTransform: 'capitalize',
-                                                                    color: lastValue?.name === 'NEW'
-                                                                        ? "#4A4C56" : lastValue?.name === 'PROCESSING'
-                                                                            ? '#F86624' : lastValue?.name === 'DELIVERED'
-                                                                                ? '#2BB2FE' : '#3250FF',
+                                                                    backgroundColor: item?.status === 'CHARGED'
+                                                                        ? "#EAF8FF" : '#F439391A',
+                                                                    width: '15%',
+                                                                    borderRadius: 10,
+                                                                    height: 30,
+                                                                    alignContent: 'center',
+                                                                    justifyContent: 'center',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    // marginLeft: 20,
+                                                                    alignSelf: 'center',
+                                                                    paddingLeft: 7,
+                                                                    paddingRight: 7
                                                                 }}
-                                                            >{lastValue?.name === 'NEW'
-                                                                ? "New" : lastValue?.name === 'PROCESSING'
-                                                                    ? 'Processing' : lastValue?.name === 'DELIVERED'
-                                                                        ? 'Delivered' : 'Shipped'}
-                                                            </span>
-                                                        </div>
+                                                            >
+                                                                <span
+                                                                    style={{
+                                                                        fontFamily: 'DM Sans',
+                                                                        fontSize: 12,
+                                                                        fontWeight: '600',
+                                                                        lineHeight: 18.23,
+                                                                        letterSpacing: 0.1,
+                                                                        textAlign: 'center',
+                                                                        // textTransform: 'capitalize',
+                                                                        color: item?.status === 'CHARGED'
+                                                                            ? "#34A853" : '#F86624',
+                                                                    }}
+                                                                >{item?.status === 'CHARGED'
+                                                                    ? "Charged" : 'Pending'}
+                                                                </span>
+                                                            </div>
+                                                        ) : item?.payment?.method === 'RAZORPAY' && (
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: "#EAF8FF",
+                                                                    width: '15%',
+                                                                    borderRadius: 10,
+                                                                    height: 30,
+                                                                    alignContent: 'center',
+                                                                    justifyContent: 'center',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    // marginLeft: 20,
+                                                                    alignSelf: 'center',
+                                                                    paddingLeft: 7,
+                                                                    paddingRight: 7
+                                                                }}
+                                                            >
+                                                                <span
+                                                                    style={{
+                                                                        fontFamily: 'DM Sans',
+                                                                        fontSize: 12,
+                                                                        fontWeight: '600',
+                                                                        lineHeight: 18.23,
+                                                                        letterSpacing: 0.1,
+                                                                        textAlign: 'center',
+                                                                        // textTransform: 'capitalize',
+                                                                        color: "#34A853",
+                                                                    }}
+                                                                >Charged
+                                                                </span>
+                                                            </div>
+                                                        )}
                                                         <div className={productStyle.dropdownStyle} />
                                                         <div className={orderStyle.action}>
                                                             <div
@@ -688,6 +715,8 @@ export const Orders = () => {
                             <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "price" } })}> <Drop color="#858D9D" /> </div>
                             <div className={orderStyle.paymentStyle}>Payment</div>
                             <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "payment" } })}> <Drop color="#858D9D" /> </div>
+                            <div className={orderStyle.status}>Status</div>
+                            <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "payment" } })}> <Drop color="#858D9D" /> </div>
                             <div className={orderStyle.action}>Action</div>
                         </div>
                         {isLoading ? (
@@ -741,13 +770,78 @@ export const Orders = () => {
                                                         <div className={productStyle.dropdownStyle} />
                                                         <div className={orderStyle.paymentStyle} style={{ color: '#667085' }}>
                                                             <div>
-                                                                Razorpay
+                                                                {item?.payment?.method}
                                                                 <br />
                                                                 {/* <span className={orderStyle.adPayment} style={{ color: '#F92929' }}>{item?.payment?.status}</span> */}
                                                             </div>
                                                         </div>
                                                         <div className={productStyle.dropdownStyle} />
-
+                                                        {item?.payment?.method === 'HDFC' ? (
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: item?.status === 'CHARGED'
+                                                                        ? "#EAF8FF" : '#F439391A',
+                                                                    width: '15%',
+                                                                    borderRadius: 10,
+                                                                    height: 30,
+                                                                    alignContent: 'center',
+                                                                    justifyContent: 'center',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    // marginLeft: 20,
+                                                                    alignSelf: 'center',
+                                                                    paddingLeft: 7,
+                                                                    paddingRight: 7
+                                                                }}
+                                                            >
+                                                                <span
+                                                                    style={{
+                                                                        fontFamily: 'DM Sans',
+                                                                        fontSize: 12,
+                                                                        fontWeight: '600',
+                                                                        lineHeight: 18.23,
+                                                                        letterSpacing: 0.1,
+                                                                        textAlign: 'center',
+                                                                        // textTransform: 'capitalize',
+                                                                        color: item?.status === 'CHARGED'
+                                                                            ? "#34A853" : '#F86624',
+                                                                    }}
+                                                                >{item?.status === 'CHARGED'
+                                                                    ? "Charged" : 'Pending'}
+                                                                </span>
+                                                            </div>) : (
+                                                            <div
+                                                                style={{
+                                                                    backgroundColor: "#EAF8FF",
+                                                                    width: '15%',
+                                                                    borderRadius: 10,
+                                                                    height: 30,
+                                                                    alignContent: 'center',
+                                                                    justifyContent: 'center',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    // marginLeft: 20,
+                                                                    alignSelf: 'center',
+                                                                    paddingLeft: 7,
+                                                                    paddingRight: 7
+                                                                }}
+                                                            >
+                                                                <span
+                                                                    style={{
+                                                                        fontFamily: 'DM Sans',
+                                                                        fontSize: 12,
+                                                                        fontWeight: '600',
+                                                                        lineHeight: 18.23,
+                                                                        letterSpacing: 0.1,
+                                                                        textAlign: 'center',
+                                                                        // textTransform: 'capitalize',
+                                                                        color: "#34A853",
+                                                                    }}
+                                                                >Charged
+                                                                </span>
+                                                            </div>
+                                                        )}
+                                                        <div className={productStyle.dropdownStyle} />
                                                         <div className={orderStyle.action}>
                                                             <div
                                                                 onClick={() => navigate(`/orders/Orders/MultiProductOrderDetails/${item._id}`)}

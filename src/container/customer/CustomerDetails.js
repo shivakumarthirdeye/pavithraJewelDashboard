@@ -599,8 +599,10 @@ export const CustomersDetails = () => {
                         <>
                             <div>
                                 {customerDetailOrders?.map((item, index) => {
-                                    const arr = item?.status;
+                                    const arr = item?.products?.status;
                                     const lastValue = arr?.at(-1);
+                                    console.log('item========', item);
+                                    
                                     return (
                                         <div
                                             className={productStyle.info}
@@ -621,19 +623,10 @@ export const CustomersDetails = () => {
                                                     alt="Featured"
                                                 />
                                                 <div>
-                                                    <span style={{ marginLeft: 5, color: "#1D1F2C" }}>
-                                                        {item?.productDetails[0]?.productName}
-                                                    </span>
+                                                    <span style={{ marginLeft: 5, fontSize: 12,color: "#1D1F2C" }}>{item?.productDetails[0]?.productName && item?.productDetails[0]?.productName?.length > 25 ? `${item?.productDetails[0]?.productName?.substring(0, 25)}...` : item?.productDetails[0]?.productName}</span>
+                                                    
                                                     <br />
-                                                    {item?.productDetails?.length > 1 ? (
-                                                        <p
-                                                            style={{ marginLeft: 5 }}
-                                                            className={productStyle.description}
-                                                        >
-                                                            +{item?.productDetails?.length - 1} Other
-                                                            Products
-                                                        </p>
-                                                    ) : null}
+                                                    
                                                 </div>
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
@@ -648,7 +641,7 @@ export const CustomersDetails = () => {
                                             // style={{ marginLeft: 10 }}
                                             />
                                             <div className={orderStyle.totalStyle}>
-                                                {item?.grandTotal}
+                                                {item?.grandTotal?.toLocaleString("en-IN")}
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
                                             <div
@@ -661,11 +654,11 @@ export const CustomersDetails = () => {
                                             <div
                                                 style={{
                                                     backgroundColor:
-                                                        lastValue?.name === "NEW"
+                                                    item?.products?.status[0]?.name === "NEW"
                                                             ? "#c7c8ca"
-                                                            : lastValue?.name === "PROCCESSING"
+                                                            : item?.products?.status[0]?.name === "PROCESSING"
                                                                 ? "#F439391A"
-                                                                : lastValue?.name === "SHIPPED"
+                                                                : item?.products?.status[0]?.name === "SHIPPED"
                                                                     ? "#EAF8FF"
                                                                     : "#E9FAF7",
                                                     width: "14%",
@@ -690,16 +683,16 @@ export const CustomersDetails = () => {
                                                         textTransform: "capitalize",
                                                         textAlign: "center",
                                                         color:
-                                                            lastValue?.name === "NEW"
+                                                        item?.products?.status[0]?.name === "NEW"
                                                                 ? "#4A4C56"
-                                                                : lastValue?.name === "PROCCESSING"
+                                                                : item?.products?.status[0]?.name === "PROCESSING"
                                                                     ? "#F86624"
-                                                                    : lastValue?.name === "SHIPPED"
+                                                                    : item?.products?.status[0]?.name === "SHIPPED"
                                                                         ? "#2BB2FE"
                                                                         : "#1A9882",
                                                     }}
                                                 >
-                                                    {lastValue?.name === 'NEW' ? 'New' : lastValue?.name === 'PROCCESSING' ? 'Processing' : lastValue?.name === 'SHIPPED' ? 'Shipped' : 'Delivered'}
+                                                    {item?.products?.status?.[0]?.name === 'NEW' ? 'New' : item?.products?.status?.[0]?.name === 'PROCESSING' ? 'Processing' : item?.products?.status[0]?.name === 'SHIPPED' ? 'Out for delivery' : 'Delivered'}
                                                 </span>
                                             </div>
                                             <div className={productStyle.dropdownStyle} />

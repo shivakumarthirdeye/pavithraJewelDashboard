@@ -134,26 +134,15 @@ const Notifications = () => {
                                     <p className={notificationStyle.notificationDescription}>
                                         {notification.message}
                                     </p>
-                                    {notification?.notificationType === 'ORDER' && notification?.orderType === 'Ready to ship orders' && (
                                         <div className={notificationStyle.viewStyle}
                                             onClick={() => {
-                                                navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/${notification?.orderId}`);
+                                                navigate(`/orders/Orders/OrderDetails/${notification?.orderId}`);
                                                 handleReadNotification(notification._id);
                                             }}
                                         >
                                             View
                                         </div>
-                                    )}
-                                    {notification?.notificationType === 'ORDER' && notification?.orderType === 'Made to orders' && (
-                                        <div className={notificationStyle.viewStyle}
-                                            onClick={() => {
-                                                navigate(`/orders/MadeToOrders/MadeToOrderDetails/${notification?.orderId}`);
-                                                handleReadNotification(notification._id);
-                                            }}
-                                        >
-                                            View
-                                        </div>
-                                    )}
+                                    
                                     <span className={notificationStyle.notificationTimestamp} style={{ paddingBottom: 20 }}
                                     >
                                         {formattedDate(notification.createdAt)}

@@ -218,6 +218,7 @@ export const OrderDetails = () => {
                                     <div className={orderStyle.polkiPerCaratText}>Polki Per Carat</div>
                                     <div className={orderStyle.polkiCostText}>Polki Cost</div>
                                     <div className={orderStyle.gstText}>Gst</div>
+                                    <div className={orderStyle.finalPriceText}>Final Sale Price</div>
                                 </div>
                                 <div>
                                     {ordersDetailsData?.data?.products?.map((item, index) => {
@@ -256,6 +257,7 @@ export const OrderDetails = () => {
                                                     <div className={orderStyle.polkiPerCaratText}>₹{item?.productId?.pricing?.polkiPerCarat?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.polkiCostText}>₹{item?.productId?.pricing?.polkiCost?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.gstText}>{item?.productId?.pricing?.gst?.value}%</div>
+                                                    <div className={orderStyle.finalPriceText}>₹{item?.productId?.pricing?.finalSalePrice?.value?.toLocaleString("en-IN")}</div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
                                             </>
@@ -451,9 +453,15 @@ export const OrderDetails = () => {
                                         <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>ID</p>
 
                                     </div>
-                                    <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                        {ordersDetailsData?.data?.payment?.id}
-                                    </div>
+                                    {ordersDetailsData?.data?.payment?.method === 'HDFC' ? (
+                                        <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                            {ordersDetailsData?.data?.hdfc_order_id}
+                                        </div>
+                                    ) : (
+                                        <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                            {ordersDetailsData?.data?.payment?.id}
+                                        </div>
+                                    )}
                                 </div>
                                 <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPaymentId}>
                                     <CopyIcon />
@@ -466,10 +474,15 @@ export const OrderDetails = () => {
                                     <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>Payment Method</p>
 
                                 </div>
-                                <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersDetailsData?.payment?.type} */}
-                                    Razorpay
-                                </div>
+                                {ordersDetailsData?.data?.payment?.method === 'HDFC' ? (
+                                    <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                        HDFC
+                                    </div>
+                                ) : (
+                                    <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                        Razorpay
+                                    </div>
+                                )}
                             </>
                         </div>
                     </div>

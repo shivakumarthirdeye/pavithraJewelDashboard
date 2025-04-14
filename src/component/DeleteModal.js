@@ -23,7 +23,6 @@ const DeleteModal = ({
             closeModal()
         }
     })
-console.log('data',data);
 
     useEffect(() => {
         if (data) {

@@ -15,7 +15,7 @@ const Header = ({ children }) => {
     const navigate = useNavigate()
     const { user } = useSelector((state) => state.user)
     const {notificationData} = useSelector((state) => state.notification)
-console.log('user============',user);
+// console.log('user============',user);
 
     const notificationCount = notificationData?.data?.unReadedNotifications || 0
 
