@@ -18,7 +18,7 @@ export const MultiProductOrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh } = useSelector((state) => state.orders);
-    console.log('ordersDetailsData', ordersDetailsData);
+    // console.log('ordersDetailsData===========', ordersDetailsData);
 
 
     useEffect(() => {
@@ -95,12 +95,19 @@ export const MultiProductOrderDetails = () => {
         }
     };
     // useEffect(() => {
+    //     const orderSingleData = ordersDetailsData?.data?.products?.map((item, index) => {
+    //         const arr = item?.status;
+    //         const lastValue = arr?.at(-1);
+        
     //     if (lastValue) {
     //         setValues({
-    //             status: lastValue.name
+    //             readyToShipStatus: lastValue.name,
+    //             // madeToOrderStatus: lastValue.name
     //         })
     //     }
-    // },[setValues,lastValue])
+    // })
+    // // orderSingleData()
+    // },[setValues,])
 
 
     const handleCopyEmail = () => {
@@ -271,7 +278,7 @@ export const MultiProductOrderDetails = () => {
                                                     <div className={orderStyle.polkiPerCaratText}>₹{item?.productId?.pricing?.polkiPerCarat?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.polkiCostText}>₹{item?.productId?.pricing?.polkiCost?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.gstText}>{item?.productId?.pricing?.gst?.value}%</div>
-                                                    <div className={orderStyle.finalPriceText}>₹{item?.productId?.pricing?.finalSalePrice?.value?.toLocaleString("en-IN")}</div>
+                                                    <div className={orderStyle.finalPriceText}>₹{item?.sellingPrice?.toLocaleString("en-IN")}</div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
                                             </>

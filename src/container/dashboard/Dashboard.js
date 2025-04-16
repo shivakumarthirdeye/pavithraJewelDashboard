@@ -38,7 +38,7 @@ export const Dashboard = () => {
             id: 0,
             icon: <IncomeIcon />,
             name: "Income",
-            number: statisticsData?.totalOrderRevenue?.toFixed(2),
+            number: `₹ ${statisticsData?.totalOrderRevenue?.toLocaleString("en-IN")}`,
         },
         {
             id: 1,

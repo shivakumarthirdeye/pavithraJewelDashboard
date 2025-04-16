@@ -45,7 +45,7 @@ const EditProduct = () => {
     const { productsDetailsData } = useSelector((state) => state.products)
 
     const data = productsDetailsData?.data;
-    // console.log('productsDetailsData==============', productsDetailsData);
+    console.log('productsDetailsData==============', productsDetailsData);
 
 
     const { categoriesExportData } = useSelector(
@@ -58,7 +58,7 @@ const EditProduct = () => {
     //State
     const [filteredSubcategory, setFilteredSubcategory] = useState([]);
     const [goldRates, setGoldRates] = useState({});
-    // console.log('goldRates', goldRates);
+    console.log('goldRates', goldRates);
 
     // console.log('filteredSubcategory==============', filteredSubcategory);
 
@@ -413,7 +413,7 @@ const EditProduct = () => {
                         status: data?.pricing?.goldWeight?.status
                     },
                     goldRate: {
-                        value: data?.pricing?.goldRate?.value || 0,
+                        value: calculateGoldCost(data?.gold?.type, data.pricing.goldWeight.value),
                         status: data?.pricing?.goldRate?.status
                     },
                     makingCharges: {
@@ -457,7 +457,7 @@ const EditProduct = () => {
                         status: data?.pricing?.gst?.status
                     },
                     finalSalePrice: {
-                        value: data?.pricing?.finalSalePrice?.value || 0,
+                        value: productsDetailsData?.sellingPrice || 0,
                         status: data?.pricing?.finalSalePrice?.status
                     },
                 },
@@ -869,9 +869,11 @@ const EditProduct = () => {
         if (values.gold.type && values.pricing.goldWeight.value) {
             const goldCost = calculateGoldCost(values.gold.type, values.pricing.goldWeight.value);
             setFieldValue("pricing.goldRate.value", goldCost);
-        }
-    }, [values.gold.type, values.pricing.goldWeight.value, goldRates, setFieldValue]);
+            
+        } 
+    }, [values.gold.type, values.pricing.goldWeight.value, goldRates, setFieldValue,]);
 
+    
     // // // Example: Update gold cost whenever `diamond` or `diamond cost` changes
     useEffect(() => {
         if (values.pricing.diamondCarat.value && values.pricing.diamondPerCarat.value) {
@@ -915,7 +917,7 @@ const EditProduct = () => {
             const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
 
             // ✅ Update form values
-            setFieldValue('pricing.finalSalePrice.value', finalSalePrice.toFixed(2));
+            setFieldValue('pricing.finalSalePrice.value', finalSalePrice?.toLocaleString("en-IN"));
         }
     }, [
         values?.pricing?.goldWeight?.value,

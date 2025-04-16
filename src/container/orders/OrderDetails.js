@@ -76,7 +76,8 @@ export const OrderDetails = () => {
             // dispatch(updateStatus({ values, id }));
         }
     });
-
+   
+    
     const handleStatusChange = (event) => {
         const selectedStatus = event.target.value;
         if (selectedStatus) {
@@ -88,14 +89,20 @@ export const OrderDetails = () => {
             })
         }
     };
-
-    // useEffect(() => {
-    //     if (lastValue) {
-    //         setValues({
-    //             status: lastValue.name
-    //         })
-    //     }
-    // },[setValues,lastValue])
+    
+    useEffect(() => {
+        const orderSingleData = ordersDetailsData?.data?.products?.map((item, index) => {
+            const arr = item?.status;
+            const lastValue = arr?.at(-1);
+        
+        if (lastValue) {
+            setValues({
+                status: lastValue.name
+            })
+        }
+    })
+    // orderSingleData()
+    },[setValues,])
 
     const handleCopyEmail = () => {
         const email = ordersDetailsData?.data?.userId?.email;
@@ -165,9 +172,9 @@ export const OrderDetails = () => {
                     <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
-                    {/* <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>
+                    <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>
                         <InvoiceIcon /><div className={productStyle.addcategoryText}> Invoice</div>
-                    </div> */}
+                    </div>
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
@@ -257,7 +264,7 @@ export const OrderDetails = () => {
                                                     <div className={orderStyle.polkiPerCaratText}>₹{item?.productId?.pricing?.polkiPerCarat?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.polkiCostText}>₹{item?.productId?.pricing?.polkiCost?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.gstText}>{item?.productId?.pricing?.gst?.value}%</div>
-                                                    <div className={orderStyle.finalPriceText}>₹{item?.productId?.pricing?.finalSalePrice?.value?.toLocaleString("en-IN")}</div>
+                                                    <div className={orderStyle.finalPriceText}>₹{item?.sellingPrice?.toLocaleString("en-IN")}</div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
                                             </>
@@ -319,7 +326,7 @@ export const OrderDetails = () => {
                                                             >{lastValue?.name === 'NEW'
                                                                 ? "New" : lastValue?.name === 'PROCESSING'
                                                                     ? 'Processing' : lastValue?.name === 'DELIVERED'
-                                                                        ? 'Delivered' : 'Shipped'}
+                                                                        ? 'Delivered' : 'Out for delivery'}
                                                             </span>
                                                         </div>
                                                     </div>
@@ -524,7 +531,7 @@ export const OrderDetails = () => {
                                     <MenuItem value="">Select</MenuItem>
                                     <MenuItem value="NEW">New</MenuItem>
                                     <MenuItem value="PROCESSING">Processing</MenuItem>
-                                    <MenuItem value="SHIPPED">Shipped</MenuItem>
+                                    <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                     <MenuItem value="DELIVERED">Delivered</MenuItem>
                                 </Select>
                             </div>
@@ -616,7 +623,7 @@ export const OrderDetails = () => {
                                         <MenuItem value="">Select</MenuItem>
                                         <MenuItem value="NEW">New</MenuItem>
                                         <MenuItem value="PROCESSING">Processing</MenuItem>
-                                        <MenuItem value="SHIPPED">Shipped</MenuItem>
+                                        <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                         <MenuItem value="DELIVERED">Delivered</MenuItem>
                                     </Select>
                                 </div>

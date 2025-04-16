@@ -20,7 +20,7 @@ const ProductViewDetails = () => {
     const getAllReview = productsDetail?.productsDetailsData?.allreviews;
     const location = useLocation()
     const path = location.pathname.split("/")[2]
-    console.log('productsDetail', productsDetail);
+    console.log('productsDetail', productsDetail.productsDetailsData    );
 
 
     useEffect(() => {
@@ -281,7 +281,8 @@ const ProductViewDetails = () => {
                             </div> */}
                         </div>
                         <div className={productStyle.dollarSyle}>
-                            ₹{productsDetail?.productsDetailsData?.sellingPrice?.toLocaleString("en-IN")} <span> ₹{productsDetail?.productsDetailsData?.totalPrice?.toLocaleString("en-IN")}</span>
+                            ₹{productsDetail?.productsDetailsData?.sellingPrice?.toLocaleString("en-IN")} 
+                            {/* <span> ₹{productsDetail?.productsDetailsData?.totalPrice?.toLocaleString("en-IN")}</span> */}
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Description:
