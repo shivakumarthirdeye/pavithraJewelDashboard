@@ -1923,8 +1923,8 @@ const EditProduct = () => {
                                 <TextField
                                     placeholder='Enter'
                                     type={'number'}
-                                    // name="pricing.finalSalePrice.value"
-                                    value={values.pricing.finalSalePrice.value || 0}
+                                    name="pricing.finalSalePrice.value"
+                                    value={values.pricing.finalSalePrice.value || ''}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
