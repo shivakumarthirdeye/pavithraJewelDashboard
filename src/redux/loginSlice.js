@@ -50,7 +50,7 @@ export const forgotPassword = createAsyncThunk('forgotPassword', async (body, { 
         if (status === 200) {
                 dispatch(setLoading(false))
                 dispatch(setForgotPassword(body))
-                Toastify.success("OTP sent successfully");
+                Toastify.success(data.data.message);
                 localStorage.setItem("email",body.email)
         }
         return data.data
@@ -78,15 +78,15 @@ export const verifyOtp = createAsyncThunk('verifyOtp', async (body, { rejectWith
     }
 }
 )
-export const resetPassword = createAsyncThunk('verifyOtp', async (body, { rejectWithValue, dispatch }) => {
+export const resetPassword = createAsyncThunk('resetPassword', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.resetPassword(body);
        
         dispatch(setLoading(true))
         if (status === 200) {
                 dispatch(setLoading(false))
-                dispatch(setResetPassword(body))
-                Toastify.success("Password Reset Successfully");
+                // dispatch(setResetPassword(body))
+                Toastify.success(data.data.message);
         }
         return data.data
     } catch (err) {

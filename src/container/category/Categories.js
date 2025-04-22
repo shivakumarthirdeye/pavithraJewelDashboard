@@ -97,7 +97,7 @@ console.log('categoriesData',categoriesData);
         console.log("result", result);
         const excelData = result?.data?.map((item) => ({
             Category: item?.name || "_",
-            Sales: item?.sales || 0,
+            Sales: `Rs. ${item?.totalSale?.toLocaleString("en-IN")}` || 0,
             Description: item?.description || "",
             CreatedDate: changeDateFormat(item?.createdAt) || "-",
             Status: item?.status === 'ACTIVE' ? `Active` : `Inactive` || "-",

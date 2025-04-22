@@ -50,6 +50,8 @@ export default function Categories() {
 
     
     const [selectedCategories, setSelectedCategories] = React.useState([]);
+    console.log('selectedCategories',selectedCategories);
+    
 
     const schema = yup.object().shape({
         categories: yup.array()
@@ -103,15 +105,31 @@ export default function Categories() {
     }, [dispatch])
 
     const handleCategoryChange = (event) => {
-        const selectedCategoryIds = event.target.value; // Get selected category IDs
-        // Find the full category objects based on selected IDs
-        const selectedCategoriesData = categoriesExportData?.data?.filter((category) =>
-            selectedCategoryIds?.includes(category?._id)
+        const selectedCategoryIds = event.target.value;
+    
+        // Start with existing selected categories to preserve order
+        const updatedSelectedCategories = [...selectedCategories];
+    
+        selectedCategoryIds.forEach((id) => {
+            // If the category is not already in the selected list, add it
+            const alreadySelected = updatedSelectedCategories.find(cat => cat._id === id);
+            if (!alreadySelected) {
+                const fullCategory = categoriesExportData?.data?.find(cat => cat._id === id);
+                if (fullCategory) {
+                    updatedSelectedCategories.push(fullCategory);
+                }
+            }
+        });
+    
+        // Remove any that are no longer selected
+        const finalSelectedCategories = updatedSelectedCategories.filter(cat =>
+            selectedCategoryIds.includes(cat._id)
         );
-
-        setSelectedCategories(selectedCategoriesData);
-        setFieldValue('categories', selectedCategoryIds, true); // Store only the IDs in Formik
+    
+        setSelectedCategories(finalSelectedCategories);
+        setFieldValue('categories', selectedCategoryIds, true);
     };
+    
 
     const handleRemoveCategory = (categoryId) => {
         // Filter out the removed category

@@ -45,9 +45,9 @@ const EditProduct = () => {
     const { productsDetailsData } = useSelector((state) => state.products)
 
     const data = productsDetailsData?.data;
-    console.log('productsDetailsData==============', productsDetailsData);
+    // console.log('productsDetailsData==============', productsDetailsData);
 
-
+    const finalSalePriceForEdit = parseFloat(productsDetailsData?.sellingPrice)
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
@@ -359,7 +359,7 @@ const EditProduct = () => {
 
     })
 
-    console.log('valuessssssssssssssssssssssssssss', values);
+    // console.log('valuessssssssssssssssssssssssssss', values);
 
     useEffect(() => {
         if (data) {
@@ -457,7 +457,7 @@ const EditProduct = () => {
                         status: data?.pricing?.gst?.status
                     },
                     finalSalePrice: {
-                        value: productsDetailsData?.sellingPrice || 0,
+                        value: finalSalePriceForEdit || 0,
                         status: data?.pricing?.finalSalePrice?.status
                     },
                 },

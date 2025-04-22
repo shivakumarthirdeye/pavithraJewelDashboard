@@ -65,7 +65,7 @@ class Api {
         return this.init().post("/admin/auth/verify-otp",data)
     }
     resetPassword = (data) =>{
-        return this.init().post("/admin/resetPassword",data)
+        return this.init().put("/admin/resetPassword",data)
     }
     
     updateProfile = (data) => {
