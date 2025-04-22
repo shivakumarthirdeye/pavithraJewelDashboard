@@ -45,9 +45,7 @@ const EditProduct = () => {
     const { productsDetailsData } = useSelector((state) => state.products)
 
     const data = productsDetailsData?.data;
-    // console.log('productsDetailsData==============', productsDetailsData);
-
-    const finalSalePriceForEdit = parseFloat(productsDetailsData?.sellingPrice)
+    
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
@@ -359,18 +357,18 @@ const EditProduct = () => {
 
     })
 
-    // console.log('valuessssssssssssssssssssssssssss', values);
+    console.log('valuessssssssssssssssssssssssssss', values);
 
     useEffect(() => {
-        if (data) {
+        if (productsDetailsData) {
             setValues({
-                productName: data.productName || '',
-                description: data.description || '',
-                status: data.status || '',
-                tags: data.tags || [],
+                productName: productsDetailsData?.data?.productName || '',
+                description: productsDetailsData?.data?.description || '',
+                status: productsDetailsData?.data?.status || '',
+                tags: productsDetailsData?.data?.tags || [],
                 media: {
-                    photo: data?.media?.photo || [],
-                    video: data?.media?.video || [],
+                    photo: productsDetailsData?.data?.media?.photo || [],
+                    video: productsDetailsData?.data?.media?.video || [],
                 },
                 features: {
                     itemWeight: data?.features?.itemWeight || 0,
@@ -381,100 +379,106 @@ const EditProduct = () => {
                     feature: data?.features?.feature || '',
                 },
                 discount: {
-                    discountValue: data?.discount?.discountValue || 0,
-                    discountStartdate: data?.discount?.discountStartdate ? new Date(data.discount?.discountStartdate) : null,
-                    discountEnddate: data?.discount?.discountEnddate ? new Date(data.discount?.discountEnddate) : null
+                    discountValue: productsDetailsData?.data?.discount?.discountValue || 0,
+                    discountStartdate: productsDetailsData?.data?.discount?.discountStartdate ? new Date(productsDetailsData?.data.discount?.discountStartdate) : null,
+                    discountEnddate: productsDetailsData?.data?.discount?.discountEnddate ? new Date(productsDetailsData?.data.discount?.discountEnddate) : null
                 },
                 category: {
-                    productCategory: data?.category?.productCategory?._id || '',
-                    productSubcategory: data?.category?.productSubcategory?._id || null,
+                    productCategory: productsDetailsData?.data?.category?.productCategory?._id || '',
+                    productSubcategory: productsDetailsData?.data?.category?.productSubcategory?._id || null,
                 },
                 gold: {
-                    type: data?.gold?.type || '',
-                    orderType: data?.gold?.orderType || '',
+                    type: productsDetailsData?.data?.gold?.type || '',
+                    orderType: productsDetailsData?.data?.gold?.orderType || '',
                 },
                 inventory: {
-                    sku: data?.inventory?.sku || '',
-                    totalstock: data?.inventory?.totalstock || 0,
+                    sku: productsDetailsData?.data?.inventory?.sku || '',
+                    totalstock: productsDetailsData?.data?.inventory?.totalstock || 0,
                 },
                 shipping: {
-                    weight: data.shipping?.weight || 0,
-                    height: data.shipping?.height || 0,
-                    length: data.shipping?.length || 0,
-                    width: data.shipping?.width || 0,
+                    weight: productsDetailsData?.data?.shipping?.weight || 0,
+                    height: productsDetailsData?.data?.shipping?.height || 0,
+                    length: productsDetailsData?.data?.shipping?.length || 0,
+                    width: productsDetailsData?.data?.shipping?.width || 0,
                 },
                 pricing: {
                     totalWeight: {
-                        value: data?.pricing?.totalWeight?.value || 0,
-                        status: data?.pricing?.totalWeight?.status
+                        value: productsDetailsData?.data?.pricing?.totalWeight?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.totalWeight?.status
                     },
                     goldWeight: {
-                        value: data?.pricing?.goldWeight?.value || 0,
-                        status: data?.pricing?.goldWeight?.status
+                        value: productsDetailsData?.data?.pricing?.goldWeight?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.goldWeight?.status
                     },
                     goldRate: {
-                        value: calculateGoldCost(data?.gold?.type, data.pricing.goldWeight.value),
-                        status: data?.pricing?.goldRate?.status
+                        value: calculateGoldCost(productsDetailsData?.data?.gold?.type, productsDetailsData?.data?.pricing?.goldWeight?.value),
+                        status: productsDetailsData?.data?.pricing?.goldRate?.status
                     },
                     makingCharges: {
-                        value: data?.pricing?.makingCharges?.value || 0,
-                        status: data?.pricing?.makingCharges?.status
+                        value: productsDetailsData?.data?.pricing?.makingCharges?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.makingCharges?.status
                     },
                     stoneType: {
-                        value: data?.pricing?.stoneType?.value || '',
-                        status: data?.pricing?.stoneType?.status
+                        value: productsDetailsData?.data?.pricing?.stoneType?.value || '',
+                        status: productsDetailsData?.data?.pricing?.stoneType?.status
                     },
                     stoneCharges: {
-                        value: data?.pricing?.stoneCharges?.value || 0,
-                        status: data?.pricing?.stoneCharges?.status
+                        value: productsDetailsData?.data?.pricing?.stoneCharges?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.stoneCharges?.status
                     },
                     diamondCarat: {
-                        value: data?.pricing?.diamondCarat?.value || 0,
-                        status: data?.pricing?.diamondCarat?.status
+                        value: productsDetailsData?.data?.pricing?.diamondCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.diamondCarat?.status
                     },
                     diamondPerCarat: {
-                        value: data?.pricing?.diamondPerCarat?.value || 0,
-                        status: data?.pricing?.diamondPerCarat?.status
+                        value: productsDetailsData?.data?.pricing?.diamondPerCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.diamondPerCarat?.status
                     },
                     diamondCost: {
-                        value: data?.pricing?.diamondCost?.value || 0,
-                        status: data?.pricing?.diamondCost?.status
+                        value: productsDetailsData?.data?.pricing?.diamondCost?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.diamondCost?.status
                     },
                     polkiCarat: {
-                        value: data?.pricing?.polkiCarat?.value || 0,
-                        status: data?.pricing?.polkiCarat?.status
+                        value: productsDetailsData?.data?.pricing?.polkiCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.polkiCarat?.status
                     },
                     polkiPerCarat: {
-                        value: data?.pricing?.polkiPerCarat?.value || 0,
-                        status: data?.pricing?.polkiPerCarat?.status
+                        value: productsDetailsData?.data?.pricing?.polkiPerCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.polkiPerCarat?.status
                     },
                     polkiCost: {
-                        value: data?.pricing?.polkiCost?.value || 0,
-                        status: data?.pricing?.polkiCost?.status
+                        value: productsDetailsData?.data?.pricing?.polkiCost?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.polkiCost?.status
                     },
                     gst: {
-                        value: data?.pricing?.gst?.value || 0,
-                        status: data?.pricing?.gst?.status
+                        value: productsDetailsData?.data?.pricing?.gst?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.gst?.status
                     },
                     finalSalePrice: {
-                        value: finalSalePriceForEdit || 0,
-                        status: data?.pricing?.finalSalePrice?.status
+                        value: productsDetailsData?.totalPrice
+                        ? Number(
+                            String(productsDetailsData.totalPrice)
+                              .replace(/,/g, '') // remove commas
+                              .replace(/[^\d.]/g, '') // remove non-numeric characters except dot
+                          )
+                        : 0,
+                        status: productsDetailsData?.data?.pricing?.finalSalePrice?.status
                     },
                 },
 
-                featurerdImage: data?.featurerdImage || "",
-                metalType: data?.metalType || '',
+                featurerdImage: productsDetailsData?.data?.featurerdImage || "",
+                metalType: productsDetailsData?.data?.metalType || '',
                 _id: id
             })
             // Preload subcategories when editing an existing product
-            if (data?.category?.productCategory?._id) {
+            if (productsDetailsData?.data?.category?.productCategory?._id) {
                 const preloadedSubcategories = subCategoiesExportData?.data?.filter(
-                    (subCategory) => subCategory.parentId === data?.category?.productCategory?._id
+                    (subCategory) => subCategory.parentId === productsDetailsData?.data?.category?.productCategory?._id
                 );
                 setFilteredSubcategory(preloadedSubcategories);
             }
         }
-    }, [data, setValues, id, subCategoiesExportData])
+    }, [data, setValues, id, productsDetailsData, subCategoiesExportData])
 
 
     const handleSubject = async (value) => {
@@ -1920,7 +1924,7 @@ const EditProduct = () => {
                                     placeholder='Enter'
                                     type={'number'}
                                     // name="pricing.finalSalePrice.value"
-                                    value={values.pricing.finalSalePrice.value || ''}
+                                    value={values.pricing.finalSalePrice.value || 0}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
