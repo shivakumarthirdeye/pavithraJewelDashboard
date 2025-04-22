@@ -45,6 +45,12 @@ const EditProduct = () => {
     const { productsDetailsData } = useSelector((state) => state.products)
 
     const data = productsDetailsData?.data;
+    const parsedSellingPrice = Number(
+        String(productsDetailsData?.totalPrice || '0')
+          .replace(/,/g, '')
+          .replace(/[^\d.]/g, '')
+      );
+    console.log('parsedSellingPrice',parsedSellingPrice);
     
     const { categoriesExportData } = useSelector(
         (state) => state.categories
@@ -455,13 +461,7 @@ const EditProduct = () => {
                         status: productsDetailsData?.data?.pricing?.gst?.status
                     },
                     finalSalePrice: {
-                        value: productsDetailsData?.totalPrice
-                        ? Number(
-                            String(productsDetailsData.totalPrice)
-                              .replace(/,/g, '') // remove commas
-                              .replace(/[^\d.]/g, '') // remove non-numeric characters except dot
-                          )
-                        : 0,
+                        value: parsedSellingPrice || 0,
                         status: productsDetailsData?.data?.pricing?.finalSalePrice?.status
                     },
                 },
@@ -478,7 +478,7 @@ const EditProduct = () => {
                 setFilteredSubcategory(preloadedSubcategories);
             }
         }
-    }, [data, setValues, id, productsDetailsData, subCategoiesExportData])
+    }, [data, setValues, id, productsDetailsData,parsedSellingPrice, subCategoiesExportData])
 
 
     const handleSubject = async (value) => {
@@ -921,7 +921,7 @@ const EditProduct = () => {
             const finalSalePrice = subtotal + gstAmount; // ✅ Add GST separately
 
             // ✅ Update form values
-            setFieldValue('pricing.finalSalePrice.value', finalSalePrice?.toLocaleString("en-IN"));
+            setFieldValue('pricing.finalSalePrice.value', finalSalePrice);
         }
     }, [
         values?.pricing?.goldWeight?.value,
@@ -1922,9 +1922,9 @@ const EditProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type={'number'}
+                                    type="number" 
                                     name="pricing.finalSalePrice.value"
-                                    value={values.pricing.finalSalePrice.value || ''}
+                                    value={values.pricing.finalSalePrice.value || 0}
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
