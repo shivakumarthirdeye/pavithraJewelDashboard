@@ -286,11 +286,9 @@ const ProductViewDetails = () => {
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Description:
-                            <div className={productStyle.textStyle} dangerouslySetInnerHTML={{ __html: productById?.description }}>
-                                {/* <span style={{ marginTop: 10, }}>
-            {productById?.description}
-        </span> */}
-                            </div>
+                            <div className={productStyle.textStyle} dangerouslySetInnerHTML={{ __html: productById?.description }}/>
+                               
+                            
                         </div>
                         <div className={productStyle.colorVariantStyle} style={{ marginTop: 20, }}>
                             Features

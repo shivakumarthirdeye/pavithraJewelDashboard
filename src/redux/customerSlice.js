@@ -16,7 +16,9 @@ const initialState = {
         order: '',
         sortBy: '',
         limit: 10,
-        status:''
+        status:'',
+        startDate: "",
+        endDate: "",
     },
     errorMsg: "",
     isError: false

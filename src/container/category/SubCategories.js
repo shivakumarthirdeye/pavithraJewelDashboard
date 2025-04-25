@@ -99,7 +99,7 @@ const Subcategories = () => {
         const result = await dispatch(getSubCategoriesExport()).unwrap();
         console.log("result", result);
         const excelData = result?.data?.map((item) => ({
-            Category: item?.parentId || "_",
+            Category: item?.category?.name || "_",
             Subcategories: item?.name || "",
             Description: item?.description || '',
             CreatedDate: changeDateFormat(item?.createdAt) || "-",

@@ -70,7 +70,7 @@ export const TrashMadeToOrders = () => {
     useEffect(() => {
         const getAllCategories = async () => {
             try {
-                await dispatch(getTrashOrders({ ...filterOptions, orderType: 'Made to orders' }));
+                await dispatch(getTrashOrders({ ...filterOptions,}));
             } catch (error) {
                 console.log(error);
             }
@@ -97,28 +97,28 @@ export const TrashMadeToOrders = () => {
 
     const exportToExcel = async () => {
         // console.log(transaction)
-        const data = 'orderType=Made to orders&isTrashed=true'
+        const data = 'isTrashed=true'
         const result = await dispatch(getAllOrderExport(data)).unwrap()
         console.log('result', result);
 
         const excelData = result?.data?.map((item) => ({
             Order_id: item?._id || '_',
-            OrderItem_Name: item?.productDetails[0]?.productName || '_',
+            OrderItem_Name: item?.productDetails?.map((i) => i?.productName).join(', ') || '_',
             // OrderItem_Quantity: item?.productDetails[0]?.units || '_',
-            Customer: item?.customer?.firstName || '-',
+            Customer: `${item?.customer?.firstName} ${item?.customer?.lastName}`  || '-',
             Email: item?.customer?.email || '-',
             Grand_Total: item?.grandTotal || '-',
-            Advance_Paid: item?.advancePaid || '-',
-            Payment_id: item?.payment?.id || '-',
-            Payment_status: item?.payment?.status || '-',
+            // Advance_Paid: item?.advancePaid || '-',
+            // Payment_id: item?.payment?.id || '-',
+            Payment_status: item?.payment?.method || '-',
             Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
             Status: 'Delivered',
-            Order_type: item?.orderType || '-',
+            Order_type: item?.productDetails?.map((i) => i?.gold?.orderType).join(', ')  || '-',
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-        XLSX.writeFile(workbook, 'TrashMadeToOrders.xlsx');
+        XLSX.writeFile(workbook, 'TrashedOrders.xlsx');
     };
     //Filtered the data from maindata and search data
     const dateContent = (
@@ -153,7 +153,7 @@ export const TrashMadeToOrders = () => {
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
-                        onClick={() => navigate('/orders/MadeToOrders')}
+                        onClick={() => navigate('/orders/Orders')}
                     >
                         <span className={productStyle.addcategoryText}>Back To List</span>
                     </div>
@@ -163,7 +163,7 @@ export const TrashMadeToOrders = () => {
 
 
             <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 }}>
-                <div className={productStyle.search} style={{ width: '40%' }}>
+                {/* <div className={productStyle.search} style={{ width: '40%' }}>
                     <div style={{ cursor: 'pointer', marginTop: 5 }}>
                         <SearchIcon />
                     </div>
@@ -173,7 +173,7 @@ export const TrashMadeToOrders = () => {
                         onChange={handleSearch}
                         placeholder="Search Orders. . ."
                     />
-                </div>
+                </div> */}
                 <div className={productStyle.dateStlye} style={{ width: '15%' }} >
                     <PopoverComponent icon={<DatePickerIcon />} label="Select Dates" content={dateContent} />
                 </div>
@@ -211,7 +211,7 @@ export const TrashMadeToOrders = () => {
                                                 <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
                                                 <div className={orderStyle.productNameStyle}>
 
-                                                    <img src={item?.productDetails[0]?.featuredImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} />
+                                                    {/* <img src={item?.productDetails[0]?.featurerdImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} /> */}
                                                     <div>
                                                         <span >{item?.productDetails[0]?.productName && item.productDetails[0]?.productName.length > 10 ? `${item?.productDetails[0]?.productName.substring(0, 10)}...` : item?.productDetails[0]?.productName}</span>
                                                         {/* <span style={{ marginLeft: 5, color: '#1D1F2C' }}>{item?.order_items[0]?.name}</span> */}
@@ -231,13 +231,13 @@ export const TrashMadeToOrders = () => {
                                                     <span className={productStyle.description} style={{ color: '#667085' }}>{item?.customer?.email && item?.customer?.email?.length > 15 ? `${item?.customer?.email.substring(0, 15)}...` : item?.customer?.email}</span>
                                                 </div>
                                                 <div className={orderStyle.totalStyle} >
-                                                    ₹{item?.grandTotal}
+                                                    ₹{item?.grandTotal?.toLocaleString("en-IN") }
                                                     <br />
-                                                    <span className={orderStyle.adPayment}>Ad: ₹{item?.advancePaid}  </span>
+                                                    {/* <span className={orderStyle.adPayment}>₹{item?.advancePaid}  </span> */}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div className={orderStyle.paymentStyle} style={{ color: '#667085' }}>
-                                                    {item?.payment?.status}
+                                                    {item?.payment?.method}
                                                 </div>
                                                 <div className={productStyle.dropdownStyle} />
                                                 <div

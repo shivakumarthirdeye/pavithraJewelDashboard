@@ -68,8 +68,8 @@ const AddProduct = () => {
             .string()
             .required("Tags are required")
             .matches(
-                /^(\s*[a-zA-Z0-9]+\s*)(,\s*[a-zA-Z0-9]+\s*)*$/,
-                "Tags must be comma-separated words"
+                /^([a-zA-Z0-9]+[\s,]*)+$/,
+                "Tags must be separated by commas or spaces and contain only alphanumeric characters"
             ),
         // featurerdImage: yup.array().min(1, "At least one image is required"),
         featurerdImage: yup.string().required("Image is required"),
@@ -803,7 +803,7 @@ const AddProduct = () => {
         }
     }, [values.pricing.polkiCarat.value, values.pricing.polkiPerCarat.value, setFieldValue]);
 
-    
+
 
     useEffect(() => {
         if (
@@ -1787,7 +1787,7 @@ const AddProduct = () => {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
-                                
+
                                 />
                                 {/* {
                                     errors?.pricing?.gst?.value && touched?.pricing?.gst?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.gst?.value}</p>

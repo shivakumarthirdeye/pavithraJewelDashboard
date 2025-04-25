@@ -26,17 +26,18 @@
 
 .cardWrap {
     display: flex;
-    gap: 28px;
+    gap: 20px;
+    flex-wrap: wrap;
 }
 
 .cardStyle {
-    width: 40%;
+    width: 32%;
     height: 110px;
     padding: 20px;
     border-radius: 8px;
     border: 1px solid #E0E2E7;
     background: #FFFFFF;
-    margin-top: 25px;
+    /* margin-top: 20px; */
     /* margin-left: 16px; */
 }
 
@@ -75,6 +76,7 @@
     background: #FFFFFF;
     border: 1px solid #E0E2E7;
     margin-top: 20px;
+    margin-bottom: 20px;
 }
 
 .goldRateStyle {

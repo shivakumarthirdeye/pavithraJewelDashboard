@@ -100,6 +100,7 @@ export const OrderDetails = () => {
                 status: lastValue.name
             })
         }
+        // orderSingleData();
     })
     // orderSingleData()
     },[setValues,])
@@ -169,12 +170,12 @@ export const OrderDetails = () => {
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
 
-                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
+                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/Orders/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
-                    <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>
+                    {/* <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/Orders/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>
                         <InvoiceIcon /><div className={productStyle.addcategoryText}> Invoice</div>
-                    </div>
+                    </div> */}
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
@@ -247,7 +248,7 @@ export const OrderDetails = () => {
                                                         </div>
                                                     </div>
                                                     <div className={orderStyle.goldTypeText}>{item?.productId?.gold?.type === 'k18' ? '18k' : '22k'}</div>
-                                                    <div className={orderStyle.goldWeightText} style={{ letterSpacing: 1.5, textTransform: 'lowercase' }}>
+                                                    <div className={orderStyle.goldWeightText} style={{ letterSpacing: '-0.5px', textTransform: 'lowercase' }}>
                                                         {item?.productId?.pricing?.goldWeight?.value || '-'}g
                                                         <br />
                                                         {ordersDetailsData?.data?.extraWeight > 0 ? (
@@ -356,7 +357,12 @@ export const OrderDetails = () => {
                                 <div className={orderStyle.bottomLineStyle} />
                                 <div className={orderStyle.info} >
                                     <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
-                                    <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹{ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+                                    <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+                                </div>
+                                <div className={orderStyle.bottomLineStyle} />
+                                <div className={orderStyle.info} >
+                                    <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500,color:'green' }}>Paid Amount</div>
+                                    <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, color:'green' }}>₹ {ordersDetailsData?.data?.paidAmount?.toLocaleString("en-IN")}</div>
                                 </div>
                             </div>
                         </div>

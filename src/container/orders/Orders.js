@@ -143,8 +143,6 @@ export const Orders = () => {
     };
 
     const deletedData = (value) => {
-        // console.log('value',value);
-        // alert('hi')
         let data = {
             status: true,
             value
@@ -370,27 +368,27 @@ export const Orders = () => {
 
     const exportToExcel = async () => {
         // console.log(transaction)
-        const data = 'orderType=Ready to ship orders&isTrashed=false'
+        const data = 'isTrashed=false'
         const result = await dispatch(getAllOrderExport(data)).unwrap()
         console.log('result', result);
 
         const excelData = result?.data?.map((item) => ({
             Order_id: item?._id || '_',
-            OrderItem_Name: item?.productDetails[0]?.productName || '_',
+            OrderItem_Name: item?.productDetails?.map((i) => i?.productName).join(', ') || '_',
             // OrderItem_Quantity: item?.productDetails[0]?.units || '_',
-            Customer: item?.customer?.firstName || '-',
+            Customer: `${item?.customer?.firstName} ${item?.customer?.lastName}` || '-',
             Email: item?.customer?.email || '-',
-            Grand_Total: item?.grandTotal || '-',
-            Payment_id: item?.payment?.id || '-',
-            Payment_status: item?.payment?.status || '-',
+            Grand_Total: item?.grandTotal?.toLocaleString("en-IN") || '-',
+            // Payment_id: item?.payment?.id || '-',
+            Payment_status: item?.payment?.method || '-',
             Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),
-            Status: item?.status || '-',
-            Order_type: item?.orderType || '-',
+            // Status: item?.status || '-',
+            Order_type: item?.productDetails?.map((i) => i?.gold?.orderType).join(', ') || '-',
         }));
         const worksheet = XLSX.utils.json_to_sheet(excelData);
         const workbook = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Orders');
-        XLSX.writeFile(workbook, 'readyToShipOrders.xlsx');
+        XLSX.writeFile(workbook, 'Orders.xlsx');
     };
 
 
@@ -408,7 +406,7 @@ export const Orders = () => {
                     <div className={productStyle.exportStyle} onClick={exportToExcel}>
                         <ExportIcon /> <p style={{ marginLeft: 5 }}>Export</p>
                     </div>
-                    <div className={orderStyle.trashButton} onClick={() => navigate('/orders/ReadyToShipOrders/TrashReadyToShip')}>
+                    <div className={orderStyle.trashButton} onClick={() => navigate('/orders/Orders/TrashOrders')}>
                         Trash
                     </div>
                 </div>
@@ -448,25 +446,28 @@ export const Orders = () => {
                     />
                 </div>
                 <div style={{ width: '50%' }}>
-                    <div className={productStyle.filterBoxStyle}>
-                        <div className={productStyle.search} style={{ width: '60%' }}>
-                            <div style={{ cursor: 'pointer', marginTop: 5 }}>
-                                <SearchIcon />
+                    {selectedOrders === 0 && (
+                        <div className={productStyle.filterBoxStyle}>
+
+                            <div className={productStyle.search} style={{ width: '80%' }}>
+                                <div style={{ cursor: 'pointer', marginTop: 5 }}>
+                                    <SearchIcon />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={search}
+                                    onChange={handleSearch}
+                                    placeholder="Search Orders. . ."
+                                />
                             </div>
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={handleSearch}
-                                placeholder="Search Orders. . ."
-                            />
-                        </div>
-                        <div className={productStyle.dateStlye} >
+                            {/* <div className={productStyle.dateStlye} >
                             <PopoverComponent icon={<DatePickerIcon />} label="Select Dates" content={dateContent} />
+                        </div> */}
+                            <div className={productStyle.filter} >
+                                <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
+                            </div>
                         </div>
-                        <div className={productStyle.filter} >
-                            <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
             <div className={orderStyle.tabViewSwitchTab}>
@@ -475,27 +476,30 @@ export const Orders = () => {
                     selected={selected}
                     onChange={(id) => changeID(id)}
                 />
+                {selectedOrders === 0 && (
                 <div className={productStyle.filter} >
                     <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
                 </div>
+                )}
             </div>
-            <div className={orderStyle.filterBoxStyle}>
-                <div className={productStyle.search} >
-                    <div style={{ cursor: 'pointer', marginTop: 5 }}>
-                        <SearchIcon />
+            {selectedOrders === 0 && (
+                <div className={orderStyle.filterBoxStyle}>
+                    <div className={productStyle.search} >
+                        <div style={{ cursor: 'pointer', marginTop: 5 }}>
+                            <SearchIcon />
+                        </div>
+                        <input
+                            type="text"
+                            value={search}
+                            onChange={handleSearch}
+                            placeholder="Search Orders. . ."
+                        />
                     </div>
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={handleSearch}
-                        placeholder="Search Orders. . ."
-                    />
-                </div>
-                <div className={productStyle.dateStlye} >
+                    {/* <div className={productStyle.dateStlye} >
                     <PopoverComponent icon={<DatePickerIcon />} label="Select Dates" content={dateContent} />
+                </div> */}
                 </div>
-
-            </div>
+            )}
             <div style={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
                 <SwitchTab
                     value={ordersValue}

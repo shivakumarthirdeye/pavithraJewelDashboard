@@ -84,10 +84,12 @@ const EditProduct = () => {
         // description: yup.string().required("Description is required"),
         // tags: yup.array().required("Tags are required"),
         tags: yup
-            .array()
-            .of(
-                yup.string().min(1, "At least one metal type is required"))
-            .required("Tags are required"),
+            .string()
+            .required("Tags are required")
+            .matches(
+                /^([a-zA-Z0-9]+[\s,]*)+$/,
+                "Tags must be separated by commas or spaces and contain only alphanumeric characters"
+            ),
         // featurerdImage: yup.array().min(1, "At least one image is required"),
         featurerdImage: yup.string().required("Image is required"),
         // media: yup.object().shape({
@@ -493,6 +495,121 @@ const EditProduct = () => {
         }
 
     }
+
+    const handleCancel = () => {
+        if (productsDetailsData) {
+            setValues({
+                productName: productsDetailsData?.data?.productName || '',
+                description: productsDetailsData?.data?.description || '',
+                status: productsDetailsData?.data?.status || '',
+                tags: productsDetailsData?.data?.tags || [],
+                media: {
+                    photo: productsDetailsData?.data?.media?.photo || [],
+                    video: productsDetailsData?.data?.media?.video || [],
+                },
+                features: {
+                    itemWeight: data?.features?.itemWeight || 0,
+                    stoneWeight: data?.features?.stoneWeight || 0,
+                    stoneColor: data?.features?.stoneColor || '',
+                    productWidth: data?.features?.productWidth || 0,
+                    productHeight: data?.features?.productHeight || 0,
+                    feature: data?.features?.feature || '',
+                },
+                discount: {
+                    discountValue: productsDetailsData?.data?.discount?.discountValue || 0,
+                    discountStartdate: productsDetailsData?.data?.discount?.discountStartdate ? new Date(productsDetailsData?.data.discount?.discountStartdate) : null,
+                    discountEnddate: productsDetailsData?.data?.discount?.discountEnddate ? new Date(productsDetailsData?.data.discount?.discountEnddate) : null
+                },
+                category: {
+                    productCategory: productsDetailsData?.data?.category?.productCategory?._id || '',
+                    productSubcategory: productsDetailsData?.data?.category?.productSubcategory?._id || null,
+                },
+                gold: {
+                    type: productsDetailsData?.data?.gold?.type || '',
+                    orderType: productsDetailsData?.data?.gold?.orderType || '',
+                },
+                inventory: {
+                    sku: productsDetailsData?.data?.inventory?.sku || '',
+                    totalstock: productsDetailsData?.data?.inventory?.totalstock || 0,
+                },
+                shipping: {
+                    weight: productsDetailsData?.data?.shipping?.weight || 0,
+                    height: productsDetailsData?.data?.shipping?.height || 0,
+                    length: productsDetailsData?.data?.shipping?.length || 0,
+                    width: productsDetailsData?.data?.shipping?.width || 0,
+                },
+                pricing: {
+                    totalWeight: {
+                        value: productsDetailsData?.data?.pricing?.totalWeight?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.totalWeight?.status
+                    },
+                    goldWeight: {
+                        value: productsDetailsData?.data?.pricing?.goldWeight?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.goldWeight?.status
+                    },
+                    goldRate: {
+                        value: calculateGoldCost(productsDetailsData?.data?.gold?.type, productsDetailsData?.data?.pricing?.goldWeight?.value),
+                        status: productsDetailsData?.data?.pricing?.goldRate?.status
+                    },
+                    makingCharges: {
+                        value: productsDetailsData?.data?.pricing?.makingCharges?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.makingCharges?.status
+                    },
+                    stoneType: {
+                        value: productsDetailsData?.data?.pricing?.stoneType?.value || '',
+                        status: productsDetailsData?.data?.pricing?.stoneType?.status
+                    },
+                    stoneCharges: {
+                        value: productsDetailsData?.data?.pricing?.stoneCharges?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.stoneCharges?.status
+                    },
+                    diamondCarat: {
+                        value: productsDetailsData?.data?.pricing?.diamondCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.diamondCarat?.status
+                    },
+                    diamondPerCarat: {
+                        value: productsDetailsData?.data?.pricing?.diamondPerCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.diamondPerCarat?.status
+                    },
+                    diamondCost: {
+                        value: productsDetailsData?.data?.pricing?.diamondCost?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.diamondCost?.status
+                    },
+                    polkiCarat: {
+                        value: productsDetailsData?.data?.pricing?.polkiCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.polkiCarat?.status
+                    },
+                    polkiPerCarat: {
+                        value: productsDetailsData?.data?.pricing?.polkiPerCarat?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.polkiPerCarat?.status
+                    },
+                    polkiCost: {
+                        value: productsDetailsData?.data?.pricing?.polkiCost?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.polkiCost?.status
+                    },
+                    gst: {
+                        value: productsDetailsData?.data?.pricing?.gst?.value || 0,
+                        status: productsDetailsData?.data?.pricing?.gst?.status
+                    },
+                    finalSalePrice: {
+                        value: parsedSellingPrice || 0,
+                        status: productsDetailsData?.data?.pricing?.finalSalePrice?.status
+                    },
+                },
+
+                featurerdImage: productsDetailsData?.data?.featurerdImage || "",
+                metalType: productsDetailsData?.data?.metalType || '',
+                _id: id
+            })
+            // Preload subcategories when editing an existing product
+            if (productsDetailsData?.data?.category?.productCategory?._id) {
+                const preloadedSubcategories = subCategoiesExportData?.data?.filter(
+                    (subCategory) => subCategory.parentId === productsDetailsData?.data?.category?.productCategory?._id
+                );
+                setFilteredSubcategory(preloadedSubcategories);
+            }
+        }
+    };
 
     useEffect(() => {
         if (goldRates?.gst !== undefined) {
@@ -2466,7 +2583,7 @@ const EditProduct = () => {
                 </div>
             </div>
             <div className={productStyle.saveProductStyle} style={{ marginTop: 20 }}>
-                <div className={productStyle.cancelStyle} onClick={resetForm}>
+                <div className={productStyle.cancelStyle} onClick={handleCancel}>
                     Cancel
                 </div>
                 <div className={productStyle.buttonStyle} onClick={handleSubmit}>

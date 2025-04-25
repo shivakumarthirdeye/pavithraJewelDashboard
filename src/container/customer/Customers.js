@@ -87,7 +87,7 @@ export const Customers = () => {
         console.log('result.data?.users',result)
 
         const excelData = result?.map((item) => ({
-            Customers_Name: item?.firstName || '_',
+            Customers_Name: `${item?.firstName} ${item?.lastName}` || '_',
             Phone: item?.phone || '_',
             Email: item?.email || '-',
             Date: moment(item?.createdAt).format('MMM DD,YYYY, HH:MMA'),

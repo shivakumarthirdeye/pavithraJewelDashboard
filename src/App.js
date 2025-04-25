@@ -77,14 +77,14 @@ function App() {
             <Route path='/orders/Orders' element={<Orders />} />
             <Route path='/orders/Orders/OrderDetails/:id' element={<OrderDetails />} />
             <Route path='/orders/Orders/MultiProductOrderDetails/:id' element={<MultiProductOrderDetails />} />
-            <Route path='/orders/ReadyToShipOrders' element={<ReadyToShipOrders />} />
-            <Route path='/orders/MadeToOrders' element={<MadeToOrders />} />
-            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/:id' element={<ReadyToShipOrderDetails />} />
-            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/:id' element={<CustomerReview />} />
-            <Route path='/orders/ReadyToShipOrders/TrashReadyToShip' element={<TrashReadyToShip />} />
-            <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/:id' element={<OrdersInvoice />} />
-            <Route path='/orders/MadeToOrders/MadeToOrderDetails/:id' element={<MadeToOrderDetails />} />
-            <Route path='/orders/MadeToOrders/TrashMadeToOrders' element={<TrashMadeToOrders />} />
+            {/* <Route path='/orders/ReadyToShipOrders' element={<ReadyToShipOrders />} /> */}
+            {/* <Route path='/orders/MadeToOrders' element={<MadeToOrders />} /> */}
+            {/* <Route path='/orders/ReadyToShipOrders/ReadyToShipOrderDetails/:id' element={<ReadyToShipOrderDetails />} /> */}
+            <Route path='/orders/Orders/CustomerReviews/:id' element={<CustomerReview />} />
+            {/* <Route path='/orders/ReadyToShipOrders/TrashReadyToShip' element={<TrashReadyToShip />} /> */}
+            <Route path='/orders/Orders/OrdersInvoice/:id' element={<OrdersInvoice />} />
+            {/* <Route path='/orders/MadeToOrders/MadeToOrderDetails/:id' element={<MadeToOrderDetails />} /> */}
+            <Route path='/orders/Orders/TrashOrders' element={<TrashMadeToOrders />} />
             <Route path='/customer/Customers' element={<Customers />} />
             <Route path='/customer/Customers/CustomersDetails/:id' element={<CustomersDetails />} />
             <Route path='/appearance/Appearance' element={<Appearance />} />

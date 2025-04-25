@@ -36,6 +36,10 @@ import ErrorPage from "../../component/ErrorPage";
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteModal from "../../component/DeleteModal";
 import CustomSeparator from "../../component/CustomizedBreadcrumb";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DateRangeCalendar } from "@mui/x-date-pickers-pro";
+import dayjs from "dayjs";
 
 export const CustomersDetails = () => {
     const navigate = useNavigate();
@@ -47,8 +51,8 @@ export const CustomersDetails = () => {
     const customerDetailOrders =
         customersDetailData?.orders;
 
-    console.log("customerDetailOrders", customerDetailOrders);
-    console.log("customersDetailData", customersDetailData);
+    // console.log("customerDetailOrders", customerDetailOrders);
+    // console.log("customersDetailData", customersDetailData);
 
     //State
     const [datas, setData] = useState([]);
@@ -90,8 +94,6 @@ export const CustomersDetails = () => {
     };
 
     const handleFilterSelection = (e) => {
-        console.log('e------------', e);
-
         setSelectedFilter(e)
         dispatch(setFilterValues({ status: e, page: 1 }));
     }
@@ -99,6 +101,14 @@ export const CustomersDetails = () => {
     const handleOpenMenu = (e) => {
         setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
         dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
+    };
+    const handleStartDateChange = (e) => {
+        setSelectedDate(e);
+        dispatch(setFilterValues({ startDate: e, page: 1 }))
+    };
+    const handleEndDateChange = (e) => {
+        setSelectedDate(e);
+        dispatch(setFilterValues({ endDate: e, page: 1 }))
     };
     useEffect(() => {
         const getAllCustomer = async () => {
@@ -253,6 +263,22 @@ export const CustomersDetails = () => {
                 .catch(err => console.error("Failed to copy:", err));
         }
     };
+
+    const dateContent = (
+        <div style={{ width: "300px" }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateRangeCalendar
+                    // value={selectedDate ? dayjs(selectedDate) : null}
+                    onChange={(newValue) => {
+                        const [startDate, endDate] = newValue;
+                        handleStartDateChange(startDate ? dayjs(startDate).format('YYYY-MM-DD') : null);
+                        handleEndDateChange(endDate ? dayjs(endDate).format('YYYY-MM-DD') : null);
+                    }}
+                    calendars={1}
+                />
+            </LocalizationProvider>
+        </div>
+    );
     return (
         <div style={{ padding: 20, marginTop: 60 }}>
             <div className={productStyle.container}>
@@ -429,11 +455,10 @@ export const CustomersDetails = () => {
                         {customerDetails?.billingAddress?.map((item) => (
                             <div
                                 className={customerStyle.proNameText}
-                                style={{ marginLeft: 50, marginTop: 10 }}
+                                style={{ marginLeft: 50, marginTop: 5 }}
                             >
-                                {item?.firstName} {item?.lastName}
-                                {","}
-                                <br />
+                                {item?.firstName} {item?.lastName}{","}
+                                <br/>
                                 {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
                                 {item?.country}
                                 {/* Supriya Raj
@@ -484,9 +509,8 @@ export const CustomersDetails = () => {
                                 className={customerStyle.proNameText}
                                 style={{ marginLeft: 50, marginTop: 5 }}
                             >
-                                {item?.firstName} {item?.lastName}
-                                {","}
-                                <br />
+                                {item?.firstName} {item?.lastName}{","}
+                                <br/>
                                 {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
                                 {item?.country}
                             </div>
@@ -548,14 +572,14 @@ export const CustomersDetails = () => {
                         />
                     </div>
                     <div className={productStyle.width}>
-                        {/* <div className={productStyle.dateStlye}>
+                        <div className={productStyle.dateStlye}>
                             <PopoverComponent
                                 icon={<DatePickerIcon />}
                                 label="Select Dates"
                                 content={dateContent}
                             />
-                        </div> */}
-                        <div className={productStyle.filter} style={{width:'40%'}}>
+                        </div>
+                        <div className={productStyle.filter} style={{width:'25%'}}>
                             <PopoverComponent
                                 icon={<FilterIcon />}
                                 label="Status"
@@ -648,7 +672,7 @@ export const CustomersDetails = () => {
                                                 className={orderStyle.paymentStyle}
                                                 style={{ color: "#667085", }}
                                             >
-                                                {item?.payment?.status}
+                                                {item?.payment?.method === 'HDFC' ? 'HDFC' : 'Razorpay'}
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
                                             <div
@@ -661,7 +685,7 @@ export const CustomersDetails = () => {
                                                                 : item?.products?.status[0]?.name === "SHIPPED"
                                                                     ? "#EAF8FF"
                                                                     : "#E9FAF7",
-                                                    width: "14%",
+                                                    width: "15%",
                                                     borderRadius: 10,
                                                     height: 30,
                                                     padding: "5PX",
