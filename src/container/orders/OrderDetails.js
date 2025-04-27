@@ -359,11 +359,11 @@ export const OrderDetails = () => {
                                     <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
                                     <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
                                 </div>
-                                <div className={orderStyle.bottomLineStyle} />
+                                {/* <div className={orderStyle.bottomLineStyle} />
                                 <div className={orderStyle.info} >
                                     <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500,color:'green' }}>Paid Amount</div>
                                     <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, color:'green' }}>₹ {ordersDetailsData?.data?.paidAmount?.toLocaleString("en-IN")}</div>
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

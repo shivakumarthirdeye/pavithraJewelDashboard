@@ -83,13 +83,13 @@ const EditProduct = () => {
         status: yup.string().required("Status is required"),
         // description: yup.string().required("Description is required"),
         // tags: yup.array().required("Tags are required"),
-        tags: yup
-            .string()
-            .required("Tags are required")
-            .matches(
-                /^([a-zA-Z0-9]+[\s,]*)+$/,
-                "Tags must be separated by commas or spaces and contain only alphanumeric characters"
-            ),
+        // tags: yup
+        //     .string()
+        //     .required("Tags are required")
+        //     .matches(
+        //         /^([a-zA-Z0-9]+[\s,]*)+$/,
+        //         "Tags must be separated by commas or spaces and contain only alphanumeric characters"
+        //     ),
         // featurerdImage: yup.array().min(1, "At least one image is required"),
         featurerdImage: yup.string().required("Image is required"),
         // media: yup.object().shape({
@@ -1119,9 +1119,9 @@ const EditProduct = () => {
                                 onBlur={handleBlur}
                                 sx={fieldText}
                             />
-                            {
+                            {/* {
                                 errors.tags && touched.tags && <p style={{ color: "red", fontSize: "12px" }}>{errors.tags}</p>
-                            }
+                            } */}
                         </div>
                     </div>
 
