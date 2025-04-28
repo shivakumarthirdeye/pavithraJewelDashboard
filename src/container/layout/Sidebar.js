@@ -31,7 +31,7 @@ const Sidebar = ({ children }) => {
     return (
         <div className={Styles.sideMenuBar}>
             <section className={Styles.left}>
-                <div className={Styles.logo}>
+                <div className={Styles.logo} onClick={() => navigate('/dashboard')}>
                     <img src='/jewelsLogo.png' alt='logo' />
                 </div>
 

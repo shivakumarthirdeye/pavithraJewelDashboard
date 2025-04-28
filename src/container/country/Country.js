@@ -25,6 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addCountry, deleteCountry, getAllCountry, getExportCountry, setFilterValues } from "../../redux/countrySlice";
 import { formatDate } from "../../helper/FormatDate";
 import * as XLSX from 'xlsx';
+import { unwrapResult } from "@reduxjs/toolkit";
 
 const Country = () => {
     const navigate = useNavigate();
@@ -67,7 +68,9 @@ const Country = () => {
         }
     })
     const handleSubject = async (values) => {
-        dispatch(addCountry(values));
+        const result = await dispatch(addCountry(values));
+        unwrapResult(result)
+        resetForm()
     };
 
     //Edit Modal

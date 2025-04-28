@@ -61,7 +61,7 @@ const EditCountry = ({ open, onClose, data }) => {
 
             });
         }
-    }, [data, setValues,countryByIdData]);
+    }, [setValues,countryByIdData]);
 
     const handleSubject = async (values) => {
         const result = await dispatch(editCountry(values));

@@ -185,7 +185,7 @@ export const MultiProductOrderDetails = () => {
                             Customer reviews
                         </div>
                     )} */}
-                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
+                    <div className={orderStyle.exportStyle} onClick={() => navigate(`/orders/Orders/CustomerReviews/${ordersDetailsData?.data?._id}`)}>
                         Customer reviews
                     </div>
                     {/* <div className={productStyle.buttonStyle} onClick={() => navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/OrdersInvoice/${ordersDetailsData?.data?._id}`)}>

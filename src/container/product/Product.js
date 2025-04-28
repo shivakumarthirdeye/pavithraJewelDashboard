@@ -359,12 +359,12 @@ const Product = () => {
             </Box>
 
             <Box
-                onClick={() => handleFilterSelection({ target: { value: "STOCKOUT" } })}
+                onClick={() => handleFilterSelection({ target: { value: "OUT OF STOCK" } })}
                 sx={{
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    backgroundColor: status === "STOCKOUT" ? "#F7F7F7" : "#FFFFFF",
+                    backgroundColor: status === "OUT OF STOCK" ? "#F7F7F7" : "#FFFFFF",
                     cursor: "pointer",
                     // borderRadius: "8px",
                     padding: "8px 0px",
@@ -386,9 +386,9 @@ const Product = () => {
                         marginLeft: 5,
                         marginRight: 10
                     }}>
-                    {status === "STOCKOUT"
+                    {status === "OUT OF STOCK"
                         && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}
-                    Stockout
+                    Out of stock
                 </Typography>
             </Box>
             <Box
