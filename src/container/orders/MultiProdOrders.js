@@ -94,21 +94,23 @@ export const MultiProductOrderDetails = () => {
             dispatch(updateStatus({ val: { status: selectedStatus }, id: id, orderType: 'Made to orders' })); // Trigger API call
         }
     };
-    // useEffect(() => {
-    //     const orderSingleData = ordersDetailsData?.data?.products?.map((item, index) => {
-    //         const arr = item?.status;
-    //         const lastValue = arr?.at(-1);
-
-    //     if (lastValue) {
-    //         setValues({
-    //             readyToShipStatus: lastValue.name,
-    //             // madeToOrderStatus: lastValue.name
-    //         })
-    //     }
-    // })
-    // // orderSingleData()
-    // },[setValues,])
-
+    useEffect(() => {
+        if (ordersDetailsData?.data?.products) {
+            ordersDetailsData.data.products.forEach((item) => {
+                const statusArray = item?.status;
+                const lastStatus = statusArray?.at(-1); // Get the last status
+    
+                if (lastStatus) {
+                    // You can distinguish whether it's readyToShip or madeToOrder based on your data
+                    if (item.orderType === 'Ready to ship orders') {
+                        setFieldValue("readyToShipStatus", lastStatus.name); 
+                    } else if (item.orderType === 'Made to orders') {
+                        setFieldValue("madeToOrderStatus", lastStatus.name); 
+                    }
+                }
+            });
+        }
+    }, [ordersDetailsData, setFieldValue]);
 
     const handleCopyEmail = () => {
         const email = ordersDetailsData?.data?.userId?.email;
@@ -192,7 +194,7 @@ export const MultiProductOrderDetails = () => {
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
-                        onClick={() => navigate('/orders/Orders')}
+                        onClick={() => navigate('/orders/Orders?tab=1')}
                     >
                         <span className={productStyle.addcategoryText}>Back To List</span>
                     </div>
@@ -344,7 +346,7 @@ export const MultiProductOrderDetails = () => {
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    {item?.selectedPaymentType === "Ad Paid" ? (
+                                                    {item?.pendingAmount !== 0 ? (
                                                         <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 10 }}>
                                                             Ad paid: ₹{item?.adPaymentAmount?.toLocaleString("en-IN")} <br />
                                                             <p className={orderStyle.pendingAmount} onClick={() => openEditPriceModal({ data: item, id: id })}>
@@ -546,7 +548,7 @@ export const MultiProductOrderDetails = () => {
                                     displayEmpty
                                     defaultValue=""
                                     name="readyToShipStatus"
-                                    value={values.readyToShipStatus}
+                                    value={values.readyToShipStatus || ''}
                                     onChange={handleStatusChange} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>
@@ -578,7 +580,7 @@ export const MultiProductOrderDetails = () => {
                                     displayEmpty
                                     defaultValue=""
                                     name="madeToOrderStatus"
-                                    value={values.madeToOrderStatus}
+                                    value={values.madeToOrderStatus || ''}
                                     onChange={handleStatusChangeForMadeOrder} // Custom handler
                                 >
                                     <MenuItem value="">Select</MenuItem>
@@ -672,8 +674,8 @@ export const MultiProductOrderDetails = () => {
                                         value={values.status}
                                         onChange={handleStatusChange} // Custom handler
                                     >
-                                        <MenuItem value="">Select</MenuItem>
-                                        <MenuItem value="NEW">New</MenuItem>
+                                        {/* <MenuItem value="">Select</MenuItem> */}
+                                        <MenuItem value="">New</MenuItem>
                                         <MenuItem value="PROCESSING">Processing</MenuItem>
                                         <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                         <MenuItem value="DELIVERED">Delivered</MenuItem>
@@ -704,8 +706,8 @@ export const MultiProductOrderDetails = () => {
                                         value={values.status}
                                         onChange={handleStatusChangeForMadeOrder} // Custom handler
                                     >
-                                        <MenuItem value="">Select</MenuItem>
-                                        <MenuItem value="NEW">New</MenuItem>
+                                        {/* <MenuItem value="">Select</MenuItem> */}
+                                        <MenuItem value="">New</MenuItem>
                                         <MenuItem value="PROCESSING">Processing</MenuItem>
                                         <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                         <MenuItem value="DELIVERED">Delivered</MenuItem>

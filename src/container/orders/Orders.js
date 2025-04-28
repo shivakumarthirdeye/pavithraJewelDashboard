@@ -3,7 +3,7 @@ import orderStyle from './orders.module.css';
 import productStyle from '../../container/product/product.module.css'
 import SwitchTab from '../../component/SwicthTab';
 import { DatePickerIcon, DeleteIcon, DeliveredIcon, Drop, ExportIcon, FilterIcon, NewIcon, ProcessingIcon, SearchIcon, ShippingIcon, ViewIcon } from '../../svg';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteOrders, getOrders, orderStatistics, setFilterValues, getAllOrderExport } from '../../redux/ordersSlice';
 import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
@@ -22,8 +22,9 @@ import dayjs from 'dayjs';
 export const Orders = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
+    const location = useLocation();
     const { ordersData, filterOptions, isLoading, isRefresh, orderStatisticsData } = useSelector((state) => state.orders);
-    console.log('ordersData=======', ordersData);
+    console.log('location=======', location);
 
     //Main data
     // console.log('orderStatisticsData==================', orderStatisticsData);
@@ -49,21 +50,35 @@ export const Orders = () => {
     const [order, setOrder] = useState('asc')
 
     useEffect(() => {
+        const params = new URLSearchParams(location.search);
+        const tab = params.get('tab');
+
+        if (tab !== null) {
+            setSelectedOrders(Number(tab)); // Set the selected tab from URL
+        }
+    }, [location.search]);
+
+    useEffect(() => {
         // let data = '?orderType=Ready to ship orders'
         dispatch(orderStatistics())
     }, [dispatch,])
 
-
+    // const handleTabChange = (tabId) => {
+    //     setSelected(tabId);
+    //     navigate(`/orders/Orders?tab=${tabId}`);
+    // };
     const changeID = (id) => {
         console.log('id', id);
 
         setSelected(id.id);
         dispatch(setFilterValues({ filter: id.val, page: 1 }))
+        
     };
     const changeOrdersID = (id) => {
         console.log('id', id);
 
         setSelectedOrders(id.id);
+        navigate(`/orders/Orders?tab=${id.id}`);
     };
 
 
@@ -168,8 +183,6 @@ export const Orders = () => {
             </LocalizationProvider>
         </div>
     );
-
-
 
     const statusContent = (
         <div style={{ width: '100%' }}>
@@ -683,7 +696,7 @@ export const Orders = () => {
                         )}
                     </div>
                 </div >
-            ) : (
+            ) : selectedOrders === 1 ? (
                 <div className={productStyle.productStockContainer} style={{ marginTop: 10 }}>
                     <div className={productStyle.scrollContainer} >
                         <div className={productStyle.header}>
@@ -870,7 +883,7 @@ export const Orders = () => {
                         )}
                     </div>
                 </div >
-            )}
+            ) : null}
             <DeleteModal
                 heading={"Delete Order"}
                 closeModal={closeDeleteModal}

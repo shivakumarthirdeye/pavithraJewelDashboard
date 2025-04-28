@@ -47,7 +47,7 @@ export default function OffersBanner() {
         image: yup.string().required("At least one image is required"),
         subtitle: yup.string().required("Sub title is required"),
         buttonText: yup.string().required("Button text is required"),
-        buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
+        // buttonLink: yup.string().url("Invalid URL").required("Button link is required"),
     })
 
 
@@ -333,9 +333,9 @@ export default function OffersBanner() {
                                 sx={InputURL}
                             />
 
-                            {
+                            {/* {
                                 errors.buttonLink && touched.buttonLink && <p style={{ color: "red", fontSize: "12px" }}>{errors.buttonLink}</p>
-                            }
+                            } */}
                         </div>
                     </Box>
 

@@ -91,19 +91,22 @@ export const OrderDetails = () => {
     };
     
     useEffect(() => {
-        const orderSingleData = ordersDetailsData?.data?.products?.map((item, index) => {
-            const arr = item?.status;
-            const lastValue = arr?.at(-1);
-        
-        if (lastValue) {
-            setValues({
-                status: lastValue.name
-            })
+        if (ordersDetailsData?.data?.products) {
+            ordersDetailsData.data.products.forEach((item) => {
+                const statusArray = item?.status;
+                const lastStatus = statusArray?.at(-1); // Get the last status
+    
+                if (lastStatus) {
+                    // You can distinguish whether it's readyToShip or madeToOrder based on your data
+                    if (item.orderType === 'Ready to ship orders') {
+                        setFieldValue("status", lastStatus.name); 
+                    } else if (item.orderType === 'Made to orders') {
+                        setFieldValue("status", lastStatus.name); 
+                    }
+                }
+            });
         }
-        // orderSingleData();
-    })
-    // orderSingleData()
-    },[setValues,])
+    }, [ordersDetailsData, setFieldValue]);
 
     const handleCopyEmail = () => {
         const email = ordersDetailsData?.data?.userId?.email;
@@ -179,7 +182,7 @@ export const OrderDetails = () => {
                     <div
                         className={productStyle.buttonStyle}
                         style={{ backgroundColor: '#E87819' }}
-                        onClick={() => navigate('/orders/Orders')}
+                        onClick={() => navigate('/orders/Orders?tab=0')}
                     >
                         <span className={productStyle.addcategoryText}>Back To List</span>
                     </div>
@@ -331,7 +334,7 @@ export const OrderDetails = () => {
                                                             </span>
                                                         </div>
                                                     </div>
-                                                    {ordersDetailsData?.data?.advancePaid !== 0 ? (
+                                                    {ordersDetailsData?.data?.pendingAmount !== 0 ? (
                                                         <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 10 }}>
                                                             Ad paid: ₹{ordersDetailsData?.data?.advancePaid?.toLocaleString("en-IN")} <br />
                                                             <p className={orderStyle.pendingAmount} onClick={() => openEditPriceModal(ordersDetailsData)}>
