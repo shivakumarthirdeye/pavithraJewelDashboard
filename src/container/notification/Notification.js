@@ -19,16 +19,16 @@ const Notifications = () => {
 
     const incomingNotification = notificationData?.data?.notifications || []
 
-    console.log(incomingNotification.length, "incoming");
+    // console.log(incomingNotification, "incoming");
 
     const [viewAll, setViewAll] = useState(false);
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false); // Prevent multiple calls
     const observer = useRef();
-    console.log('page',page);
-    
+    // console.log('page', page);
 
-   
+
+
     // console.log("users", user);
 
     // Infinite Scroll Observer
@@ -36,14 +36,14 @@ const Notifications = () => {
         (node) => {
             if (loading || viewAll) return; // Stop observing if View All is active
             if (observer.current) observer.current.disconnect();
-    
+
             observer.current = new IntersectionObserver((entries) => {
                 if (entries[0].isIntersecting) {
                     setLoading(true);
                     setPage((prevPage) => prevPage + 1);
                 }
             });
-    
+
             if (node) observer.current.observe(node);
         },
         [loading, viewAll]
@@ -51,11 +51,11 @@ const Notifications = () => {
 
     // Fetch notifications when `page` changes
     useEffect(() => {
-            let data = `page=1&limit=5`;
-    
-            dispatch(getNotification(data))
+        let data = `page=1&limit=5`;
+
+        dispatch(getNotification(data))
     }, [dispatch]);
-    
+
     const formattedDate = (date = new Date()) => {
         const dateFromMongoDB = new Date(date);
 
@@ -81,7 +81,7 @@ const Notifications = () => {
         // setPage(1); // Reset page to start fresh
         dispatch(getNotification(`?page=${page}&limit=99999999`)); // Fetch all notifications
     };
-    
+
 
     const handleReadNotification = async (id) => {
         // Dispatch action to mark as read
@@ -90,8 +90,8 @@ const Notifications = () => {
     };
 
 
-    
-    
+
+
     return (
         <div style={{ padding: 20, marginTop: 60 }}>
             <div className={catStyle.container}>
@@ -115,7 +115,7 @@ const Notifications = () => {
                     )}
 
                     <div className={notificationStyle.notificationList}>
-                        {incomingNotification?.map((notification,index) => (
+                        {incomingNotification?.map((notification, index) => (
                             <div
                                 key={notification._id} // Unique key for each notification
                                 className={notificationStyle.notificationItem}
@@ -134,6 +134,7 @@ const Notifications = () => {
                                     <p className={notificationStyle.notificationDescription}>
                                         {notification.message}
                                     </p>
+                                    {notification?.isMutlipleOrder === false ? (
                                         <div className={notificationStyle.viewStyle}
                                             onClick={() => {
                                                 navigate(`/orders/Orders/OrderDetails/${notification?.orderId}`);
@@ -142,7 +143,16 @@ const Notifications = () => {
                                         >
                                             View
                                         </div>
-                                    
+                                    ) : (
+                                        <div className={notificationStyle.viewStyle}
+                                            onClick={() => {
+                                                navigate(`/orders/Orders/MultiProductOrderDetails/${notification?.orderId}`);
+                                                handleReadNotification(notification._id);
+                                            }}
+                                        >
+                                            View
+                                        </div>
+                                    )}
                                     <span className={notificationStyle.notificationTimestamp} style={{ paddingBottom: 20 }}
                                     >
                                         {formattedDate(notification.createdAt)}

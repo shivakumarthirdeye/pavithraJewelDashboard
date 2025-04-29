@@ -18,7 +18,7 @@ export const OrderDetails = () => {
 
     const dispatch = useDispatch();
     const { ordersDetailsData, isRefresh } = useSelector((state) => state.orders);
-    console.log('ordersDetailsData', ordersDetailsData);
+    // console.log('ordersDetailsData', ordersDetailsData);
 
 
     useEffect(() => {
@@ -233,7 +233,7 @@ export const OrderDetails = () => {
                                 </div>
                                 <div>
                                     {ordersDetailsData?.data?.products?.map((item, index) => {
-                                        console.log('items---------------------', item);
+                                        // console.log('items---------------------', item);
 
                                         return (
                                             <>
@@ -316,8 +316,8 @@ export const OrderDetails = () => {
                                                             <span
                                                                 style={{
                                                                     fontFamily: 'DM Sans',
-                                                                    fontSize: 12,
-                                                                    fontWeight: '600',
+                                                                    fontSize: 11,
+                                                                    fontWeight: '400',
                                                                     lineHeight: 18.23,
                                                                     letterSpacing: 0.1,
                                                                     textAlign: 'center',

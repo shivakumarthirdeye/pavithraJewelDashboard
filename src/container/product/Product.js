@@ -47,7 +47,7 @@ const Product = () => {
     const { subCategoiesExportData } = useSelector(
         (state) => state.subCategories
     );
-    console.log('productsData=======================', productsData);
+    // console.log('productsData=======================', productsData);
 
 
     const calculateShowingRange = () => {
@@ -154,8 +154,8 @@ const Product = () => {
             Product_ID: item?.productdetails?._id || '_',
             Category: item?.productdetails?.category?.productCategory?.name || '-',
             Sub_Category: item?.productdetails?.category?.productSubcategory?.name || '-',
-            Stock: item?.productdetails?.inventory?.totalstock || '-',
-            Sale_Price: item?.sellingPrice || '-',
+            Stock: item?.productdetails?.inventory?.totalstock || 0,
+            Sale_Price: `₹ ${item?.sellingPrice?.toLocaleString("en-IN")}` || '0',
             Date: moment(item?.productdetails?.createdAt).format('MMM DD,YYYY, HH:MMA'),
             Status: item?.productdetails?.status || '-',
         }));
@@ -544,7 +544,7 @@ const Product = () => {
                                                     </div>
                                                     <div className={productStyle.dropdownStyle} />
                                                     <div className={productStyle.priceStyle} style={{ color: '#667085', fontSize: 12 }}>
-                                                        Rs. {item?.sellingPrice?.toLocaleString("en-IN")}
+                                                    ₹ {item?.sellingPrice?.toLocaleString("en-IN")}
                                                     </div>
                                                     <div className={productStyle.dropdownStyle} />
                                                     <div

@@ -34,7 +34,7 @@ const Categories = () => {
     const { categoriesData, filterOptions, isLoading, isRefresh } = useSelector(
         (state) => state.categories
     );
-console.log('categoriesData',categoriesData);
+// console.log('categoriesData',categoriesData);
 
     
     
@@ -300,7 +300,7 @@ console.log('categoriesData',categoriesData);
                                                     className={catStyle.salesStyle}
                                                     style={{ color: "#667085", }}
                                                 >
-                                                    Rs. {item?.totalSale?.toLocaleString("en-IN")}
+                                                    ₹ {item?.totalSale?.toLocaleString("en-IN")}
                                                 </div>
                                                 <div className={catStyle.dropdownStyle} />
 

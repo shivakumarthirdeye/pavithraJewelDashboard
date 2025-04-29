@@ -245,7 +245,7 @@ export const MultiProductOrderDetails = () => {
                                 </div>
                                 <div>
                                     {ordersDetailsData?.data?.products?.map((item, index) => {
-                                        console.log('items---------------------', item);
+                                        // console.log('items---------------------', item);
 
                                         return (
                                             <>
@@ -328,8 +328,8 @@ export const MultiProductOrderDetails = () => {
                                                             <span
                                                                 style={{
                                                                     fontFamily: 'DM Sans',
-                                                                    fontSize: 12,
-                                                                    fontWeight: '600',
+                                                                    fontSize: 11,
+                                                                    fontWeight: '400',
                                                                     lineHeight: 18.23,
                                                                     letterSpacing: 0.1,
                                                                     textAlign: 'center',

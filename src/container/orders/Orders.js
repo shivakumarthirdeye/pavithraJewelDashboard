@@ -24,7 +24,7 @@ export const Orders = () => {
     const dispatch = useDispatch();
     const location = useLocation();
     const { ordersData, filterOptions, isLoading, isRefresh, orderStatisticsData } = useSelector((state) => state.orders);
-    console.log('location=======', location);
+    // console.log('location=======', location);
 
     //Main data
     // console.log('orderStatisticsData==================', orderStatisticsData);
@@ -68,14 +68,14 @@ export const Orders = () => {
     //     navigate(`/orders/Orders?tab=${tabId}`);
     // };
     const changeID = (id) => {
-        console.log('id', id);
+        // console.log('id', id);
 
         setSelected(id.id);
         dispatch(setFilterValues({ filter: id.val, page: 1 }))
         
     };
     const changeOrdersID = (id) => {
-        console.log('id', id);
+        // console.log('id', id);
 
         setSelectedOrders(id.id);
         navigate(`/orders/Orders?tab=${id.id}`);
@@ -616,8 +616,8 @@ export const Orders = () => {
                                                             <span
                                                                 style={{
                                                                     fontFamily: 'DM Sans',
-                                                                    fontSize: 12,
-                                                                    fontWeight: '600',
+                                                                    fontSize: 11,
+                                                                    fontWeight: '400',
                                                                     lineHeight: 18.23,
                                                                     letterSpacing: 0.1,
                                                                     textAlign: 'center',
