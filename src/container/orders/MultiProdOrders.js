@@ -524,9 +524,6 @@ export const MultiProductOrderDetails = () => {
                                     </div>
                                 ) : (
                                     <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-
-
-
                                         Razorpay
                                     </div>
                                 )}
@@ -870,9 +867,15 @@ export const MultiProductOrderDetails = () => {
                                         <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>ID</p>
 
                                     </div>
-                                    <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                        {ordersDetailsData?.data?.payment?.id}
-                                    </div>
+                                    {ordersDetailsData?.data?.payment?.method === 'HDFC' ? (
+                                        <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                            {ordersDetailsData?.data?.hdfc_order_id}
+                                        </div>
+                                    ) : (
+                                        <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                            {ordersDetailsData?.data?.payment?.id}
+                                        </div>
+                                    )}
                                 </div>
                                 <div style={{ marginTop: 20, cursor: 'pointer' }} onClick={handleCopyPaymentId}>
                                     <CopyIcon />
@@ -885,10 +888,15 @@ export const MultiProductOrderDetails = () => {
                                     <p className={orderStyle.textStyle} style={{ paddingLeft: 10 }}>Payment Method</p>
 
                                 </div>
-                                <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
-                                    {/* {ordersDetailsData?.payment?.type} */}
-                                    Razorpay
-                                </div>
+                                {ordersDetailsData?.data?.payment?.method === 'HDFC' ? (
+                                    <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                        HDFC
+                                    </div>
+                                ) : (
+                                    <div className={orderStyle.proNameText} style={{ marginLeft: 30, marginTop: 10 }}>
+                                        Razorpay
+                                    </div>
+                                )}
                             </>
                         </div>
                         <div className={orderStyle.viewCardStyle} style={{ marginTop: 20, padding: 20 }}>
