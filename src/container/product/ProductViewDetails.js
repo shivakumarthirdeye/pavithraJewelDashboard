@@ -213,7 +213,7 @@ const ProductViewDetails = () => {
                                 <div className={productStyle.catStatusStyle} key={index}>
                                     <img
                                         src={item}
-                                        alt={`Product Image ${index + 1}`}
+                                        alt={`ProductImage ${index + 1}`}
                                         className={productStyle.sliderImage}
                                         onClick={() => handleThumbnailClick(item)} // Update the selected image when thumbnail is clicked
                                         style={{ cursor: 'pointer' }}

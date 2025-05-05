@@ -95,7 +95,7 @@ export default function ViewFeaturedProducts() {
                                     {featurerdProducts?.products?.map((item, index) => (
                                         <div className={appearancStyle.categoriesStyle} key={index}>
                                             <div className={appearancStyle.textStyle}>{item.productName} </div>
-                                            <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
+                                            {/* <div style={{ marginTop: 5 }}><CancelCateIcon /></div> */}
                                         </div>
                                     ))}
                                 </div>

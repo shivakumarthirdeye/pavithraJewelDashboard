@@ -76,8 +76,8 @@ export const OrderDetails = () => {
             // dispatch(updateStatus({ values, id }));
         }
     });
-   
-    
+
+
     const handleStatusChange = (event) => {
         const selectedStatus = event.target.value;
         if (selectedStatus) {
@@ -89,19 +89,19 @@ export const OrderDetails = () => {
             })
         }
     };
-    
+
     useEffect(() => {
         if (ordersDetailsData?.data?.products) {
             ordersDetailsData.data.products.forEach((item) => {
                 const statusArray = item?.status;
                 const lastStatus = statusArray?.at(-1); // Get the last status
-    
+
                 if (lastStatus) {
                     // You can distinguish whether it's readyToShip or madeToOrder based on your data
                     if (item.orderType === 'Ready to ship orders') {
-                        setFieldValue("status", lastStatus.name); 
+                        setFieldValue("status", lastStatus.name);
                     } else if (item.orderType === 'Made to orders') {
-                        setFieldValue("status", lastStatus.name); 
+                        setFieldValue("status", lastStatus.name);
                     }
                 }
             });
@@ -193,8 +193,25 @@ export const OrderDetails = () => {
                 <div className={orderStyle.productStockContainer} style={{ marginTop: 20, }}>
                     <div className={orderStyle.productStyle} style={{ padding: 20 }}>
                         <div className={orderStyle.iconStyle}>
-                            <div className={orderStyle.textStyle}>
+                            <div className={orderStyle.textStyle} style={{ fontSize: 16,color:'#000',fontWeight:'600' }}>
                                 Products
+                            </div>
+                            <div style={{
+                                marginLeft: 10,
+                                width: 30,
+                                height: 28,
+                                borderRadius: 8,
+                                backgroundColor: '#E9FAF7',
+                                textAlign: 'center'
+                            }}>
+                                <span style={{
+                                    color: '#1A9882',
+                                    fontSize: 14,
+                                    fontWeight: '600'
+                                }}>
+                                    {ordersDetailsData?.data?.products?.length}
+
+                                </span>
                             </div>
                         </div>
                         <div className={orderStyle.iconStyle} style={{ gap: 10, alignItems: 'flex-start' }}>
@@ -213,7 +230,7 @@ export const OrderDetails = () => {
                         </div>
                     </div>
                     <div style={{ display: "flex", width: '100%' }}>
-                        <div style={{ width: "65%", overflowX: "scroll" }}>
+                        <div style={{ width: "60%", overflowX: "scroll" }}>
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.productTextStyle}>Product </div>
@@ -279,7 +296,7 @@ export const OrderDetails = () => {
                             <div className={orderStyle.bottomLineStyle} />
 
                         </div>
-                        <div style={{ width: "35%", borderLeft: "6px solid #EEEEEE", overflowX: 'scroll' }}>
+                        <div style={{ width: "40%", borderLeft: "6px solid #EEEEEE", overflowX: 'scroll' }}>
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.qytText}>Status</div>
@@ -293,7 +310,7 @@ export const OrderDetails = () => {
                                         return (
                                             <>
                                                 <div className={orderStyle.info} key={index}>
-                                                    <div style={{ width: '34%' }}>
+                                                    <div style={{ width: '35%' }}>
                                                         <div
                                                             style={{
                                                                 backgroundColor: lastValue?.name === 'NEW'
@@ -343,7 +360,7 @@ export const OrderDetails = () => {
                                                     ) : (
                                                         <div className={orderStyle.fullyPaid}>Fully paid</div>
                                                     )}
-                                                    <div className={orderStyle.priceStyle}>₹{ordersDetailsData?.data?.total?.toLocaleString("en-IN")}
+                                                    <div className={orderStyle.priceStyle}>₹ {ordersDetailsData?.data?.total?.toLocaleString("en-IN")}
                                                     </div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
@@ -355,7 +372,7 @@ export const OrderDetails = () => {
                                 <div className={orderStyle.bottomLineStyle} />
                                 <div className={orderStyle.info} >
                                     <div className={orderStyle.pendingAmountStyle}>Shipping Rate</div>
-                                    <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.shippingRate} </div>
+                                    <div className={orderStyle.totalAmountStyle}>₹ {ordersDetailsData?.data?.shippingRate} </div>
                                 </div>
                                 <div className={orderStyle.bottomLineStyle} />
                                 <div className={orderStyle.info} >

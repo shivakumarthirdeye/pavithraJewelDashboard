@@ -205,9 +205,26 @@ export const MultiProductOrderDetails = () => {
                 <div className={orderStyle.productStockContainer} style={{ marginTop: 20, }}>
                     <div className={orderStyle.productStyle} style={{ padding: 20 }}>
                         <div className={orderStyle.iconStyle}>
-                            <div className={orderStyle.textStyle}>
+                            <div className={orderStyle.textStyle} style={{ fontSize: 16,color:'#000',fontWeight:'600'}}>
                                 Products
                             </div>
+                            <div style={{
+                                    marginLeft: 10,
+                                    width: 30,
+                                    height: 28,
+                                    borderRadius: 8,
+                                    backgroundColor: '#E9FAF7',
+                                    textAlign: 'center'
+                                }}>
+                                    <span style={{
+                                        color: '#1A9882',
+                                        fontSize: 14,
+                                        fontWeight: '600'
+                                    }}>
+                                        {ordersDetailsData?.data?.products?.length}
+
+                                    </span>
+                                </div>
                         </div>
                         <div className={orderStyle.iconStyle} style={{ gap: 10, alignItems: 'flex-start' }}>
                             <div className={orderStyle.dateStyle}>
@@ -225,7 +242,7 @@ export const MultiProductOrderDetails = () => {
                         </div>
                     </div>
                     <div style={{ display: "flex", width: '100%' }}>
-                        <div style={{ width: "65%", overflowX: "scroll" }}>
+                        <div style={{ width: "60%", overflowX: "scroll" }}>
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.productTextStyle}>Product </div>
@@ -291,7 +308,7 @@ export const MultiProductOrderDetails = () => {
                             <div className={orderStyle.bottomLineStyle} />
 
                         </div>
-                        <div style={{ width: "35%", borderLeft: "6px solid #EEEEEE", overflowX: 'scroll' }}>
+                        <div style={{ width: "40%", borderLeft: "6px solid #EEEEEE", overflowX: 'scroll' }}>
                             <div className={orderStyle.scrollContainer} >
                                 <div className={orderStyle.header}>
                                     <div className={orderStyle.qytText}>Status</div>
@@ -305,7 +322,7 @@ export const MultiProductOrderDetails = () => {
                                         return (
                                             <>
                                                 <div className={orderStyle.info} key={index}>
-                                                    <div style={{ width: '34%' }}>
+                                                    <div style={{ width: '35%' }}>
                                                         <div
                                                             style={{
                                                                 backgroundColor: lastValue?.name === 'NEW'
@@ -355,7 +372,7 @@ export const MultiProductOrderDetails = () => {
                                                     ) : (
                                                         <div className={orderStyle.fullyPaid}>Fully paid</div>
                                                     )}
-                                                    <div className={orderStyle.priceStyle}>₹{item?.totalPrice?.toLocaleString("en-IN")}
+                                                    <div className={orderStyle.priceStyle}>₹ {item?.totalPrice?.toLocaleString("en-IN")}
                                                     </div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
@@ -367,12 +384,12 @@ export const MultiProductOrderDetails = () => {
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.pendingAmountStyle}>Shipping Rate</div>
-                                <div className={orderStyle.totalAmountStyle}>₹{ordersDetailsData?.data?.shippingRate} </div>
+                                <div className={orderStyle.totalAmountStyle}>₹ {ordersDetailsData?.data?.shippingRate} </div>
                             </div>
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹{ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
                             </div>
                             {/* <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
@@ -538,8 +555,8 @@ export const MultiProductOrderDetails = () => {
                                     sx={{
                                         ...formselect,
                                         "& .MuiSelect-select": {
-                                            fontWeight: values.status ? "500" : "400",
-                                            color: values.status ? "#081735" : "#858D9D",
+                                            fontWeight: values.readyToShipStatus ? "500" : "400",
+                                            color: values.readyToShipStatus ? "#081735" : "#858D9D",
                                         },
                                     }}
                                     IconComponent={(props) => (
@@ -570,8 +587,8 @@ export const MultiProductOrderDetails = () => {
                                     sx={{
                                         ...formselect,
                                         "& .MuiSelect-select": {
-                                            fontWeight: values.status ? "500" : "400",
-                                            color: values.status ? "#081735" : "#858D9D",
+                                            fontWeight: values.madeToOrderStatus ? "500" : "400",
+                                            color: values.madeToOrderStatus ? "#081735" : "#858D9D",
                                         },
                                     }}
                                     IconComponent={(props) => (
@@ -661,8 +678,8 @@ export const MultiProductOrderDetails = () => {
                                         sx={{
                                             ...formselect,
                                             "& .MuiSelect-select": {
-                                                fontWeight: values.status ? "500" : "400",
-                                                color: values.status ? "#081735" : "#858D9D",
+                                                fontWeight: values.readyToShipStatus ? "500" : "400",
+                                                color: values.readyToShipStatus ? "#081735" : "#858D9D",
                                             },
                                         }}
                                         IconComponent={(props) => (
@@ -670,12 +687,12 @@ export const MultiProductOrderDetails = () => {
                                         )}
                                         displayEmpty
                                         defaultValue=""
-                                        name="status"
-                                        value={values.status}
+                                        name="readyToShipStatus"
+                                        value={values.readyToShipStatus}
                                         onChange={handleStatusChange} // Custom handler
                                     >
-                                        {/* <MenuItem value="">Select</MenuItem> */}
-                                        <MenuItem value="">New</MenuItem>
+                                        <MenuItem value="">Select</MenuItem>
+                                        <MenuItem value="NEW">New</MenuItem>
                                         <MenuItem value="PROCESSING">Processing</MenuItem>
                                         <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                         <MenuItem value="DELIVERED">Delivered</MenuItem>
@@ -693,8 +710,8 @@ export const MultiProductOrderDetails = () => {
                                         sx={{
                                             ...formselect,
                                             "& .MuiSelect-select": {
-                                                fontWeight: values.status ? "500" : "400",
-                                                color: values.status ? "#081735" : "#858D9D",
+                                                fontWeight: values.madeToOrderStatus ? "500" : "400",
+                                                color: values.madeToOrderStatus ? "#081735" : "#858D9D",
                                             },
                                         }}
                                         IconComponent={(props) => (
@@ -702,12 +719,12 @@ export const MultiProductOrderDetails = () => {
                                         )}
                                         displayEmpty
                                         defaultValue=""
-                                        name="status"
-                                        value={values.status}
+                                        name="madeToOrderStatus"
+                                        value={values.madeToOrderStatus}
                                         onChange={handleStatusChangeForMadeOrder} // Custom handler
                                     >
-                                        {/* <MenuItem value="">Select</MenuItem> */}
-                                        <MenuItem value="">New</MenuItem>
+                                        <MenuItem value="">Select</MenuItem>
+                                        <MenuItem value="NEW">New</MenuItem>
                                         <MenuItem value="PROCESSING">Processing</MenuItem>
                                         <MenuItem value="SHIPPED">Out for delivery</MenuItem>
                                         <MenuItem value="DELIVERED">Delivered</MenuItem>

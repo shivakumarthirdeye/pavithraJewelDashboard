@@ -377,7 +377,7 @@ export default function Testimonials() {
                     </div>
                 </Box> */}
                 <div style={{ margin: "0px 20px 20px 19px" }}>
-                    <label className={productStyle.label}>Photo</label>
+                    <label className={productStyle.label}>Photos</label>
                     <br />
                     <div className={productStyle.imageUpload1}>
                         <div className={productStyle.imageView}>

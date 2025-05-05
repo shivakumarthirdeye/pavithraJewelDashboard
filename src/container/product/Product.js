@@ -14,7 +14,7 @@ import { DatePickerIcon, DeleteIcon, Drop, EditIcon, ExportIcon, FilterIcon, Plu
 import DeleteModal from '../../component/DeleteModal';
 import { formatDate } from '../../helper/FormatDate';
 import { getCategoriesExport } from '../../redux/categoriesSlice';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider, PickersDay } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
 import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
@@ -182,6 +182,22 @@ const Product = () => {
                         handleEndDateChange(endDate ? dayjs(endDate).format('YYYY-MM-DD') : null);
                     }}
                     calendars={1}
+                    renderDay={(day, _value, DayComponentProps) => {
+                        const isToday = dayjs().isSame(day, 'day');
+                  
+                        return (
+                          <PickersDay
+                            {...DayComponentProps}
+                            sx={{
+                              ...(isToday && {
+                                border: '2px solid #1976d2', // Blue border for today
+                                fontWeight: 'bold',
+                                color: '#1976d2',
+                              }),
+                            }}
+                          />
+                        );
+                      }}
                 />
             </LocalizationProvider>
         </div>
@@ -544,7 +560,7 @@ const Product = () => {
                                                     </div>
                                                     <div className={productStyle.dropdownStyle} />
                                                     <div className={productStyle.priceStyle} style={{ color: '#667085', fontSize: 12 }}>
-                                                    ₹ {item?.sellingPrice?.toLocaleString("en-IN")}
+                                                    ₹ {item?.sellingPrice?.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
                                                     </div>
                                                     <div className={productStyle.dropdownStyle} />
                                                     <div

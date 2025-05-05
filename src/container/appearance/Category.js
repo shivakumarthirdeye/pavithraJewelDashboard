@@ -36,6 +36,7 @@ export default function Categories() {
         (state) => state.appearance);
     
     const viewCategories = appearanceCategoriesData?.data?.categories
+    // console.log('viewCategories',viewCategories);
     
     
     React.useEffect(() => {

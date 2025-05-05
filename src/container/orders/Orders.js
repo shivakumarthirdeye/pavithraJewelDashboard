@@ -27,7 +27,7 @@ export const Orders = () => {
     // console.log('location=======', location);
 
     //Main data
-    // console.log('orderStatisticsData==================', orderStatisticsData);
+    console.log('ordersData==================', ordersData);
 
     const [value, setValue] = useState([
         { val: "All Dates", id: 0 },
@@ -550,12 +550,12 @@ export const Orders = () => {
                                     <>
                                         <div>
                                             {ordersData?.data?.map((item, index) => {
-                                                const arr = item?.status;
-                                                let lastValue = arr?.at(-1);
+                                                // const arr = item?.status;
+                                                // let lastValue = arr?.at(-1);
                                                 return (
                                                     <div className={productStyle.info} key={index}>
                                                         <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
-                                                        <div className={orderStyle.productNameStyle}>
+                                                        <div className={orderStyle.productNameStyle} style={{width:'36%'}}>
 
                                                             {/* <img src={item?.order_items[0]?.productId?.featuredImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} /> */}
                                                             <div>
@@ -596,9 +596,9 @@ export const Orders = () => {
                                                         <div className={productStyle.dropdownStyle} />
                                                         <div
                                                             style={{
-                                                                backgroundColor: lastValue?.name === 'NEW'
-                                                                    ? "#4A4C561A" : lastValue?.name === 'PROCESSING'
-                                                                        ? '#F439391A' : lastValue?.name === 'DELIVERED'
+                                                                backgroundColor: item?.status?.name === 'NEW'
+                                                                    ? "#4A4C561A" : item?.status?.name === 'PROCESSING'
+                                                                        ? '#F439391A' : item?.status?.name === 'DELIVERED'
                                                                             ? '#EAF8FF' : '#3250FF1A',
                                                                 width: '15%',
                                                                 borderRadius: 10,
@@ -622,14 +622,14 @@ export const Orders = () => {
                                                                     letterSpacing: 0.1,
                                                                     textAlign: 'center',
                                                                     // textTransform: 'capitalize',
-                                                                    color: lastValue?.name === 'NEW'
-                                                                        ? "#4A4C56" : lastValue?.name === 'PROCESSING'
-                                                                            ? '#F86624' : lastValue?.name === 'DELIVERED'
+                                                                    color: item?.status?.name === 'NEW'
+                                                                        ? "#4A4C56" : item?.status?.name === 'PROCESSING'
+                                                                            ? '#F86624' : item?.status?.name === 'DELIVERED'
                                                                                 ? '#2BB2FE' : '#3250FF',
                                                                 }}
-                                                            >{lastValue?.name === 'NEW'
-                                                                ? "New" : lastValue?.name === 'PROCESSING'
-                                                                    ? 'Processing' : lastValue?.name === 'DELIVERED'
+                                                            >{item?.status?.name === 'NEW'
+                                                                ? "New" : item?.status?.name === 'PROCESSING'
+                                                                    ? 'Processing' : item?.status?.name === 'DELIVERED'
                                                                         ? 'Delivered' : 'Out for delivery'}
                                                             </span>
                                                         </div>
@@ -726,12 +726,10 @@ export const Orders = () => {
                                     <>
                                         <div>
                                             {ordersData?.data?.map((item, index) => {
-                                                const arr = item?.status;
-                                                const lastValue = arr?.at(-1);
                                                 return (
                                                     <div className={productStyle.info} key={index}>
                                                         <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
-                                                        <div className={orderStyle.productNameStyle}>
+                                                        <div className={orderStyle.productNameStyle} style={{width:'36%'}}>
 
                                                             {/* <img src={item?.order_items[0]?.productId?.featuredImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} /> */}
                                                             <div>

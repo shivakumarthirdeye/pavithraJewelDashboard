@@ -209,7 +209,7 @@ export const TrashMadeToOrders = () => {
                                         return (
                                             <div className={productStyle.info} key={index}>
                                                 <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
-                                                <div className={orderStyle.productNameStyle}>
+                                                <div className={orderStyle.productNameStyle} style={{width:'35%'}}>
 
                                                     {/* <img src={item?.productDetails[0]?.featurerdImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} /> */}
                                                     <div>

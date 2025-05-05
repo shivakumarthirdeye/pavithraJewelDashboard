@@ -15,7 +15,7 @@
 }
 
 .productNameStyle {
-    width: 36%;
+    
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;
@@ -77,7 +77,7 @@
 }
 
 .totalStyle {
-    width: 15%;
+    width: 20%;
     font-family: Public Sans;
     font-size: 14px;
     font-weight: 500;

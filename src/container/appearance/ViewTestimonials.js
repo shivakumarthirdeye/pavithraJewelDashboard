@@ -14,6 +14,7 @@ import { AddIcon, CancelCateIcon } from '../../svg';
 import appearancStyle from './appearance.module.css'
 import { useDispatch, useSelector } from 'react-redux';
 import { getTestimonials } from '../../redux/appearanceSlice';
+import productStyle from '../product/product.module.css'
 
 const CustomAccordion = styled(Accordion)(({ theme }) => ({
 
@@ -27,8 +28,8 @@ const CustomAccordion = styled(Accordion)(({ theme }) => ({
 }));
 export default function ViewTestimonials() {
     const dispatch = useDispatch();
-    const { testimonialsData,isLoading } = useSelector((state) => state.appearance);
-    const viewTestimonials = testimonialsData?.data?.testimonials;
+    const { testimonialsData, isLoading } = useSelector((state) => state.appearance);
+    const viewTestimonials = testimonialsData?.data;
     console.log('viewTestimonials', viewTestimonials);
 
 
@@ -57,133 +58,35 @@ export default function ViewTestimonials() {
                         letterSpacing: '0.005em',
                         textAlign: 'left'
 
-                    }}>Testimonials</Typography>
+                    }}>Happy Clients</Typography>
                 </AccordionSummary>
-                {isLoading ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
-                        <CircularProgress />
-                    </Box>
-                ) : (
-                    <>
-                        {viewTestimonials?.length > 0 ? (
-                            <>
-                                {viewTestimonials?.map((banners, index) => (
-                                    <AccordionDetails
-                                        sx={{
-                                            backgroundColor: '#F8F9FF',
-                                            // width:'100%',
-                                            height: 'fit-content',
-                                            padding: '18px 29px',
-                                            margin: "0px 20px 20px 19px"
-                                        }}
-                                    >
-                                        <Box sx={{ marginBottom: '10px' }}>
-                                            <Typography
-                                                sx={{
-                                                    fontWeight: '500',
-                                                    fontFamily: 'Public Sans',
-                                                    fontSize: '14px',
-                                                    lineHeight: '28px',
-                                                    letterSpacing: '0.005em',
-                                                    textAlign: 'left',
-                                                    color: '#777980'
-                                                }}>
-                                                Rating
-                                            </Typography>
-                                            <TextField
-                                                placeholder='Enter'
-                                                type={'text'}
-                                                value={banners?.rating}
-                                                sx={TextInput}
-                                                disabled
-                                            />
-                                        </Box>
-                                        <Box sx={{
-                                            marginBottom: '10px',
-                                            display: 'flex',
-                                            justifyContent: 'flex-start',
-                                            width: '100%',
-                                            alignItems: 'center',
-                                            gap: '10px'
-                                        }}>
-                                            <div style={{ width: '50%' }}>
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: '500',
-                                                        fontFamily: 'Public Sans',
-                                                        fontSize: '14px',
-                                                        lineHeight: '28px',
-                                                        letterSpacing: '0.005em',
-                                                        textAlign: 'left',
-                                                        color: '#777980'
-                                                    }}>
-                                                    Customer Name
-                                                </Typography>
-                                                <TextField
-                                                    placeholder='Enter'
-                                                    type={'text'}
-                                                    value={banners?.customerName}
-                                                    sx={TextInput}
-                                                    disabled
-                                                />
-                                            </div>
-                                            <div style={{ width: '50%' }}>
-                                                <Typography
-                                                    sx={{
-                                                        fontWeight: '500',
-                                                        fontFamily: 'Public Sans',
-                                                        fontSize: '14px',
-                                                        lineHeight: '28px',
-                                                        letterSpacing: '0.005em',
-                                                        textAlign: 'left',
-                                                        color: '#777980'
-                                                    }}>
-                                                    Customer Role
-                                                </Typography>
-                                                <TextField
-                                                    placeholder='Enter'
-                                                    type={'text'}
-                                                    value={banners?.customerRole}
-                                                    sx={TextInput}
-                                                    disabled
-                                                />
-                                            </div>
-                                        </Box>
-                                        <Box sx={{ marginBottom: '10px' }}>
-                                            <Typography
-                                                sx={{
-                                                    fontWeight: '500',
-                                                    fontFamily: 'Public Sans',
-                                                    fontSize: '14px',
-                                                    lineHeight: '28px',
-                                                    letterSpacing: '0.005em',
-                                                    textAlign: 'left',
-                                                    color: '#777980'
-                                                }}>
-                                                Their testimony
-                                            </Typography>
-                                            <TextField
-                                                placeholder='Enter'
-                                                type={'text'}
-                                                value={banners.testimony}
-                                                sx={TextArea}
-                                                multiline
-                                                rows={4}
-                                                disabled
-                                            />
+                <div style={{ margin: "0px 20px 20px 19px" }}>
+                    <label className={productStyle.label}>Photos</label>
+                    <br />
+                    <div className={productStyle.imageUpload1}>
+                        <div className={productStyle.imageView}>
 
-                                        </Box>
-                                    </AccordionDetails>
-                                ))}
-                            </>
-                        ) : (
-                            <div>
-                                Testimonials not found
-                            </div>
-                        )}
-                    </>
-                )}
-            </CustomAccordion>
+                            {viewTestimonials?.image?.length > 0 ? (
+                                <>
+                                    <div className={productStyle.imageContainer}>
+                                        {viewTestimonials?.image?.map((img, imgIndex) => (
+                                            <div key={imgIndex} className={productStyle.imageWrapper}>
+
+                                                <img src={img} alt="Uploaded" className={productStyle.inventoryImage} />
+                                            </div>
+                                        ))}
+
+                                    </div>
+                                </>
+                            ) : (
+                                <div>
+                                    No Clients
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </CustomAccordion >
         </div >
     );
 }

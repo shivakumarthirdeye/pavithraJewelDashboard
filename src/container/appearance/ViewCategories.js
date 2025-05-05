@@ -96,11 +96,11 @@ export default function ViewCategories() {
                         <>
                             {viewCategories?.length > 0 ? (
 
-                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%' }}>
+                                <div style={{ display: 'flex', justifyContent: 'flex-start', alignItems: 'center', gap: 10, width: '100%',flexWrap:'wrap' }}>
                                     {viewCategories?.map((item, index) => (
                                         <div className={appearancStyle.categoriesStyle} key={index}>
                                             <div className={appearancStyle.textStyle}>{item.name} </div>
-                                            <div style={{ marginTop: 5 }}><CancelCateIcon /></div>
+                                            {/* <div style={{ marginTop: 5 }}><CancelCateIcon /></div> */}
                                         </div>
                                     ))}
                                 </div>

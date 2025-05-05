@@ -455,10 +455,10 @@ export const CustomersDetails = () => {
                         {customerDetails?.billingAddress?.map((item) => (
                             <div
                                 className={customerStyle.proNameText}
-                                style={{ marginLeft: 50, marginTop: 5 }}
+                                style={{ marginLeft: 50, marginTop: 10 }}
                             >
                                 {item?.firstName} {item?.lastName}{","}
-                                <br/>
+                                <br />
                                 {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
                                 {item?.country}
                                 {/* Supriya Raj
@@ -510,7 +510,7 @@ export const CustomersDetails = () => {
                                 style={{ marginLeft: 50, marginTop: 5 }}
                             >
                                 {item?.firstName} {item?.lastName}{","}
-                                <br/>
+                                <br />
                                 {item?.streetAddress}, {item?.city}, {item?.state} {item?.pincode},{" "}
                                 {item?.country}
                             </div>
@@ -579,7 +579,7 @@ export const CustomersDetails = () => {
                                 content={dateContent}
                             />
                         </div>
-                        <div className={productStyle.filter} style={{width:'25%'}}>
+                        <div className={productStyle.filter} style={{ width: '25%' }}>
                             <PopoverComponent
                                 icon={<FilterIcon />}
                                 label="Status"
@@ -623,10 +623,7 @@ export const CustomersDetails = () => {
                         <>
                             <div>
                                 {customerDetailOrders?.map((item, index) => {
-                                    const arr = item?.products?.status;
-                                    const lastValue = arr?.at(-1);
-                                    console.log('item========', item);
-                                    
+
                                     return (
                                         <div
                                             className={productStyle.info}
@@ -647,10 +644,10 @@ export const CustomersDetails = () => {
                                                     alt="Featured"
                                                 />
                                                 <div>
-                                                    <span style={{ marginLeft: 5, fontSize: 12,color: "#1D1F2C" }}>{item?.productDetails[0]?.productName && item?.productDetails[0]?.productName?.length > 25 ? `${item?.productDetails[0]?.productName?.substring(0, 25)}...` : item?.productDetails[0]?.productName}</span>
-                                                    
+                                                    <span style={{ marginLeft: 5, fontSize: 12, color: "#1D1F2C" }}>{item?.productDetails[0]?.productName && item?.productDetails[0]?.productName?.length > 20 ? `${item?.productDetails[0]?.productName?.substring(0, 20)}...` : item?.productDetails[0]?.productName}</span>
+
                                                     <br />
-                                                    
+
                                                 </div>
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
@@ -665,7 +662,7 @@ export const CustomersDetails = () => {
                                             // style={{ marginLeft: 10 }}
                                             />
                                             <div className={orderStyle.totalStyle}>
-                                                {item?.grandTotal?.toLocaleString("en-IN")}
+                                                ₹{item?.grandTotal?.toLocaleString("en-IN")}
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
                                             <div
@@ -678,7 +675,7 @@ export const CustomersDetails = () => {
                                             <div
                                                 style={{
                                                     backgroundColor:
-                                                    item?.products?.status[0]?.name === "NEW"
+                                                        item?.products?.status[0]?.name === "NEW"
                                                             ? "#c7c8ca"
                                                             : item?.products?.status[0]?.name === "PROCESSING"
                                                                 ? "#F439391A"
@@ -707,7 +704,7 @@ export const CustomersDetails = () => {
                                                         textTransform: "capitalize",
                                                         textAlign: "center",
                                                         color:
-                                                        item?.products?.status[0]?.name === "NEW"
+                                                            item?.products?.status[0]?.name === "NEW"
                                                                 ? "#4A4C56"
                                                                 : item?.products?.status[0]?.name === "PROCESSING"
                                                                     ? "#F86624"
@@ -721,23 +718,14 @@ export const CustomersDetails = () => {
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
                                             <div className={customerStyle.actionStyle}>
-                                                {item?.orderType === 'Made to orders' ? (
                                                     <div
                                                         onClick={() =>
-                                                            navigate(`/orders/MadeToOrders/MadeToOrderDetails/${item?._id}`)
+                                                            navigate(`/orders/Orders/OrderDetails/${item?._id}`)
                                                         }
                                                     >
                                                         <ViewIcon />
                                                     </div>
-                                                ) : (
-                                                    <div
-                                                        onClick={() =>
-                                                            navigate(`/orders/ReadyToShipOrders/ReadyToShipOrderDetails/${item?._id}`)
-                                                        }
-                                                    >
-                                                        <ViewIcon />
-                                                    </div>
-                                                )}
+                                               
                                                 <div
                                                     style={{ marginLeft: 12 }}
                                                     onClick={() => openDeleteModal(item?._id)}
