@@ -32,7 +32,7 @@ const Sidebar = ({ children }) => {
         <div className={Styles.sideMenuBar}>
             <section className={Styles.left}>
                 <div className={Styles.logo} onClick={() => navigate('/dashboard')}>
-                    <img src='/jewelsLogo.png' alt='logo' />
+                    <img src='/pavithrajewelslogo.png' alt='logo' />
                 </div>
 
                 <div onClick={() => navigate('/dashboard')} className={path === 'dashboard' ? `${Styles.width} ${Styles.active}` : Styles.width}>

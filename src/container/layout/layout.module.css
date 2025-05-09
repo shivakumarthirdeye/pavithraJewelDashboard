@@ -132,6 +132,11 @@
     width: 100%;
     cursor: pointer;
 }
+.logo img{
+    width: 200px;
+    height: 110px;
+    cursor: pointer;
+}
 
 .dashboardText {
     font-family: Public Sans;
