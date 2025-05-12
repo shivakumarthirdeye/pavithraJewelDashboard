@@ -487,7 +487,7 @@ const dateContent = (
                     </div>
                 </div>
             </div>
-            <div className={productStyle.filterBoxStyle} style={{ marginTop: 10 }}>
+            <div className={productStyle.searchBoxStyle} style={{ marginTop: 10 }}>
                 <div className={productStyle.search} >
                     <div style={{ cursor: 'pointer', marginTop: 5 }}>
                         <SearchIcon />

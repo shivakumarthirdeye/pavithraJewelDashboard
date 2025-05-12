@@ -1409,6 +1409,12 @@ input {
     border: 1px solid #E0E2E7;
     background-color: #FFFFFF;
 }
+.searchBoxStyle{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+}
 .filterBoxStyle{
     display: flex;
     width: 100%;
