@@ -27,7 +27,14 @@ const Sidebar = ({ children }) => {
         setPath(pathname)
         setSubpath(subpathname)
     }, [pathname, subpathname])
-
+    // Function to format the count
+    const getDisplayCount = (count) => {
+        if (count > 9999) return '9999+';
+        if (count > 999) return '999+';
+        if (count > 99) return '99+';
+        if (count > 9) return '9+';
+        return count;
+    };
     return (
         <div className={Styles.sideMenuBar}>
             <section className={Styles.left}>
@@ -298,7 +305,7 @@ const Sidebar = ({ children }) => {
                                             right: -2,
                                             background: '#fff',
                                             color: '#161515',
-                                            fontSize: 10,
+                                            fontSize: 9,
                                             borderRadius: '50%',
                                             minWidth: 15,
                                             minHeight: 15,
@@ -307,9 +314,9 @@ const Sidebar = ({ children }) => {
                                             display: 'flex',
                                             justifyContent: 'center',
                                             alignItems: 'center',
-                                            // padding:5
+                                            padding:2
                                         }}
-                                        >{notificationCount}
+                                        >{getDisplayCount(notificationCount)}
                                         </div>
                                     }
                                     <Notification color='#fff' outline='#fff' />
@@ -333,9 +340,9 @@ const Sidebar = ({ children }) => {
                                         display: 'flex',
                                         justifyContent: 'center',
                                         alignItems: 'center',
-                                        // padding:5
+                                        padding:2
                                     }}
-                                    >{notificationCount}
+                                    >{getDisplayCount(notificationCount)}
                                     </div>
                                 }
                                 <Notification outline='#858D9D' color='#858D9D' />

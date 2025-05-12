@@ -11,6 +11,7 @@ import { formselect } from '../../MaterialsUI';
 import { MenuItem, Select } from '@mui/material';
 import { useFormik } from 'formik';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
+import CustomSeparator from '../../component/CustomizedBreadcrumb';
 
 export const MultiProductOrderDetails = () => {
     const navigate = useNavigate()
@@ -166,14 +167,9 @@ export const MultiProductOrderDetails = () => {
                         <h2 className={productStyle.categoryText}>Order {ordersDetailsData?.data?._id}</h2>
                     </div>
                     <div className={productStyle.home} style={{ marginTop: 10 }}>
-                        Orders <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
-                        <span style={{ marginLeft: 10 }}>
-                            Order Details
-                        </span>
-                        <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
-                        <span style={{ marginLeft: 10 }}>
-                            Order #{ordersDetailsData?.data?._id}
-                        </span>
+                    <div className={productStyle.home} style={{ marginTop: 10 }}>
+                        <CustomSeparator dashboard="Dashboard" type="Orders" subType={`Order #${ordersDetailsData?.data?._id}`} />
+                    </div>
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
@@ -297,7 +293,7 @@ export const MultiProductOrderDetails = () => {
                                                     <div className={orderStyle.polkiPerCaratText}>₹{item?.productId?.pricing?.polkiPerCarat?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.polkiCostText}>₹{item?.productId?.pricing?.polkiCost?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.gstText}>{item?.productId?.pricing?.gst?.value}%</div>
-                                                    <div className={orderStyle.finalPriceText}>₹{item?.sellingPrice?.toLocaleString("en-IN")}</div>
+                                                    <div className={orderStyle.finalPriceText}>₹{item?.sellingPrice?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
                                             </>
@@ -365,14 +361,14 @@ export const MultiProductOrderDetails = () => {
                                                     </div>
                                                     {item?.pendingAmount !== 0 ? (
                                                         <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 10 }}>
-                                                            Ad paid: ₹{item?.adPaymentAmount?.toLocaleString("en-IN")} <br />
+                                                            Ad paid: ₹{item?.adPaymentAmount?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })} <br />
                                                             <p className={orderStyle.pendingAmount} onClick={() => openEditPriceModal({ data: item, id: id })}>
-                                                                Pending: ₹{item?.pendingAmount?.toLocaleString("en-IN")} <EditBlackIcon /></p>
+                                                                Pending: ₹{item?.pendingAmount?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })} <EditBlackIcon /></p>
                                                         </div>
                                                     ) : (
                                                         <div className={orderStyle.fullyPaid}>Fully paid</div>
                                                     )}
-                                                    <div className={orderStyle.priceStyle}>₹ {item?.totalPrice?.toLocaleString("en-IN")}
+                                                    <div className={orderStyle.priceStyle}>₹ {item?.totalPrice?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
@@ -389,7 +385,7 @@ export const MultiProductOrderDetails = () => {
                             <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >
                                 <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
-                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+                                <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                             </div>
                             {/* <div className={orderStyle.bottomLineStyle} />
                             <div className={orderStyle.info} >

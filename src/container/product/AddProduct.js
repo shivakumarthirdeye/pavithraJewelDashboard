@@ -908,7 +908,7 @@ const AddProduct = () => {
                             } */}
                         </div>
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Tags*</label>
+                            <label className={productStyle.label}>Tags</label>
                             <TextField
                                 placeholder='Type and add'
                                 type={'text'}
@@ -1090,7 +1090,7 @@ const AddProduct = () => {
                             </div>
                             <div style={{ marginTop: 20, width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckProductHeight} checked={values.features.productHeight.status} /> <span>Product Length</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1551,7 +1551,7 @@ const AddProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckDiamondCarat} checked={values.pricing.diamondCarat.status} /> <span>Diamond carat*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckDiamondCarat} checked={values.pricing.diamondCarat.status} /> <span>Diamond carat</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1569,7 +1569,7 @@ const AddProduct = () => {
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckDiamondPerCarat} checked={values.pricing.diamondPerCarat.status} /> <span>Diamond per carat*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckDiamondPerCarat} checked={values.pricing.diamondPerCarat.status} /> <span>Diamond per carat</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -1617,7 +1617,7 @@ const AddProduct = () => {
                             </div>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckDiamondCost} checked={values.pricing.diamondCost.status} /> <span>Diamond cost*</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckDiamondCost} checked={values.pricing.diamondCost.status} /> <span>Diamond cost</span>
                                 </div>
                                 <TextField
                                     placeholder='auto'
@@ -1795,7 +1795,7 @@ const AddProduct = () => {
                             </div>
                             <div style={{ width: '67%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckFinalSalePrice} checked={values.pricing.finalSalePrice.status} /> <span>Final sale price</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckFinalSalePrice} checked={values.pricing.finalSalePrice.status} /> <span>Final sale price*</span>
                                 </div>
                                 <TextField
                                     placeholder='auto'

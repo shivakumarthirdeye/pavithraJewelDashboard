@@ -27,8 +27,8 @@ import {
 } from "../../svg";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { getCustomersDetail, setFilterValues } from "../../redux/customerSlice";
-import { Box, CircularProgress, Pagination, Typography } from "@mui/material";
+import { deleteCustomersOrders, getCustomersDetail, setFilterValues } from "../../redux/customerSlice";
+import { Box, Button, CircularProgress, Pagination, Typography } from "@mui/material";
 import { deleteOrders } from "../../redux/ordersSlice"
 import PopoverComponent from "../../component/Popover";
 import Calendar from "react-calendar";
@@ -36,7 +36,7 @@ import ErrorPage from "../../component/ErrorPage";
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteModal from "../../component/DeleteModal";
 import CustomSeparator from "../../component/CustomizedBreadcrumb";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { LocalizationProvider, PickersDay } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DateRangeCalendar } from "@mui/x-date-pickers-pro";
 import dayjs from "dayjs";
@@ -51,7 +51,7 @@ export const CustomersDetails = () => {
     const customerDetailOrders =
         customersDetailData?.orders;
 
-    // console.log("customerDetailOrders", customerDetailOrders);
+    console.log("customerDetailOrders", customerDetailOrders);
     // console.log("customersDetailData", customersDetailData);
 
     //State
@@ -68,9 +68,13 @@ export const CustomersDetails = () => {
     //     dispatch(getCustomersDetail(id))
     // }, [dispatch, id])
 
-    const handleSubject = (value) => {
-        dispatch(deleteOrders(value))
-    }
+    const deletedData = (value) => {
+        let data = {
+            status: true,
+            value
+        }
+        dispatch(deleteCustomersOrders(data));
+    };
 
     const calculateShowingRange = () => {
         const start = (customersDetailData?.currentPage - 1) * customersDetailData.limit + 1;
@@ -264,19 +268,62 @@ export const CustomersDetails = () => {
         }
     };
 
+    const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+
+    const handleDateRangeChange = (newValue) => {
+        setSelectedDateRange(newValue);
+
+        const [startDate, endDate] = newValue;
+
+        if (startDate) {
+            handleStartDateChange(dayjs(startDate).format('YYYY-MM-DD'));
+        } else {
+            handleStartDateChange(null);
+        }
+
+        if (endDate) {
+            handleEndDateChange(dayjs(endDate).format('YYYY-MM-DD'));
+        } else {
+            handleEndDateChange(null);
+        }
+    };
+
+    const handleClearDates = () => {
+        setSelectedDateRange([null, null]);
+        handleStartDateChange(null);
+        handleEndDateChange(null);
+    };
+
     const dateContent = (
         <div style={{ width: "300px" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateRangeCalendar
-                    // value={selectedDate ? dayjs(selectedDate) : null}
-                    onChange={(newValue) => {
-                        const [startDate, endDate] = newValue;
-                        handleStartDateChange(startDate ? dayjs(startDate).format('YYYY-MM-DD') : null);
-                        handleEndDateChange(endDate ? dayjs(endDate).format('YYYY-MM-DD') : null);
-                    }}
+                    value={selectedDateRange}
+                    onChange={handleDateRangeChange}
                     calendars={1}
+                    renderDay={(day, _value, DayComponentProps) => {
+                        const isToday = dayjs().isSame(day, 'day');
+                        return (
+                            <PickersDay
+                                {...DayComponentProps}
+                                sx={{
+                                    ...(isToday && {
+                                        border: '2px solid #1976d2',
+                                        fontWeight: 'bold',
+                                        color: '#1976d2',
+                                    }),
+                                }}
+                            />
+                        );
+                    }}
                 />
             </LocalizationProvider>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, padding: '10px' }}>
+                <Button variant="outlined" size="small" onClick={handleClearDates}>
+                    Clear
+                </Button>
+            </Box>
         </div>
     );
     return (
@@ -623,7 +670,8 @@ export const CustomersDetails = () => {
                         <>
                             <div>
                                 {customerDetailOrders?.map((item, index) => {
-
+                                    const arr = item?.products?.status;
+                                    const lastValue = arr?.at(-1);
                                     return (
                                         <div
                                             className={productStyle.info}
@@ -675,11 +723,11 @@ export const CustomersDetails = () => {
                                             <div
                                                 style={{
                                                     backgroundColor:
-                                                        item?.products?.status[0]?.name === "NEW"
+                                                    lastValue?.name === "NEW"
                                                             ? "#c7c8ca"
-                                                            : item?.products?.status[0]?.name === "PROCESSING"
+                                                            : lastValue?.name === "PROCESSING"
                                                                 ? "#F439391A"
-                                                                : item?.products?.status[0]?.name === "SHIPPED"
+                                                                : lastValue?.name === "SHIPPED"
                                                                     ? "#EAF8FF"
                                                                     : "#E9FAF7",
                                                     width: "15%",
@@ -704,28 +752,28 @@ export const CustomersDetails = () => {
                                                         textTransform: "capitalize",
                                                         textAlign: "center",
                                                         color:
-                                                            item?.products?.status[0]?.name === "NEW"
+                                                        lastValue?.name === "NEW"
                                                                 ? "#4A4C56"
-                                                                : item?.products?.status[0]?.name === "PROCESSING"
+                                                                : lastValue?.name === "PROCESSING"
                                                                     ? "#F86624"
-                                                                    : item?.products?.status[0]?.name === "SHIPPED"
+                                                                    : lastValue?.name === "SHIPPED"
                                                                         ? "#2BB2FE"
                                                                         : "#1A9882",
                                                     }}
                                                 >
-                                                    {item?.products?.status?.[0]?.name === 'NEW' ? 'New' : item?.products?.status?.[0]?.name === 'PROCESSING' ? 'Processing' : item?.products?.status[0]?.name === 'SHIPPED' ? 'Out for delivery' : 'Delivered'}
+                                                    {lastValue?.name === 'NEW' ? 'New' : lastValue?.name === 'PROCESSING' ? 'Processing' : lastValue?.name === 'SHIPPED' ? 'Out for delivery' : 'Delivered'}
                                                 </span>
                                             </div>
                                             <div className={productStyle.dropdownStyle} />
                                             <div className={customerStyle.actionStyle}>
-                                                    <div
-                                                        onClick={() =>
-                                                            navigate(`/orders/Orders/OrderDetails/${item?._id}`)
-                                                        }
-                                                    >
-                                                        <ViewIcon />
-                                                    </div>
-                                               
+                                                <div
+                                                    onClick={() =>
+                                                        navigate(`/orders/Orders/OrderDetails/${item?._id}`)
+                                                    }
+                                                >
+                                                    <ViewIcon />
+                                                </div>
+
                                                 <div
                                                     style={{ marginLeft: 12 }}
                                                     onClick={() => openDeleteModal(item?._id)}
@@ -783,7 +831,7 @@ export const CustomersDetails = () => {
                 open={isDeleteModalOpen}
                 data={datas}
                 description={"Do you want to delete this order? "}
-                handleSubject={handleSubject}
+                handleSubject={deletedData}
             />
         </div>
     );

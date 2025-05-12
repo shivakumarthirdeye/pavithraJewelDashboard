@@ -4,6 +4,7 @@ import Typography from '@mui/material/Typography';
 import Link from '@mui/material/Link';
 import Stack from '@mui/material/Stack';
 import { ForwardIcon } from '../svg';
+import { useNavigate } from 'react-router-dom';
 
 function handleClick(event) {
     event.preventDefault();
@@ -11,13 +12,14 @@ function handleClick(event) {
 }
 
 export default function CustomSeparator({ dashboard, type, subType }) {
+    const navigate = useNavigate();
     const breadcrumbs = [
         <Link
             underline="hover"
             key="1"
             color="inherit"
-            href="/"
-            onClick={handleClick}
+            // href="/"
+            onClick={() => navigate('/dashboard')}
             sx={{
                 fontFamily: 'Public Sans',
                 fontSize: '14px',
@@ -26,7 +28,8 @@ export default function CustomSeparator({ dashboard, type, subType }) {
                 letterSpacing: '0.005em',
                 textAlign: 'left',
                 color: '#000',
-                paddingRight:'5px'
+                paddingRight:'5px',
+                cursor:'pointer'
             }}
         >
             {dashboard}
@@ -35,8 +38,8 @@ export default function CustomSeparator({ dashboard, type, subType }) {
             underline="hover"
             key="2"
             color="inherit"
-            href="/material-ui/getting-started/installation/"
-            onClick={handleClick}
+            // href="/material-ui/getting-started/installation/"
+            onClick={() => navigate(-1)}
             sx={{
                 fontFamily: 'Public Sans',
                 fontSize: '14px',
@@ -45,7 +48,8 @@ export default function CustomSeparator({ dashboard, type, subType }) {
                 letterSpacing: '0.005em',
                 textAlign: 'left',
                 color: '#667085',
-                paddingLeft:'5px'
+                paddingLeft:'5px',
+                cursor:'pointer'
             }}
         >
             {type}

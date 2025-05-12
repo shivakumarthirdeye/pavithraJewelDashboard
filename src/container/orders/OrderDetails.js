@@ -11,6 +11,7 @@ import { formselect } from '../../MaterialsUI';
 import { MenuItem, Select } from '@mui/material';
 import { useFormik } from 'formik';
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
+import CustomSeparator from '../../component/CustomizedBreadcrumb';
 
 export const OrderDetails = () => {
     const navigate = useNavigate()
@@ -161,14 +162,7 @@ export const OrderDetails = () => {
                         <h2 className={productStyle.categoryText}>Order {ordersDetailsData?.data?._id}</h2>
                     </div>
                     <div className={productStyle.home} style={{ marginTop: 10 }}>
-                        Orders <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
-                        <span style={{ marginLeft: 10 }}>
-                            Order Details
-                        </span>
-                        <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
-                        <span style={{ marginLeft: 10 }}>
-                            Order #{ordersDetailsData?.data?._id}
-                        </span>
+                        <CustomSeparator dashboard="Dashboard" type="Orders" subType={`Order #${ordersDetailsData?.data?._id}`} />
                     </div>
                 </div>
                 <div className={productStyle.attributeStyle} style={{ marginTop: 20 }}>
@@ -193,7 +187,7 @@ export const OrderDetails = () => {
                 <div className={orderStyle.productStockContainer} style={{ marginTop: 20, }}>
                     <div className={orderStyle.productStyle} style={{ padding: 20 }}>
                         <div className={orderStyle.iconStyle}>
-                            <div className={orderStyle.textStyle} style={{ fontSize: 16,color:'#000',fontWeight:'600' }}>
+                            <div className={orderStyle.textStyle} style={{ fontSize: 16, color: '#000', fontWeight: '600' }}>
                                 Products
                             </div>
                             <div style={{
@@ -285,7 +279,7 @@ export const OrderDetails = () => {
                                                     <div className={orderStyle.polkiPerCaratText}>₹{item?.productId?.pricing?.polkiPerCarat?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.polkiCostText}>₹{item?.productId?.pricing?.polkiCost?.value?.toLocaleString("en-IN") || '-'}</div>
                                                     <div className={orderStyle.gstText}>{item?.productId?.pricing?.gst?.value}%</div>
-                                                    <div className={orderStyle.finalPriceText}>₹{item?.sellingPrice?.toLocaleString("en-IN")}</div>
+                                                    <div className={orderStyle.finalPriceText}>₹{item?.sellingPrice?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
                                             </>
@@ -353,14 +347,17 @@ export const OrderDetails = () => {
                                                     </div>
                                                     {ordersDetailsData?.data?.pendingAmount !== 0 ? (
                                                         <div className={orderStyle.pendingAmountStyle} style={{ fontSize: 10 }}>
-                                                            Ad paid: ₹{ordersDetailsData?.data?.advancePaid?.toLocaleString("en-IN")} <br />
+                                                            Ad paid: ₹{ordersDetailsData?.data?.advancePaid?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })} <br />
                                                             <p className={orderStyle.pendingAmount} onClick={() => openEditPriceModal(ordersDetailsData)}>
-                                                                Pending: ₹{ordersDetailsData?.data?.pendingAmount?.toLocaleString("en-IN")} <EditBlackIcon /></p>
+                                                                Pending: ₹{ordersDetailsData?.data?.pendingAmount?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })} <EditBlackIcon /></p>
                                                         </div>
                                                     ) : (
                                                         <div className={orderStyle.fullyPaid}>Fully paid</div>
                                                     )}
-                                                    <div className={orderStyle.priceStyle}>₹ {ordersDetailsData?.data?.total?.toLocaleString("en-IN")}
+                                                    <div className={orderStyle.priceStyle}>₹ {ordersDetailsData?.data?.total?.toLocaleString("en-IN", {
+                                                        minimumFractionDigits: 2,
+                                                        maximumFractionDigits: 2,
+                                                    })}
                                                     </div>
                                                 </div>
                                                 <div className={orderStyle.bottomLineStyle} />
@@ -377,7 +374,7 @@ export const OrderDetails = () => {
                                 <div className={orderStyle.bottomLineStyle} />
                                 <div className={orderStyle.info} >
                                     <div className={orderStyle.pendingAmountStyle} style={{ fontWeight: 500, }}>Grand Total</div>
-                                    <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN")}</div>
+                                    <div className={orderStyle.totalAmountStyle} style={{ fontWeight: 500, }}>₹ {ordersDetailsData?.data?.grandTotal?.toLocaleString("en-IN",{ minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                                 </div>
                                 {/* <div className={orderStyle.bottomLineStyle} />
                                 <div className={orderStyle.info} >

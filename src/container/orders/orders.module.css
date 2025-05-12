@@ -447,6 +447,8 @@
     display: flex;
     justify-content: space-between;
     padding-top: 20px;
+    align-items: center;
+    width: 100%;
 }
 
 .section {

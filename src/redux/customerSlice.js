@@ -83,6 +83,24 @@ export const deleteCustomers = createAsyncThunk('deleteCustomers', async (body, 
     }
 }
 )
+export const deleteCustomersOrders = createAsyncThunk('deleteOrders', async (body, { rejectWithValue, dispatch }) => {
+    try {
+        const { data, status } = await api.deleteCustomersOrders(body);
+
+        if (status === 200) {
+            // render otp screen
+            // dispatch(setDeleteOrders(body));
+            Toastify.success("Order Deleted successfully");
+            dispatch(setRefresh());
+        }
+        return data.data
+
+    } catch (err) {
+        Toastify.error(err.response.data.message);
+        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+    }
+}
+)
 
 export const customerSlice = createSlice({
     name:'customers',

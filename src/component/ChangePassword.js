@@ -6,19 +6,35 @@ import * as yup from "yup";
 import { changePassword } from '../redux/settingSlice';
 import { useDispatch } from 'react-redux';
 import { fieldText } from '../MaterialsUI';
-import { HidePassword, HidePasswordIcon, PasswordVisible } from '../svg';
+import { HidePasswordIcon, PasswordVisible } from '../svg';
 
 const ChangePassword = () => {
     const dispatch = useDispatch();
+    
     const [showPassword, setShowPassword] = useState(false);
     const [showNewPassword, setShowNewPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const schema = yup.object().shape({
-        currentPassword: yup.string().required("Current Password is required"),
-        password: yup.string().required("New Password is required"),
-        confirmPassword: yup.string().required("Confirm Password is required"),        
-    })
+        currentPassword: yup
+            .string()
+            .required("Current Password is required"),
+        password: yup
+            .string()
+            .required("New Password is required")
+            .test(
+                "not-same-as-current",
+                "New Password should not be the same as Old Password",
+                function (value) {
+                    return value !== this.parent.currentPassword;
+                }
+            ),
+        confirmPassword: yup
+            .string()
+            .required("Confirm Password is required")
+            .oneOf([yup.ref('password'), null], "Passwords must match"),
+    });
+    
 
     const {
         errors,

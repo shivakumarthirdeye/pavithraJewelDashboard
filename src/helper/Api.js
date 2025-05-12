@@ -218,6 +218,9 @@ class Api {
     deleteCustomers = (data) => {
         return this.init().delete(`/admin/customer/${data}`, data)
     }
+    deleteCustomersOrders = (data) => {        
+        return this.init().put(`/admin/trashCustomerOrder/${data.value}`, data)
+    }
     // Coupons 
     getAllCoupons = (data) => {
         return this.init().get(`/admin/coupons?${data}`, data)

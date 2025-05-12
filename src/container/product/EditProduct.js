@@ -1075,7 +1075,7 @@ const EditProduct = () => {
                             General Information
                         </h6>
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Product Name</label>
+                            <label className={productStyle.label}>Product Name*</label>
                             <TextField
                                 placeholder='Type product name here. . .'
                                 type={'text'}
@@ -1509,7 +1509,7 @@ const EditProduct = () => {
                     {/* Metal type */}
                     <div className={productStyle.variationStyle} style={{ marginTop: 20 }}>
                         <h6 className={productStyle.variationText}>
-                            Metal Type
+                            Metal Type*
                         </h6>
                         <div style={{ display: 'flex', width: '70%', alignItems: 'center', justifyContent: 'space-between', marginTop: 20 }}>
                             {metalTypeData?.map((item, index) => (
@@ -2017,7 +2017,7 @@ const EditProduct = () => {
                         <div className={productStyle.itemsStyle} style={{ marginTop: 10 }}>
                             <div style={{ width: '33%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckGst} checked={values.pricing.gst.status} /> <span>GST</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckGst} checked={values.pricing.gst.status} /> <span>GST in %</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -2035,7 +2035,7 @@ const EditProduct = () => {
                             </div>
                             <div style={{ width: '67%' }}>
                                 <div className={productStyle.checkBoxStyle} style={{ marginLeft: -10 }}>
-                                    <CustomizedCheckbox handleCheck={handleCheckFinalSalePrice} checked={values.pricing.finalSalePrice.status} /> <span>Final sale price</span>
+                                    <CustomizedCheckbox handleCheck={handleCheckFinalSalePrice} checked={values.pricing.finalSalePrice.status} /> <span>Final sale price*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -2233,7 +2233,7 @@ const EditProduct = () => {
                             </div>
                             <div style={{ width: '50%' }}>
                                 <div className={productStyle.checkBoxStyle} >
-                                    <span>Total Stock</span>
+                                    <span>Total Stock*</span>
                                 </div>
                                 <TextField
                                     placeholder='Enter'
@@ -2334,7 +2334,7 @@ const EditProduct = () => {
                     <div className={productStyle.thumbanilStyle}>
                         <h6 className={productStyle.variationText}>Category</h6>
                         <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Product Category</label>
+                            <label className={productStyle.label}>Product Category*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2370,7 +2370,7 @@ const EditProduct = () => {
                             }
                         </div>
                         <div style={{ marginTop: 10 }}>
-                            <label className={productStyle.label}>Product Sub-Category</label>
+                            <label className={productStyle.label}>Product Sub-Category(Optional)</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2441,7 +2441,7 @@ const EditProduct = () => {
                             errors?.gold?.type && touched?.gold?.type && <p style={{ color: "red", fontSize: "12px" }}>{errors?.gold?.type}</p>
                         }
                         <div style={{ marginTop: 10 }}>
-                            <label className={productStyle.label}>Order Type</label>
+                            <label className={productStyle.label}>Order Type*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"
@@ -2477,7 +2477,7 @@ const EditProduct = () => {
                     <div className={productStyle.thumbanilStyle} style={{ marginTop: 20 }}>
                         <h6 className={productStyle.variationText}>Featured image</h6>
                         <div style={{ marginTop: 20 }}>
-                            <label className={productStyle.label}>Photo</label>
+                            <label className={productStyle.label}>Photo*</label>
                             <br />
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
@@ -2549,7 +2549,7 @@ const EditProduct = () => {
                             </div>
                         </div>
                         <div style={{ marginTop: 15 }}>
-                            <label className={productStyle.label}>Product Status</label>
+                            <label className={productStyle.label}>Product Status*</label>
                             <br />
                             <Select
                                 labelId="demo-simple-select-label"

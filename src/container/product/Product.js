@@ -3,7 +3,7 @@ import productStyle from './product.module.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteProducts, getExportProducts, getProducts, setFilterValues } from '../../redux/productSlice';
-import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Pagination, Typography } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
 import * as XLSX from 'xlsx';
 import moment from 'moment'
@@ -26,6 +26,16 @@ const Product = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
 
+    const { productsData, filterOptions, isLoading, isRefresh, } = useSelector(
+        (state) => state.products
+    );
+    const { categoriesExportData } = useSelector(
+        (state) => state.categories
+    );
+    const { subCategoiesExportData } = useSelector(
+        (state) => state.subCategories
+    );
+    // console.log('productsData=======================', productsData);
 
     //states
     const [search, setSearch] = useState("");
@@ -38,17 +48,11 @@ const Product = () => {
     const [order, setOrder] = useState('asc')
 
 
-    const { productsData, filterOptions, isLoading, isRefresh, } = useSelector(
-        (state) => state.products
+    const filteredSubCategories = subCategoiesExportData?.data?.filter(
+        (subCat) => subCat.category?._id === selectedCategory
     );
-    const { categoriesExportData } = useSelector(
-        (state) => state.categories
-    );
-    const { subCategoiesExportData } = useSelector(
-        (state) => state.subCategories
-    );
-    // console.log('productsData=======================', productsData);
 
+console.log('filteredSubCategories',subCategoiesExportData?.data);
 
     const calculateShowingRange = () => {
         const start = (productsData?.currentPage - 1) * productsData.limit + 1;
@@ -86,18 +90,7 @@ const Product = () => {
     };
 
 
-    const handleStartDateChange = (e) => {
-        // console.log('e==============', e);
-
-        setSelectedDate(e);
-        dispatch(setFilterValues({ startDate: e, page: 1 }))
-    };
-    const handleEndDateChange = (e) => {
-        // console.log('e==============', e);
-
-        setSelectedDate(e);
-        dispatch(setFilterValues({ endDate: e, page: 1 }))
-    };
+    
 
     const handleOpenMenu = (e) => {
         setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
@@ -165,43 +158,76 @@ const Product = () => {
         XLSX.writeFile(workbook, 'products.xlsx');
     };
 
+    const handleStartDateChange = (e) => {
+        // console.log('e==============', e);
 
-    const dateContent = (
-        <div style={{ width: "300px" }}>
-            {/* <Calendar
-                onChange={handleDateChange}
-                value={selectedDate}
-                maxDate={new Date()}
-            /> */}
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                <DateRangeCalendar
-                    // value={selectedDate ? dayjs(selectedDate) : null}
-                    onChange={(newValue) => {
-                        const [startDate, endDate] = newValue;
-                        handleStartDateChange(startDate ? dayjs(startDate).format('YYYY-MM-DD') : null);
-                        handleEndDateChange(endDate ? dayjs(endDate).format('YYYY-MM-DD') : null);
-                    }}
-                    calendars={1}
-                    renderDay={(day, _value, DayComponentProps) => {
-                        const isToday = dayjs().isSame(day, 'day');
-                  
-                        return (
-                          <PickersDay
+        setSelectedDate(e);
+        dispatch(setFilterValues({ startDate: e, page: 1 }))
+    };
+    const handleEndDateChange = (e) => {
+        // console.log('e==============', e);
+
+        setSelectedDate(e);
+        dispatch(setFilterValues({ endDate: e, page: 1 }))
+    };
+    const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+
+    const handleDateRangeChange = (newValue) => {
+        setSelectedDateRange(newValue);
+    
+        const [startDate, endDate] = newValue;
+    
+        if (startDate) {
+            handleStartDateChange(dayjs(startDate).format('YYYY-MM-DD'));
+        } else {
+            handleStartDateChange(null);
+        }
+    
+        if (endDate) {
+            handleEndDateChange(dayjs(endDate).format('YYYY-MM-DD'));
+        } else {
+            handleEndDateChange(null);
+        }
+    };
+
+    const handleClearDates = () => {
+        setSelectedDateRange([null, null]);
+        handleStartDateChange(null);
+        handleEndDateChange(null);
+    };
+
+const dateContent = (
+    <div style={{ width: "300px" }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <DateRangeCalendar
+                value={selectedDateRange}
+                onChange={handleDateRangeChange}
+                calendars={1}
+                renderDay={(day, _value, DayComponentProps) => {
+                    const isToday = dayjs().isSame(day, 'day');
+                    return (
+                        <PickersDay
                             {...DayComponentProps}
                             sx={{
-                              ...(isToday && {
-                                border: '2px solid #1976d2', // Blue border for today
-                                fontWeight: 'bold',
-                                color: '#1976d2',
-                              }),
+                                ...(isToday && {
+                                    border: '2px solid #1976d2',
+                                    fontWeight: 'bold',
+                                    color: '#1976d2',
+                                }),
                             }}
-                          />
-                        );
-                      }}
-                />
-            </LocalizationProvider>
-        </div>
-    );
+                        />
+                    );
+                }}
+            />
+        </LocalizationProvider>
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1,padding:'10px' }}>
+            <Button variant="outlined" size="small" onClick={handleClearDates}>
+                Clear
+            </Button>
+        </Box>
+    </div>
+);
 
     const categoryContent = (
         <div style={{ height: "100%", width: '100%' }}>
@@ -277,13 +303,13 @@ const Product = () => {
                     borderBottomWidth: '100%',
                 }}
             >
-                <Typography variant="body1" sx={{ fontWeight: 400, display: "flex", alignItems: "center", fontSize: 12, color: '#822D32', marginLeft: 12, marginRight: 1, fontFamily: 'Poppins' }}> Clear All</Typography>
+                <Typography variant="body1" sx={{ fontWeight: 400, fontSize: 12, color: '#822D32', fontFamily: 'Poppins', marginLeft: 12, marginRight: 1 }}>Clear All</Typography>
             </Box>
-            {subCategoiesExportData?.data?.length > 0 ? (
-                < >
-                    {subCategoiesExportData?.data?.map((cat) => (
+            {filteredSubCategories?.length > 0 ? (
+                <>
+                    {filteredSubCategories.map((cat) => (
                         <Box
-                            key={cat._id} // Use cat._id as key for better optimization
+                            key={cat._id}
                             onClick={() => handleSubCategorySelect({ target: { value: cat?._id } })}
                             sx={{
                                 display: "flex",
@@ -291,36 +317,34 @@ const Product = () => {
                                 justifyContent: "flex-start",
                                 backgroundColor: selectedSubCategory === cat._id ? "#F7F7F7" : "#FFFFFF",
                                 cursor: "pointer",
-                                overflow: 'auto',
                                 padding: "8px 0",
                                 borderBottom: '1px solid #E0E2E7',
-                                borderBottomWidth: '100%',
                             }}
                         >
                             <Typography
                                 variant="body1"
-                                sx=
-                                {{
+                                sx={{
                                     fontWeight: 400,
-                                    display: "flex",
-                                    alignItems: "center",
                                     fontSize: '12px',
                                     lineHeight: '24px',
                                     fontFamily: 'Poppins',
                                     marginLeft: 5,
                                     marginRight: 10
                                 }}>
-                                {selectedSubCategory === cat._id && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}{cat?.name}</Typography>
+                                {selectedSubCategory === cat._id && <CheckIcon fontSize="small" sx={{ marginLeft: "4px" }} />}
+                                {cat?.name}
+                            </Typography>
                         </Box>
                     ))}
                 </>
             ) : (
                 <Box>
-                    <Typography>No Categories</Typography>
+                    <Typography>No Subcategories</Typography>
                 </Box>
             )}
         </div>
     );
+
 
     const statusContent = (
         <div style={{ width: '100%' }}>
@@ -482,17 +506,15 @@ const Product = () => {
                     <div className={productStyle.dateStlye} style={{ width: '25%' }}>
                         <PopoverComponent icon={<FilterIcon />} label="Category" content={categoryContent} value={selectedCategory} />
                     </div>
-                    {subCategoiesExportData?.data?.length > 0 && (
-                        <div className={productStyle.dateStlye} style={{ width: '25%' }}>
-                            <PopoverComponent icon={<FilterIcon />} label="Subcategory" content={subCategoryContent} value={selectedSubCategory} />
-                        </div>
-                    )}
+                    <div className={productStyle.dateStlye} style={{ width: '25%' }}>
+                        <PopoverComponent icon={<FilterIcon />} label="Subcategory" content={subCategoryContent} value={selectedSubCategory} />
+                    </div>
                     <div className={productStyle.filter}>
                         <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} value={status} />
                     </div>
                 </div>
             </div>
-            <div className={productStyle.productStockContainer} style={{ marginTop: 20}}>
+            <div className={productStyle.productStockContainer} style={{ marginTop: 20 }}>
                 <div className={productStyle.scrollContainer} >
                     <div className={productStyle.header}>
                         {/* <CustomizedCheckbox /> */}
@@ -560,7 +582,7 @@ const Product = () => {
                                                     </div>
                                                     <div className={productStyle.dropdownStyle} />
                                                     <div className={productStyle.priceStyle} style={{ color: '#667085', fontSize: 12 }}>
-                                                    ₹ {item?.sellingPrice?.toLocaleString("en-IN", { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+                                                        ₹ {item?.sellingPrice?.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                     </div>
                                                     <div className={productStyle.dropdownStyle} />
                                                     <div

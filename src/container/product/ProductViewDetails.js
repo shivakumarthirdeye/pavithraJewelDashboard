@@ -9,6 +9,7 @@ import { deleteProducts, getProductsDetails } from '../../redux/productSlice';
 import { Tab, Tabs } from '@mui/material';
 import DeleteModal from '../../component/DeleteModal';
 import Reviews from './Reviews';
+import CustomSeparator from '../../component/CustomizedBreadcrumb';
 
 
 const ProductViewDetails = () => {
@@ -106,16 +107,7 @@ const ProductViewDetails = () => {
                     <div>
                         <h2 className={productStyle.categoryText}>Product</h2>
                     </div>
-                    <div className={productStyle.home} style={{ marginTop: 10 }}>
-                        Dashboard <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
-                        <span style={{ marginLeft: 10, textTransform: "capitalize" }}>
-                            {path === "Product" ? "Product" : "Combo Product"}
-                        </span>
-                        <div style={{ marginLeft: 10 }} ><ForwardIcon /></div>{" "}
-                        <span style={{ marginLeft: 10 }}>
-                            {productById?.productName}
-                        </span>
-                    </div>
+                    <CustomSeparator dashboard="Dashboard" type="Product" subType={productById?.productName} />
                 </div>
                 <div className={productStyle.attributeStyle} >
                     <div

@@ -14,8 +14,8 @@ const Header = ({ children }) => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const { user } = useSelector((state) => state.user)
-    const {notificationData} = useSelector((state) => state.notification)
-// console.log('user============',user);
+    const { notificationData } = useSelector((state) => state.notification)
+    // console.log('user============',user);
 
     const notificationCount = notificationData?.data?.unReadedNotifications || 0
 
@@ -24,12 +24,19 @@ const Header = ({ children }) => {
 
     }, [dispatch])
 
-
+    // Function to format the count
+    const getDisplayCount = (count) => {
+        if (count > 9999) return '9999+';
+        if (count > 999) return '999+';
+        if (count > 99) return '99+';
+        if (count > 9) return '9+';
+        return count;
+    };
     const [isLogout, setIsLogout] = useState(false);
     const [anchorEl, setAnchorEl] = useState(null);
 
     const [data, setData] = useState(null);
-    
+
     const logoutOpenModal = (data) => {
         setIsLogout(true);
     };
@@ -49,7 +56,7 @@ const Header = ({ children }) => {
     const id = open ? 'simple-popover' : undefined;
 
 
-    
+
 
     const logout = async () => {
         try {
@@ -65,28 +72,29 @@ const Header = ({ children }) => {
             <div className={layoutStyles.headermenu}>
 
                 <div className={layoutStyles.menuStyle}>
-                    <div onClick={() => navigate('/notification/Notifications')} style={{position:'relative'}}>
-                    {notificationCount > 0 &&
-                                        <div style={{
-                                            position: 'absolute',
-                                            top: -5,
-                                            right: -2,
-                                            background: 'red',
-                                            color: 'white',
-                                            fontSize: 10,
-                                            borderRadius: '50%',
-                                            minWidth: 15,
-                                            minHeight: 15,
-                                            textAlign: 'center',
-                                            zIndex: 1,
-                                            display: 'flex',
-                                            justifyContent: 'center',
-                                            alignItems: 'center',
-                                            // padding:5
-                                        }}
-                                        >{notificationCount}
-                                        </div>
-                                    }
+                    <div onClick={() => navigate('/notification/Notifications')} style={{ position: 'relative' }}>
+                        {notificationCount > 0 &&
+                            <div style={{
+                                position: 'absolute',
+                                top: -9,
+                                right: -9,
+                                background: 'red',
+                                color: 'white',
+                                fontSize: 9,
+                                borderRadius: '50%',
+                                minHeight: 15,
+                                // minWidth: 25,
+                                textAlign: 'center',
+                                zIndex: 1,
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                width: "fitContent",
+                                padding:2
+                            }}
+                            >{getDisplayCount(notificationCount)}
+                            </div>
+                        }
                         <Notification outline='#858D9D' color='#858D9D' />
                     </div>
                     <Divider orientation="vertical" variant="middle" flexItem sx={{ marginLeft: '10px', marginRight: '10px' }} />

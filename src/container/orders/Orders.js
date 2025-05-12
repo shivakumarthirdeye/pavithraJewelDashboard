@@ -6,7 +6,7 @@ import { DatePickerIcon, DeleteIcon, DeliveredIcon, Drop, ExportIcon, FilterIcon
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteOrders, getOrders, orderStatistics, setFilterValues, getAllOrderExport } from '../../redux/ordersSlice';
-import { Box, CircularProgress, Pagination, Typography } from '@mui/material';
+import { Box, Button, CircularProgress, Pagination, Typography } from '@mui/material';
 import PopoverComponent from '../../component/Popover';
 import * as XLSX from 'xlsx';
 import moment from 'moment'
@@ -14,7 +14,7 @@ import ErrorPage from '../../component/ErrorPage';
 import CheckIcon from '@mui/icons-material/Check';
 import DeleteModal from '../../component/DeleteModal';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider, PickersDay } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
 import dayjs from 'dayjs';
@@ -72,7 +72,7 @@ export const Orders = () => {
 
         setSelected(id.id);
         dispatch(setFilterValues({ filter: id.val, page: 1 }))
-        
+
     };
     const changeOrdersID = (id) => {
         // console.log('id', id);
@@ -168,21 +168,65 @@ export const Orders = () => {
 
 
 
+    const [selectedDateRange, setSelectedDateRange] = useState([null, null]);
+
+    const handleDateRangeChange = (newValue) => {
+        setSelectedDateRange(newValue);
+
+        const [startDate, endDate] = newValue;
+
+        if (startDate) {
+            handleStartDateChange(dayjs(startDate).format('YYYY-MM-DD'));
+        } else {
+            handleStartDateChange(null);
+        }
+
+        if (endDate) {
+            handleEndDateChange(dayjs(endDate).format('YYYY-MM-DD'));
+        } else {
+            handleEndDateChange(null);
+        }
+    };
+
+    const handleClearDates = () => {
+        setSelectedDateRange([null, null]);
+        handleStartDateChange(null);
+        handleEndDateChange(null);
+    };
+
     const dateContent = (
         <div style={{ width: "300px" }}>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DateRangeCalendar
-                    // value={selectedDate ? dayjs(selectedDate) : null}
-                    onChange={(newValue) => {
-                        const [startDate, endDate] = newValue;
-                        handleStartDateChange(startDate ? dayjs(startDate).format('YYYY-MM-DD') : null);
-                        handleEndDateChange(endDate ? dayjs(endDate).format('YYYY-MM-DD') : null);
-                    }}
+                    value={selectedDateRange}
+                    onChange={handleDateRangeChange}
                     calendars={1}
+                    renderDay={(day, _value, DayComponentProps) => {
+                        const isToday = dayjs().isSame(day, 'day');
+                        return (
+                            <PickersDay
+                                {...DayComponentProps}
+                                sx={{
+                                    ...(isToday && {
+                                        border: '2px solid #1976d2',
+                                        fontWeight: 'bold',
+                                        color: '#1976d2',
+                                    }),
+                                }}
+                            />
+                        );
+                    }}
                 />
             </LocalizationProvider>
+
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, padding: '10px' }}>
+                <Button variant="outlined" size="small" onClick={handleClearDates}>
+                    Clear
+                </Button>
+            </Box>
         </div>
     );
+
 
     const statusContent = (
         <div style={{ width: '100%' }}>
@@ -459,10 +503,10 @@ export const Orders = () => {
                     />
                 </div>
                 <div style={{ width: '50%' }}>
-                    {selectedOrders === 0 && (
-                        <div className={productStyle.filterBoxStyle}>
 
-                            <div className={productStyle.search} style={{ width: '80%' }}>
+                    <div className={productStyle.filterBoxStyle}>
+                        {selectedOrders === 0 && (
+                            <div className={productStyle.search} style={{ width: '70%' }}>
                                 <div style={{ cursor: 'pointer', marginTop: 5 }}>
                                     <SearchIcon />
                                 </div>
@@ -473,14 +517,17 @@ export const Orders = () => {
                                     placeholder="Search Orders. . ."
                                 />
                             </div>
-                            {/* <div className={productStyle.dateStlye} >
+                        )}
+                        <div className={productStyle.dateStlye} >
                             <PopoverComponent icon={<DatePickerIcon />} label="Select Dates" content={dateContent} />
-                        </div> */}
-                            <div className={productStyle.filter} >
-                                <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
-                            </div>
                         </div>
-                    )}
+                        {selectedOrders === 0 && (
+                        <div className={productStyle.filter} >
+                            <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
+                        </div>
+                        )}
+                    </div>
+                    
                 </div>
             </div>
             <div className={orderStyle.tabViewSwitchTab}>
@@ -490,10 +537,13 @@ export const Orders = () => {
                     onChange={(id) => changeID(id)}
                 />
                 {selectedOrders === 0 && (
-                <div className={productStyle.filter} >
-                    <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
-                </div>
+                    <div className={productStyle.filter} >
+                        <PopoverComponent icon={<FilterIcon />} label="Status" content={statusContent} />
+                    </div>
                 )}
+                <div className={productStyle.dateStlye} >
+                    <PopoverComponent icon={<DatePickerIcon />} label="Select Dates" content={dateContent} />
+                </div>
             </div>
             {selectedOrders === 0 && (
                 <div className={orderStyle.filterBoxStyle}>
@@ -555,7 +605,7 @@ export const Orders = () => {
                                                 return (
                                                     <div className={productStyle.info} key={index}>
                                                         <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
-                                                        <div className={orderStyle.productNameStyle} style={{width:'36%'}}>
+                                                        <div className={orderStyle.productNameStyle} style={{ width: '36%' }}>
 
                                                             {/* <img src={item?.order_items[0]?.productId?.featuredImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} /> */}
                                                             <div>
@@ -576,7 +626,7 @@ export const Orders = () => {
                                                         </div>
                                                         <div className={orderStyle.totalStyle} >
                                                             <div>
-                                                                ₹{item?.grandTotal?.toLocaleString("en-IN")}
+                                                                ₹{item?.grandTotal?.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </div>
                                                         </div>
                                                         <div className={productStyle.dropdownStyle} />
@@ -729,7 +779,7 @@ export const Orders = () => {
                                                 return (
                                                     <div className={productStyle.info} key={index}>
                                                         <div className={orderStyle.orderMainStyle} style={{ color: '#1D1F2C' }}> {item?._id} </div>
-                                                        <div className={orderStyle.productNameStyle} style={{width:'36%'}}>
+                                                        <div className={orderStyle.productNameStyle} style={{ width: '36%' }}>
 
                                                             {/* <img src={item?.order_items[0]?.productId?.featuredImage} alt='productImage' width={40} height={40} style={{ borderRadius: 5 }} /> */}
                                                             <div>
@@ -761,7 +811,7 @@ export const Orders = () => {
                                                         </div>
                                                         <div className={orderStyle.totalStyle} >
                                                             <div>
-                                                                ₹{item?.grandTotal?.toLocaleString("en-IN")}
+                                                                ₹{item?.grandTotal?.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                                             </div>
                                                         </div>
                                                         <div className={productStyle.dropdownStyle} />
