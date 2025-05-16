@@ -47,11 +47,11 @@ const EditProduct = () => {
     const data = productsDetailsData?.data;
     const parsedSellingPrice = Number(
         String(productsDetailsData?.totalPrice || '0')
-          .replace(/,/g, '')
-          .replace(/[^\d.]/g, '')
-      );
-    console.log('parsedSellingPrice',parsedSellingPrice);
-    
+            .replace(/,/g, '')
+            .replace(/[^\d.]/g, '')
+    );
+    // console.log('parsedSellingPrice', parsedSellingPrice);
+
     const { categoriesExportData } = useSelector(
         (state) => state.categories
     );
@@ -480,7 +480,7 @@ const EditProduct = () => {
                 setFilteredSubcategory(preloadedSubcategories);
             }
         }
-    }, [data, setValues, id, productsDetailsData,parsedSellingPrice, subCategoiesExportData])
+    }, [data, setValues, id, productsDetailsData, parsedSellingPrice, subCategoiesExportData])
 
 
     const handleSubject = async (value) => {
@@ -952,7 +952,7 @@ const EditProduct = () => {
         },
     ]
 
-    
+
 
     // Assuming you fetch the gold rates from your API and update the state
     const fetchGoldRates = async () => {
@@ -990,11 +990,11 @@ const EditProduct = () => {
         if (values.gold.type && values.pricing.goldWeight.value) {
             const goldCost = calculateGoldCost(values.gold.type, values.pricing.goldWeight.value);
             setFieldValue("pricing.goldRate.value", goldCost);
-            
-        } 
+
+        }
     }, [values.gold.type, values.pricing.goldWeight.value, goldRates, setFieldValue,]);
 
-    
+
     // // // Example: Update gold cost whenever `diamond` or `diamond cost` changes
     useEffect(() => {
         if (values.pricing.diamondCarat.value && values.pricing.diamondPerCarat.value) {
@@ -1051,7 +1051,9 @@ const EditProduct = () => {
         setFieldValue
     ]);
 
-
+    const handleDeleteVideo = () => {
+        setFieldValue('media.video', ''); // or null, depending on how you handle it
+    };
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
             <div className={productStyle.container}>
@@ -1445,7 +1447,14 @@ const EditProduct = () => {
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
                                     {values?.media?.video?.length ? (
-                                        <div>
+                                        <div className={productStyle.imageWrapper}>
+                                            <div
+                                                className={productStyle.deleteImageStyles}
+                                                style={{ zIndex: 1, marginTop: 10 }}
+                                                onClick={handleDeleteVideo} // Pass inventoryIndex and image URL to delete function
+                                            >
+                                                <CrossIcon />  {/* This is the delete icon */}
+                                            </div>
                                             <video
                                                 src={values.media.video[0]}
                                                 alt="Selected"
@@ -2027,7 +2036,7 @@ const EditProduct = () => {
                                     onChange={handleChange}
                                     onBlur={handleBlur}
                                     sx={fieldText}
-                                    // disabled
+                                // disabled
                                 />
                                 {/* {
                                     errors?.pricing?.gst?.value && touched?.pricing?.gst?.value && <p style={{ color: "red", fontSize: "12px" }}>{errors?.pricing?.gst?.value}</p>
@@ -2039,7 +2048,7 @@ const EditProduct = () => {
                                 </div>
                                 <TextField
                                     placeholder='Enter'
-                                    type="number" 
+                                    type="number"
                                     name="pricing.finalSalePrice.value"
                                     value={values.pricing.finalSalePrice.value || 0}
                                     onChange={handleChange}

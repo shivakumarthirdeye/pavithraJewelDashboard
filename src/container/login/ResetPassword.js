@@ -81,7 +81,7 @@ const ResetPassword = () => {
     return (
         <div className={styles.main}>
             <div className={styles.mainContainer}>
-                <img src="/logo.png" alt="Container" className={styles.imgView} />
+                <img src="/pavithrajewelslogo.png" alt="Container" className={styles.imgView} />
             </div>
             <div className={styles.login}>
                 <div className={styles.content}>

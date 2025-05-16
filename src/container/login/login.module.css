@@ -29,7 +29,11 @@
     align-items: center;
     display: flex;
 }
-
+.imgView{
+    width: 350px;
+    height: 200px;
+    object-fit: contain;
+}
 .labelText {
     font-family: Nunito Sans;
     font-size: 14px;

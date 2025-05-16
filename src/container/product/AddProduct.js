@@ -849,7 +849,9 @@ const AddProduct = () => {
         setFieldValue
     ]);
 
-
+    const handleDeleteVideo = () => {
+        setFieldValue('media.video', ''); // or null, depending on how you handle it
+      };
 
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
@@ -1225,7 +1227,14 @@ const AddProduct = () => {
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
                                     {values?.media?.video?.length ? (
-                                        <div>
+                                        <div className={productStyle.imageWrapper}>
+                                            <div
+                                                className={productStyle.deleteImageStyles}
+                                                style={{ zIndex: 1,marginTop:10}}
+                                                onClick={handleDeleteVideo} // Pass inventoryIndex and image URL to delete function
+                                            >
+                                                <CrossIcon />  {/* This is the delete icon */}
+                                            </div>
                                             <video
                                                 src={values.media.video}
                                                 alt="Selected"
