@@ -342,9 +342,6 @@ const AddProduct = () => {
 
 
         onSubmit: async (values) => {
-            const tagsArray = values.tags.split(",").map((tag) => tag.trim());
-            console.log("Tags Array:", tagsArray);
-            console.log("Submitted Values:", { ...values, tags: tagsArray });
             handleSubject(values)
         }
 
