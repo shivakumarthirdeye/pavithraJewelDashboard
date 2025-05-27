@@ -15,6 +15,7 @@ import { addProducts, editProducts, getProductsDetails } from '../../redux/produ
 import { unwrapResult } from '@reduxjs/toolkit';
 import Toastify from '../../helper/Toastify';
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import Delete from '@mui/icons-material/Delete';
 import { toast } from 'react-toastify';
 import CustomSeparator from '../../component/CustomizedBreadcrumb';
 import { CheckBox } from '@mui/icons-material';
@@ -62,6 +63,7 @@ const EditProduct = () => {
     //State
     const [filteredSubcategory, setFilteredSubcategory] = useState([]);
     const [goldRates, setGoldRates] = useState({});
+    const [tag, setTag] = useState("");
     console.log('goldRates', goldRates);
 
     // console.log('filteredSubcategory==============', filteredSubcategory);
@@ -494,6 +496,36 @@ const EditProduct = () => {
             toast.error(error.message)
         }
 
+    }
+
+
+    const handleTag = () => {
+        let tags = [];
+
+        if (values.tags.length > 0) {
+            tags = [...values.tags];
+        }
+
+        if (tag) {
+            tags.push(tag)
+
+            setFieldValue("tags", tags);
+            setTag("")
+        }
+    }
+
+    const handleTagRemove = (index) => {
+        let tags = [];
+
+        if (values.tags.length > 0) {
+            tags = [...values.tags];
+        }
+
+        if (tags.length > 0) {
+            tags.splice(index, 1)
+
+            setFieldValue("tags", tags);
+        }
     }
 
     const handleCancel = () => {
@@ -987,12 +1019,12 @@ const EditProduct = () => {
     // // // Example: Update gold cost whenever `goldType` or `goldWeight` changes
     useEffect(() => {
         // Only calculate if we have valid gold rates and weight
-        if (values.gold.type && values.pricing.goldWeight.value) {
+        if (values.gold?.type && values.pricing?.goldWeight?.value) {
             const goldCost = calculateGoldCost(values.gold.type, values.pricing.goldWeight.value);
             setFieldValue("pricing.goldRate.value", goldCost);
 
         }
-    }, [values.gold.type, values.pricing.goldWeight.value, goldRates, setFieldValue,]);
+    }, [values.gold?.type, values.pricing.goldWeight?.value, goldRates]);
 
 
     // // // Example: Update gold cost whenever `diamond` or `diamond cost` changes
@@ -1112,15 +1144,42 @@ const EditProduct = () => {
                         </div>
                         <div style={{ marginTop: 20 }}>
                             <label className={productStyle.label}>Tags</label>
-                            <TextField
-                                placeholder='Type and add'
-                                type={'text'}
-                                value={values.tags || ""} // Temporary tag input value
-                                onChange={(e) => setFieldValue("tags", e.target.value)} // Update currentTag value
+                            <div style={{ display: "flex", gap: 10 }}>
+                                <TextField
+                                    placeholder='Type and add'
+                                    type={'text'}
+                                    name='tags'
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            // Add your action here
+                                            handleTag();
+                                        }
+                                    }}
+                                    value={tag} // Temporary tag input value
+                                    onChange={(e) => setTag(e.target.value)} // Update currentTag value
+                                    onBlur={handleBlur}
+                                    sx={fieldText}
+                                />
+                                <div className={productStyle.buttonStyle} onClick={handleTag}>
+                                    <div className={productStyle.addcategoryText}>Add</div>
+                                </div>
+                            </div>
 
-                                onBlur={handleBlur}
-                                sx={fieldText}
-                            />
+                            {
+                                values.tags?.length > 0 && <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 15 }}>
+                                    {
+                                        values.tags.map((tag, index) => (
+                                            <div key={index} style={{ background: "rgb(224, 224, 224)", padding: "5px 10px", borderRadius: 20, color: "rgb(51, 51, 51)", fontSize: 13, display: "flex", alignItems: "center", gap: 5 }}>
+                                                {tag}
+
+                                                <div style={{ display: "flex", alignItems: "center" }} onClick={() => handleTagRemove(index)}>
+                                                    <Delete style={{ fontSize: "18px" }} />
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            }
                             {/* {
                                 errors.tags && touched.tags && <p style={{ color: "red", fontSize: "12px" }}>{errors.tags}</p>
                             } */}

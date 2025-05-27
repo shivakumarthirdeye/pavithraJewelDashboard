@@ -27,6 +27,8 @@ import axios from 'axios';
 import { getGoldRate } from '../../redux/dashboardSlice';
 import { getCategoriesExport } from '../../redux/categoriesSlice';
 import { getSubCategoriesExport } from '../../redux/subCategoriesSlice';
+import Delete from '@mui/icons-material/Delete';
+
 
 let Font = Quill.import('attributors/style/font');
 Font.whitelist = ['Rubik'];
@@ -39,6 +41,7 @@ const AddProduct = () => {
     const selectedImage = useRef(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
+    const [tag, setTag] = useState("");
 
     const { categoriesExportData } = useSelector(
         (state) => state.categories
@@ -219,7 +222,7 @@ const AddProduct = () => {
         initialValues: {
             productName: "",
             description: "",
-            tags: "",
+            tags: [],
             features: {
                 itemWeight: {
                     value: 0,
@@ -347,8 +350,6 @@ const AddProduct = () => {
 
     })
 
-    console.log('valuesssssssssss', values);
-
     useEffect(() => {
         if (goldRates?.gst !== undefined) {
             setFieldValue("pricing.gst.value", goldRates.gst);
@@ -366,6 +367,35 @@ const AddProduct = () => {
             toast.error(error.message)
         }
 
+    }
+
+    const handleTag = () => {
+        let tags = [];
+
+        if (values.tags.length > 0) {
+            tags = [...values.tags];
+        }
+
+        if (tag) {
+            tags.push(tag)
+
+            setFieldValue("tags", tags);
+            setTag("")
+        }
+    }
+
+    const handleTagRemove = (index) => {
+        let tags = [];
+
+        if (values.tags.length > 0) {
+            tags = [...values.tags];
+        }
+
+        if (tags.length > 0) {
+            tags.splice(index, 1)
+
+            setFieldValue("tags", tags);
+        }
     }
 
     // handleCategoryChange
@@ -851,7 +881,7 @@ const AddProduct = () => {
 
     const handleDeleteVideo = () => {
         setFieldValue('media.video', ''); // or null, depending on how you handle it
-      };
+    };
 
     return (
         <div style={{ marginTop: 50, padding: 20 }}>
@@ -911,15 +941,48 @@ const AddProduct = () => {
                         </div>
                         <div style={{ marginTop: 20 }}>
                             <label className={productStyle.label}>Tags</label>
-                            <TextField
-                                placeholder='Type and add'
-                                type={'text'}
-                                value={values.tags || ""} // Temporary tag input value
-                                onChange={(e) => setFieldValue("tags", e.target.value)} // Update currentTag value
+                            <div style={{ display: "flex", gap: 10 }}>
 
-                                onBlur={handleBlur}
-                                sx={fieldText}
-                            />
+                                <TextField
+                                    placeholder='Type and add'
+                                    name='tags'
+                                    type={'text'}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            // Add your action here
+                                            handleTag();
+                                        }
+                                    }}
+                                    value={tag}
+                                    onChange={(e) => setTag(e.target.value)} // Update currentTag value
+
+                                    onBlur={handleBlur}
+                                    sx={fieldText}
+                                />
+                                <div className={productStyle.buttonStyle} onClick={handleTag}>
+                                    <div className={productStyle.addcategoryText}>Add</div>
+                                </div>
+                            </div>
+
+
+
+                            {
+                                values.tags?.length > 0 && <div style={{ display: "flex", gap: 10, flexWrap: "wrap", marginTop: 15 }}>
+                                    {
+                                        values.tags.map((tag, index) => (
+                                            <div key={index} style={{ background: "rgb(224, 224, 224)", padding: "5px 10px", borderRadius: 20, color: "rgb(51, 51, 51)", fontSize: 13, display: "flex", alignItems: "center", gap: 5 }}>
+                                                {tag}
+
+                                                <div style={{ display: "flex", alignItems: "center" }} onClick={() => handleTagRemove(index)}>
+                                                    <Delete style={{ fontSize: "18px" }} />
+                                                </div>
+                                            </div>
+                                        ))
+                                    }
+                                </div>
+                            }
+
+
                             {/* {
                                 errors.tags && touched.tags && <p style={{ color: "red", fontSize: "12px" }}>{errors.tags}</p>
                             } */}
@@ -1230,7 +1293,7 @@ const AddProduct = () => {
                                         <div className={productStyle.imageWrapper}>
                                             <div
                                                 className={productStyle.deleteImageStyles}
-                                                style={{ zIndex: 1,marginTop:10}}
+                                                style={{ zIndex: 1, marginTop: 10 }}
                                                 onClick={handleDeleteVideo} // Pass inventoryIndex and image URL to delete function
                                             >
                                                 <CrossIcon />  {/* This is the delete icon */}
