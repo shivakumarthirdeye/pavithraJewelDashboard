@@ -11,17 +11,15 @@ import orderStyle from './orders.module.css'
 import { ArrowDropDownIcon } from '@mui/x-date-pickers';
 import { editPendingPrice, editPendingPriceMultiProduct } from '../../redux/ordersSlice';
 
-const EditPriceModal = ({ open, onClose, data,id }) => {
-    console.log('data================',data);
-    console.log('id================',id);
-    
+const EditPriceModal = ({ open, onClose, data, id }) => {
+
     const dispatch = useDispatch()
-    
+
 
     const schema = yup.object().shape({
         weigthStatus: yup.string().required("Weigth status is required"),
         extraWeight: yup.string().required("Extra weight is required"),
-        pendingAmount: yup.number().typeError("Pending amount must be a number").min(0, "Pending amount is required"),
+        pendingAmount: yup.number().typeError("Amount must be a number").min(0, "Amount is required"),
         customerNote: yup.string().required("Description is required"),
     })
 
@@ -39,7 +37,7 @@ const EditPriceModal = ({ open, onClose, data,id }) => {
         initialValues: {
             weigthStatus: "",
             extraWeight: "",
-            pendingAmount: 0,
+            pendingAmount: "",
             customerNote: "",
         },
         validationSchema: schema,
@@ -50,24 +48,23 @@ const EditPriceModal = ({ open, onClose, data,id }) => {
 
     })
 
-    console.log(typeof(values.pendingAmount) , "pendingg Amount")
     useEffect(() => {
-        if (data?.data?.isMutlipleOrder === false ) {
-            setValues({
-               pendingAmount: Number(data?.data?.pendingAmount?.toFixed(3))
-            })
-        } else {
-            setValues({
-                pendingAmount:Number(data?.data?.pendingAmount?.toFixed(3))
-            })
-        }
+        // if (data?.data?.isMutlipleOrder === false ) {
+        //     setValues({
+        //        pendingAmount: Number(data?.data?.pendingAmount?.toFixed(3))
+        //     })
+        // } else {
+        //     setValues({
+        //         pendingAmount:Number(data?.data?.pendingAmount?.toFixed(3))
+        //     })
+        // }
     }, [data, setValues])
 
     const handleEdit = (val) => {
-        if (data?.data?.isMutlipleOrder === false ) {
-        dispatch(editPendingPrice({ url: `${data?.data?._id}`, val }))
+        if (data?.data?.isMutlipleOrder === false) {
+            dispatch(editPendingPrice({ url: `${data?.data?._id}`, val }))
         } else {
-            dispatch(editPendingPriceMultiProduct({ url: `${data?.id}`,productId:`${data?.data?.productId?._id}`, val }))
+            dispatch(editPendingPriceMultiProduct({ url: `${data?.id}`, productId: `${data?.data?.productId?._id}`, val }))
         }
     }
 
@@ -109,21 +106,21 @@ const EditPriceModal = ({ open, onClose, data,id }) => {
                     </div>
                 </div>
                 {data?.data?.isMutlipleOrder === false ? (
-                <div className={orderStyle.jwelleryDetails}>
-                    <img src={data?.data?.products[0]?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
-                    <div>
-                        <p className={orderStyle.jwelleryText}>{data?.data?.products[0]?.productId?.productName}</p>
-                        <p className={orderStyle.priceText}>₹{data?.data?.grandTotal?.toLocaleString("en-IN")}</p>
-                    </div>
-                </div>
-                ): (
                     <div className={orderStyle.jwelleryDetails}>
-                    <img src={data?.data?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
-                    <div>
-                        <p className={orderStyle.jwelleryText}>{data?.data?.productId?.productName}</p>
-                        <p className={orderStyle.priceText}>₹{data?.data?.sellingPrice?.toLocaleString("en-IN")}</p>
+                        <img src={data?.data?.products[0]?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                        <div>
+                            <p className={orderStyle.jwelleryText}>{data?.data?.products[0]?.productId?.productName}</p>
+                            <p className={orderStyle.priceText}>₹{data?.data?.grandTotal?.toLocaleString("en-IN")}</p>
+                        </div>
                     </div>
-                </div>  
+                ) : (
+                    <div className={orderStyle.jwelleryDetails}>
+                        <img src={data?.data?.productId?.featurerdImage} alt='Jewellery' style={{ width: 126, height: 102, objectFit: 'cover' }} />
+                        <div>
+                            <p className={orderStyle.jwelleryText}>{data?.data?.productId?.productName}</p>
+                            <p className={orderStyle.priceText}>₹{data?.data?.sellingPrice?.toLocaleString("en-IN")}</p>
+                        </div>
+                    </div>
                 )}
                 <div style={{ marginTop: 10 }}>
                     <label className={productStyle.label}>Weight</label>
@@ -165,12 +162,12 @@ const EditPriceModal = ({ open, onClose, data,id }) => {
                     }
                 </div>
                 <div style={{ marginTop: 10 }}>
-                    <label className={productStyle.label}>Pending Price*</label>
+                    <label className={productStyle.label}>Price*</label>
                     <TextField
                         placeholder='Enter'
-                        type='number'   
+                        type='number'
                         name="pendingAmount"
-                        value={values.pendingAmount || 0}
+                        value={values.pendingAmount}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         sx={fieldText}

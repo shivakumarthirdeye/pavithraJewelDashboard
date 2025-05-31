@@ -15,7 +15,6 @@ class Api {
         this.client = null;
         this.api_url = process.env.NODE_ENV === "development" ? "https://admin.kingster.edu.in/pavitra/api" : `https://admin.kingster.edu.in/pavitra/api`;
         // this.api_url = process.env.NODE_ENV === "development" ? "http://localhost:4000/api" : `http://localhost:4000/api`;
-        
     }
 
     init = (type) => {
