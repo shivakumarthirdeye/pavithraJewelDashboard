@@ -52,7 +52,7 @@ const Product = () => {
         (subCat) => subCat.category?._id === selectedCategory
     );
 
-console.log('filteredSubCategories',subCategoiesExportData?.data);
+    console.log('filteredSubCategories', subCategoiesExportData?.data);
 
     const calculateShowingRange = () => {
         const start = (productsData?.currentPage - 1) * productsData.limit + 1;
@@ -90,7 +90,7 @@ console.log('filteredSubCategories',subCategoiesExportData?.data);
     };
 
 
-    
+
 
     const handleOpenMenu = (e) => {
         setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
@@ -174,15 +174,15 @@ console.log('filteredSubCategories',subCategoiesExportData?.data);
 
     const handleDateRangeChange = (newValue) => {
         setSelectedDateRange(newValue);
-    
+
         const [startDate, endDate] = newValue;
-    
+
         if (startDate) {
             handleStartDateChange(dayjs(startDate).format('YYYY-MM-DD'));
         } else {
             handleStartDateChange(null);
         }
-    
+
         if (endDate) {
             handleEndDateChange(dayjs(endDate).format('YYYY-MM-DD'));
         } else {
@@ -196,38 +196,38 @@ console.log('filteredSubCategories',subCategoiesExportData?.data);
         handleEndDateChange(null);
     };
 
-const dateContent = (
-    <div style={{ width: "300px" }}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DateRangeCalendar
-                value={selectedDateRange}
-                onChange={handleDateRangeChange}
-                calendars={1}
-                renderDay={(day, _value, DayComponentProps) => {
-                    const isToday = dayjs().isSame(day, 'day');
-                    return (
-                        <PickersDay
-                            {...DayComponentProps}
-                            sx={{
-                                ...(isToday && {
-                                    border: '2px solid #1976d2',
-                                    fontWeight: 'bold',
-                                    color: '#1976d2',
-                                }),
-                            }}
-                        />
-                    );
-                }}
-            />
-        </LocalizationProvider>
+    const dateContent = (
+        <div style={{ width: "300px" }}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DateRangeCalendar
+                    value={selectedDateRange}
+                    onChange={handleDateRangeChange}
+                    calendars={1}
+                    renderDay={(day, _value, DayComponentProps) => {
+                        const isToday = dayjs().isSame(day, 'day');
+                        return (
+                            <PickersDay
+                                {...DayComponentProps}
+                                sx={{
+                                    ...(isToday && {
+                                        border: '2px solid #1976d2',
+                                        fontWeight: 'bold',
+                                        color: '#1976d2',
+                                    }),
+                                }}
+                            />
+                        );
+                    }}
+                />
+            </LocalizationProvider>
 
-        <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1,padding:'10px' }}>
-            <Button variant="outlined" size="small" onClick={handleClearDates}>
-                Clear
-            </Button>
-        </Box>
-    </div>
-);
+            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1, padding: '10px' }}>
+                <Button variant="outlined" size="small" onClick={handleClearDates}>
+                    Clear
+                </Button>
+            </Box>
+        </div>
+    );
 
     const categoryContent = (
         <div style={{ height: "100%", width: '100%' }}>
@@ -477,6 +477,7 @@ const dateContent = (
                 </div>
                 <div className={productStyle.attributeStyle}>
                     <div className={productStyle.exportStyle}
+                        style={{ alignSelf: "auto" }}
                         onClick={exportToExcel}
                     >
                         <ExportIcon /> <p style={{ marginLeft: 5 }}>Export</p>

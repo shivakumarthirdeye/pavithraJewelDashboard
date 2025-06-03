@@ -619,14 +619,14 @@ export const CustomersDetails = () => {
                         />
                     </div>
                     <div className={productStyle.width}>
-                        <div className={productStyle.dateStlye}>
+                        <div className={productStyle.dateStlye} style={{width: "auto", paddingLeft: "10px", paddingRight: "10px"}}>
                             <PopoverComponent
                                 icon={<DatePickerIcon />}
                                 label="Select Dates"
                                 content={dateContent}
                             />
                         </div>
-                        <div className={productStyle.filter} style={{ width: '25%' }}>
+                        <div className={productStyle.filter} style={{ width: 'auto' , paddingLeft: "10px", paddingRight: "10px"}}>
                             <PopoverComponent
                                 icon={<FilterIcon />}
                                 label="Status"
