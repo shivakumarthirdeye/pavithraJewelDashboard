@@ -684,6 +684,43 @@ input {
     padding: 20px;
 }
 
+.imagePreviewContainer {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.previewImage {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 7px;
+    margin-bottom: 10px;
+}
+
+.deleteButton {
+    padding: 8px 16px;
+    background: #E87819;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-family: Public Sans;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    letter-spacing: 0.005em;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+.deleteButton:hover {
+    background: #FF7875;
+}
+.deleteButton:disabled {
+    background: #FFCCCB;
+    cursor: not-allowed;
+}
+
 .uploadBox {
     display: flex;
     align-content: center;

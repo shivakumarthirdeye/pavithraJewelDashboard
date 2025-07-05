@@ -90,6 +90,21 @@ const Notifications = () => {
     };
 
 
+    const getNotificationPath = (notification) => {
+
+        const id = notification?.userId;
+        if (notification.title === "New user registered") {
+            return `/customer/Customers/CustomersDetails/${id}`;
+        }
+        if (notification.title === "Order created") {
+            if (notification?.isMutlipleOrder === false) {
+                return `/orders/Orders/OrderDetails/${notification?.orderId}`;
+            } else if (notification?.isMutlipleOrder === true) {
+                return `/orders/Orders/MultiProductOrderDetails/${notification?.orderId}`;
+            }
+        }
+        return null;
+    };
 
 
     return (
@@ -134,25 +149,18 @@ const Notifications = () => {
                                     <p className={notificationStyle.notificationDescription}>
                                         {notification.message}
                                     </p>
-                                    {notification?.isMutlipleOrder === false ? (
-                                        <div className={notificationStyle.viewStyle}
-                                            onClick={() => {
-                                                navigate(`/orders/Orders/OrderDetails/${notification?.orderId}`);
+                                    <div
+                                        className={notificationStyle.viewStyle}
+                                        onClick={() => {
+                                            const path = getNotificationPath(notification);
+                                            if (path) {
+                                                navigate(path);
                                                 handleReadNotification(notification._id);
-                                            }}
-                                        >
-                                            View
-                                        </div>
-                                    ) : (
-                                        <div className={notificationStyle.viewStyle}
-                                            onClick={() => {
-                                                navigate(`/orders/Orders/MultiProductOrderDetails/${notification?.orderId}`);
-                                                handleReadNotification(notification._id);
-                                            }}
-                                        >
-                                            View
-                                        </div>
-                                    )}
+                                            }
+                                        }}
+                                    >
+                                        View
+                                    </div>
                                     <span className={notificationStyle.notificationTimestamp} style={{ paddingBottom: 20 }}
                                     >
                                         {formattedDate(notification.createdAt)}
