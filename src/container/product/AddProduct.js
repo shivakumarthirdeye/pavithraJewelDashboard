@@ -36,12 +36,14 @@ Font.whitelist = ['Rubik'];
 Quill.register('modules/imageResize', ImageResize);
 Quill.register('modules/blotFormatter', BlotFormatter);
 Quill.register(Font, true);
+
 const AddProduct = () => {
     const quillRef = useRef(null)
     const selectedImage = useRef(null);
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const [tag, setTag] = useState("");
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const { categoriesExportData } = useSelector(
         (state) => state.categories
@@ -750,6 +752,28 @@ const AddProduct = () => {
             Toastify.error("Error uploading file")
         }
     };
+
+    const handleDeleteFeaturedImage = async () => {
+        if (isDeleting) return;
+        setIsDeleting(true);
+        try {
+            const urlParts = values.featurerdImage.split('/');
+            const key = urlParts[urlParts.length - 1];
+
+            const { status } = await api.deleteImage({ key });
+            if (status === 200) {
+                setFieldValue('featurerdImage', '');
+                Toastify.success("Image deleted successfully");
+            }
+        } catch (err) {
+            console.log(err);
+            Toastify.error("Error deleting image");
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+
     const handleDeleteImage = (imageUrl, imgIndex) => {
         // Remove the selected image by filtering it out from the media.photo array
         const updatedImages = values.media.photo.filter((_, index) => index !== imgIndex);
@@ -2310,13 +2334,22 @@ const AddProduct = () => {
                             <div className={productStyle.imageUpload1}>
                                 <div className={productStyle.imageView}>
                                     {values?.featurerdImage?.length > 0 ? (
-                                        <div>
+                                        <div className={productStyle.imagePreviewContainer}>
                                             <img
                                                 src={values.featurerdImage}
                                                 alt="Selected"
-                                                style={{ maxWidth: '100%', marginTop: '0px' }}
+                                                className={productStyle.previewImage}
                                             />
-                                            {/* <button onClick={handleUpload}>Upload</button> */}
+                                            <button
+                                                type="button"
+                                                className={productStyle.deleteButton}
+                                                onClick={handleDeleteFeaturedImage}
+                                                disabled={isDeleting}
+                                                aria-busy={isDeleting}
+                                                aria-label="Delete featured image"
+                                            >
+                                                {isDeleting ? 'Deleting...' : 'Delete Image'}
+                                            </button>
                                         </div>
                                     ) : (
                                         <>
