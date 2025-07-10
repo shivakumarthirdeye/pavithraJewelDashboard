@@ -5,31 +5,27 @@ import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, markAsRead } from "../../redux/notificationSlice";
 import CustomSeparator from "../../component/CustomizedBreadcrumb";
-import { Dropdown, UnreadIcon } from "../../svg";
+import { UnreadIcon } from "../../svg";
 import { useNavigate } from "react-router-dom";
 
 
-
 const Notifications = () => {
+    
     const dispatch = useDispatch()
     const navigate = useNavigate();
 
     const user = useSelector((state) => state.user);
-    const { notificationData, isRefresh } = useSelector((state) => state.notification)
-
-    const incomingNotification = notificationData?.data?.notifications || []
-
-    // console.log(incomingNotification, "incoming");
+    const { incomingNotification } = useSelector((state) => state.notification);
 
     const [viewAll, setViewAll] = useState(false);
+
     const [page, setPage] = useState(1);
+    const [limit, setLimit] = useState(5);
+    const [sortBy, setSortBy] = useState("createdAt");
+    const [order, setOrder] = useState("asc");
+
     const [loading, setLoading] = useState(false); // Prevent multiple calls
     const observer = useRef();
-    // console.log('page', page);
-
-
-
-    // console.log("users", user);
 
     // Infinite Scroll Observer
     const lastNotificationRef = useCallback(
@@ -49,12 +45,12 @@ const Notifications = () => {
         [loading, viewAll]
     );
 
-    // Fetch notifications when `page` changes
     useEffect(() => {
-        let data = `page=1&limit=5`;
-
-        dispatch(getNotification(data))
-    }, [dispatch]);
+        const timer = setTimeout(() => {
+            dispatch(getNotification({ page, limit, sortBy, order }));
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [dispatch, page, limit, sortBy, order]);
 
     const formattedDate = (date = new Date()) => {
         const dateFromMongoDB = new Date(date);
@@ -76,12 +72,12 @@ const Notifications = () => {
             }
         }
     };
-    const handleViewAll = () => {
-        setViewAll(true); // Indicate that "View All" is active
-        // setPage(1); // Reset page to start fresh
-        dispatch(getNotification(`?page=${page}&limit=99999999`)); // Fetch all notifications
-    };
 
+    const handleViewAll = () => {
+        setViewAll(true);
+        setLimit(999);
+        setPage(1);
+    };
 
     const handleReadNotification = async (id) => {
         // Dispatch action to mark as read
@@ -89,14 +85,13 @@ const Notifications = () => {
 
     };
 
-
     const getNotificationPath = (notification) => {
 
         const id = notification?.userId;
         if (notification.title === "New user registered") {
             return `/customer/Customers/CustomersDetails/${id}`;
         }
-        if (notification.title === "Order created") {
+        if (notification.title === "Order created" || "Pending Amount paid") {
             if (notification?.isMutlipleOrder === false) {
                 return `/orders/Orders/OrderDetails/${notification?.orderId}`;
             } else if (notification?.isMutlipleOrder === true) {
@@ -104,6 +99,10 @@ const Notifications = () => {
             }
         }
         return null;
+    };
+
+    const toggleOrder = () => {
+        setOrder(prev => (prev === "asc" ? "desc" : "asc"));
     };
 
 
@@ -119,7 +118,6 @@ const Notifications = () => {
             <div className={notificationStyle.cardContainer}>
                 <div className={notificationStyle.headingStyle}>
                     <h3 className={notificationStyle.h3Style}>Notifications</h3>
-                    <div className={notificationStyle.allStyle}>All <Dropdown /></div>
                 </div>
                 <div>
                     {/* No Notifications for Received */}
@@ -130,7 +128,7 @@ const Notifications = () => {
                     )}
 
                     <div className={notificationStyle.notificationList}>
-                        {incomingNotification?.map((notification, index) => (
+                        {incomingNotification && incomingNotification?.map((notification, index) => (
                             <div
                                 key={notification._id} // Unique key for each notification
                                 className={notificationStyle.notificationItem}
