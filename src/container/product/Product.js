@@ -22,7 +22,6 @@ import { DateRangeCalendar } from '@mui/x-date-pickers-pro';
 import { getSubCategoriesExport } from '../../redux/subCategoriesSlice';
 
 
-
 const Product = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch()
