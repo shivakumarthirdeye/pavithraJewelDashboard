@@ -2348,7 +2348,7 @@ const AddProduct = () => {
                                                 aria-busy={isDeleting}
                                                 aria-label="Delete featured image"
                                             >
-                                                {isDeleting ? 'Deleting...' : 'Delete Image'}
+                                                {isDeleting ? 'Deleting...' : 'Delete'}
                                             </button>
                                         </div>
                                     ) : (
@@ -2368,7 +2368,7 @@ const AddProduct = () => {
                                                     onChange={handleFeatureImageChange}
                                                 />
                                                 <label htmlFor="featuredFile" className={productStyle.uploadBox}>
-                                                    Add Image
+                                                    Add
                                                 </label>
                                             </div>
                                         </>

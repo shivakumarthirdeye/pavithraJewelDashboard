@@ -157,6 +157,9 @@ class Api {
     deleteProduct = (data) => {
         return this.init().delete(`/admin/product/${data}`, data)
     }
+    deleteImage = (data) => {
+        return this.init().delete(`/admin/delete-image`, { data });
+    }
 
 
     // Order
