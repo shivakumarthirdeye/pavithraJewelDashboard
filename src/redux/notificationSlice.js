@@ -23,18 +23,19 @@ const initialState = {
 export const getNotification = createAsyncThunk('notifications/getNotification',
     async (params = {}, { rejectWithValue, dispatch }) => {
         try {
-            const { data, status } = await api.getNotification({ params });
-            if (status === 200) {
-                dispatch(setNotification(data?.data || {}));
-            }
-            return data?.data || {};
+            const { data } = await api.getNotification({ params });
+            return {
+                data: data?.data,
+                page: params.page
+            };
+
         } catch (err) {
             console.error("Notification Fetch Error →", err);
             return rejectWithValue(
                 err.response?.data?.message || "Something went wrong. Please try again later."
             );
         }
-});
+    });
 
 export const markAsRead = createAsyncThunk('markAsRead', async (body, { rejectWithValue, dispatch }) => {
     try {
@@ -54,11 +55,6 @@ export const notificationSlice = createSlice({
     name: "notification",
     initialState,
     reducers: {
-        setNotification: (state, action) => {
-            state.incomingNotification = action.payload.notifications || [];
-            state.unReadedNotifications = action.payload.unReadedNotifications || 0;
-        },
-
         setRefresh: (state) => {
             state.isRefresh = !state.isRefresh
         },
@@ -72,17 +68,27 @@ export const notificationSlice = createSlice({
             state.errorMsg = "";
         })
         builder.addCase(getNotification.fulfilled, (state, action) => {
+            const { data, page } = action.payload;
+            const newNotifications = data.notifications || [];
+
+            if (page === 1) {
+                state.incomingNotification = newNotifications;
+            } else {
+                const existingIds = new Set(state.incomingNotification.map(n => n._id));
+                const uniqueNew = newNotifications.filter(n => !existingIds.has(n._id));
+                state.incomingNotification = [...state.incomingNotification, ...uniqueNew];
+            }
+
             state.isLoading = false;
-            state.incomingNotification = action.payload.notifications || [];
-            state.unReadedNotifications = action.payload.unReadedNotifications || 0;
+            state.unReadedNotifications = data.unReadedNotifications || 0;
             state.pagination = {
-                totalPages: action.payload.totalPages || 1,
-                totalNotifications: action.payload.totalNotifications || 0,
-                pageNotifications: action.payload.pageNotifications || 0,
-                isFirst: action.payload.isFirst || false,
-                isLast: action.payload.isLast || false,
-                hasNext: action.payload.hasNext || false,
-                hasPrevious: action.payload.hasPrevious || false,
+                totalPages: data.totalPages || 1,
+                totalNotifications: data.totalNotifications || 0,
+                pageNotifications: data.pageNotifications || 0,
+                isFirst: data.isFirst || false,
+                isLast: data.isLast || false,
+                hasNext: data.hasNext || false,
+                hasPrevious: data.hasPrevious || false,
             };
         })
         builder.addCase(getNotification.rejected, (state, action) => {
@@ -94,6 +100,6 @@ export const notificationSlice = createSlice({
 });
 
 
-export const { setNotification, setRefresh } = notificationSlice.actions;
+export const { setRefresh } = notificationSlice.actions;
 
 export default notificationSlice.reducer;
