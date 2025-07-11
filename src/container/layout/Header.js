@@ -12,12 +12,10 @@ import LogoutModal from '../../component/LogoutModal';
 
 const Header = ({ children }) => {
     const dispatch = useDispatch();
-    const navigate = useNavigate()
-    const { user } = useSelector((state) => state.user)
-    const { notificationData } = useSelector((state) => state.notification)
-    // console.log('user============',user);
-
-    const notificationCount = notificationData?.data?.unReadedNotifications || 0
+    const navigate = useNavigate();
+    const { user } = useSelector((state) => state.user);
+    const { unReadedNotifications } = useSelector((state) => state.notification);
+  
 
     useEffect(() => {
         dispatch(getNotification())
@@ -73,7 +71,7 @@ const Header = ({ children }) => {
 
                 <div className={layoutStyles.menuStyle}>
                     <div onClick={() => navigate('/notification/Notifications')} style={{ position: 'relative' }}>
-                        {notificationCount > 0 &&
+                        {unReadedNotifications && unReadedNotifications > 0 &&
                             <div style={{
                                 position: 'absolute',
                                 top: -9,
@@ -92,7 +90,7 @@ const Header = ({ children }) => {
                                 width: "fitContent",
                                 padding:2
                             }}
-                            >{getDisplayCount(notificationCount)}
+                            >{getDisplayCount(unReadedNotifications)}
                             </div>
                         }
                         <Notification outline='#858D9D' color='#858D9D' />

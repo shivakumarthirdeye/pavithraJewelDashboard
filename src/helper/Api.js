@@ -54,27 +54,27 @@ class Api {
     getProfile = (data, config) => {
         return this.init().get("/admin/getadminprofile", data)
     }
-    adminLogin = (data) =>{
-        return this.init().post("/admin/login",data)
+    adminLogin = (data) => {
+        return this.init().post("/admin/login", data)
     }
-    forgotPassword = (data) =>{
-        return this.init().post("/admin/forgetPassword",data)
+    forgotPassword = (data) => {
+        return this.init().post("/admin/forgetPassword", data)
     }
-    verifyOtp = (data) =>{
-        return this.init().post("/admin/auth/verify-otp",data)
+    verifyOtp = (data) => {
+        return this.init().post("/admin/auth/verify-otp", data)
     }
-    resetPassword = (data) =>{
-        return this.init().put("/admin/resetPassword",data)
+    resetPassword = (data) => {
+        return this.init().put("/admin/resetPassword", data)
     }
-    
+
     updateProfile = (data) => {
-        return this.init().put(`/admin/update-bio`,data)
+        return this.init().put(`/admin/update-bio`, data)
     }
     updateConfirmProfile = (data) => {
-        return this.init().put(`/admin/confirm/edit-bio`,data)
+        return this.init().put(`/admin/confirm/edit-bio`, data)
     }
     updatePassword = (data) => {
-        return this.init().put(`/admin/update-password`,data)
+        return this.init().put(`/admin/update-password`, data)
     }
     fileUpload = (data, config) => {
         return this.init('multipart/form-data').post("/admin/upload-file", data)
@@ -102,7 +102,7 @@ class Api {
     deleteCategories = (data) => {
         return this.init().delete(`/admin/category/${data}`, data)
     }
-    
+
     //Subcategories
 
     addSubCategories = (data) => {
@@ -126,7 +126,7 @@ class Api {
 
     //Dasboards Api 
     updateGoldRate = (data) => {
-        return this.init().post('/admin/goldrate',data)
+        return this.init().post('/admin/goldrate', data)
     }
     getGoldRate = (data) => {
         return this.init().get('/admin/goldrate', data)
@@ -157,8 +157,11 @@ class Api {
     deleteProduct = (data) => {
         return this.init().delete(`/admin/product/${data}`, data)
     }
-    
-    
+    deleteImage = (data) => {
+        return this.init().delete(`/admin/delete-image`, { data });
+    }
+
+
     // Order
     orderStatistics = () => {
         return this.init().get(`/admin/getOrderStatistics`,)
@@ -175,34 +178,34 @@ class Api {
     getOrdersDetails = (data) => {
         return this.init().get(`/admin/orders/${data}`, data)
     }
-    deleteOrders = (data) => {        
+    deleteOrders = (data) => {
         return this.init().put(`/admin/trashorder/${data.value}`, data)
     }
-    revertOrders = (data) => {        
+    revertOrders = (data) => {
         return this.init().put(`/admin/revert-deleted-order/${data}`, data)
     }
     getCustomerReviews = (data) => {
         // console.log('data=============================',data);
-        
+
         return this.init().get(`/admin/reviews/${data}`, data)
     }
-    editPendingPrice = ({url,val}) => {
+    editPendingPrice = ({ url, val }) => {
         return this.init().put(`/admin/updatePendingOrder/${url}`, val)
-    } 
-    editPendingPriceMultiProduct = ({url,productId,val}) => {
+    }
+    editPendingPriceMultiProduct = ({ url, productId, val }) => {
         return this.init().put(`/admin/order/update-multi-product/${url}/${productId}`, val)
-    } 
-    editReviews = ({url,val}) => {
+    }
+    editReviews = ({ url, val }) => {
         return this.init().put(`/admin/reviews/${url}`, val)
     }
     approveReject = (url) => {
-        return this.init().put(`/admin/rejectorapprove/${url?.val}`, url?.url);  
-    } 
+        return this.init().put(`/admin/rejectorapprove/${url?.val}`, url?.url);
+    }
     updateStatus = (data) => {
-        console.log('url',data);
-        
-        return this.init().put(`/admin/updateOrderstatus/${data?.id}`, {...data?.val, orderType: data?.orderType});  
-    } 
+        console.log('url', data);
+
+        return this.init().put(`/admin/updateOrderstatus/${data?.id}`, { ...data?.val, orderType: data?.orderType });
+    }
 
     // Customer 
     getAllCustomers = (data) => {
@@ -217,7 +220,7 @@ class Api {
     deleteCustomers = (data) => {
         return this.init().delete(`/admin/customer/${data}`, data)
     }
-    deleteCustomersOrders = (data) => {        
+    deleteCustomersOrders = (data) => {
         return this.init().put(`/admin/trashCustomerOrder/${data.value}`, data)
     }
     // Coupons 
@@ -322,8 +325,8 @@ class Api {
     }
 
     //getNotification
-    getNotification = (data) => {
-        return this.init().get(`/admin/getAllNotifications?${data}`)
+    getNotification = (config) => {
+        return this.init().get('/admin/getAllNotifications', config);
     }
     markAsRead = (data) => {
         return this.init().put(`/admin/readedNotification/${data}`)
@@ -334,7 +337,7 @@ class Api {
         return this.init().get('/admin/getTermsAndCondition')
     }
     addTermsCondition = (data) => {
-        return this.init().post('/admin/addTermsAndCondition',data)
+        return this.init().post('/admin/addTermsAndCondition', data)
     }
 
 }

@@ -14,9 +14,8 @@ const Sidebar = ({ children }) => {
     const [subpath, setSubpath] = useState('');
     const pathname = location.pathname.split('/')[1];
     const subpathname = location.pathname.split('/')[2];
-    const { notificationData } = useSelector((state) => state.notification)
+    const { unReadedNotifications } = useSelector((state) => state.notification);
 
-    const notificationCount = notificationData?.data?.unReadedNotifications || 0
 
     useEffect(() => {
         dispatch(getNotification())
@@ -298,7 +297,7 @@ const Sidebar = ({ children }) => {
                         {path === 'notification' ?
                             (
                                 <div style={{ width: 30, marginTop: 5, position: 'relative' }}>
-                                    {notificationCount > 0 &&
+                                    {unReadedNotifications && unReadedNotifications > 0 &&
                                         <div style={{
                                             position: 'absolute',
                                             top: -5,
@@ -316,7 +315,7 @@ const Sidebar = ({ children }) => {
                                             alignItems: 'center',
                                             padding:2
                                         }}
-                                        >{getDisplayCount(notificationCount)}
+                                        >{getDisplayCount(unReadedNotifications)}
                                         </div>
                                     }
                                     <Notification color='#fff' outline='#fff' />
@@ -324,7 +323,7 @@ const Sidebar = ({ children }) => {
                             )
                             :
                             <div style={{ width: 30, marginTop: 5, position: 'relative' }}>
-                                {notificationCount > 0 &&
+                                {unReadedNotifications && unReadedNotifications > 0 &&
                                     <div style={{
                                         position: 'absolute',
                                         top: -5,
@@ -342,7 +341,7 @@ const Sidebar = ({ children }) => {
                                         alignItems: 'center',
                                         padding:2
                                     }}
-                                    >{getDisplayCount(notificationCount)}
+                                    >{getDisplayCount(unReadedNotifications)}
                                     </div>
                                 }
                                 <Notification outline='#858D9D' color='#858D9D' />
