@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import catStyle from "../category/category.module.css";
 import notificationStyle from "./notification.module.css";
-import { format, isToday, isYesterday, formatDistanceToNow } from "date-fns";
 import { useDispatch, useSelector } from "react-redux";
 import { getNotification, markAsRead } from "../../redux/notificationSlice";
 import CustomSeparator from "../../component/CustomizedBreadcrumb";
@@ -10,74 +9,48 @@ import { useNavigate } from "react-router-dom";
 
 
 const Notifications = () => {
-    
-    const dispatch = useDispatch()
+
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const user = useSelector((state) => state.user);
-    const { incomingNotification } = useSelector((state) => state.notification);
-
-    const [viewAll, setViewAll] = useState(false);
+    const { incomingNotification, pagination, isLoading } = useSelector((state) => state.notification);
 
     const [page, setPage] = useState(1);
-    const [limit, setLimit] = useState(5);
+    const limit = 5;
     const [sortBy, setSortBy] = useState("createdAt");
-    const [order, setOrder] = useState("asc");
-
-    const [loading, setLoading] = useState(false); // Prevent multiple calls
-    const observer = useRef();
-
-    // Infinite Scroll Observer
-    const lastNotificationRef = useCallback(
-        (node) => {
-            if (loading || viewAll) return; // Stop observing if View All is active
-            if (observer.current) observer.current.disconnect();
-
-            observer.current = new IntersectionObserver((entries) => {
-                if (entries[0].isIntersecting) {
-                    setLoading(true);
-                    setPage((prevPage) => prevPage + 1);
-                }
-            });
-
-            if (node) observer.current.observe(node);
-        },
-        [loading, viewAll]
-    );
+    const [order, setOrder] = useState("desc");
 
     useEffect(() => {
-        const timer = setTimeout(() => {
-            dispatch(getNotification({ page, limit, sortBy, order }));
-        }, 500);
-        return () => clearTimeout(timer);
-    }, [dispatch, page, limit, sortBy, order]);
+        dispatch(getNotification({ page, limit, sortBy, order }));
+    }, [dispatch, page, sortBy, order]);
 
-    const formattedDate = (date = new Date()) => {
-        const dateFromMongoDB = new Date(date);
+    // reset to page one when sorting or order changes
+    useEffect(() => {
+        setPage(1);
+    }, [sortBy, order]);
 
-        if (isToday(dateFromMongoDB)) {
-            return `Today, ${format(dateFromMongoDB, "hh:mm a")}`;
-        } else if (isYesterday(dateFromMongoDB)) {
-            return `Yesterday, ${format(dateFromMongoDB, "hh:mm a")}`;
-        } else {
-            const differenceInDays = Math.floor(
-                (new Date() - dateFromMongoDB) / (1000 * 60 * 60 * 24)
-            );
-            if (differenceInDays < 7) {
-                return `${formatDistanceToNow(dateFromMongoDB)} ago`;
-            } else {
-                const formattedDate = format(dateFromMongoDB, "dd MMM yyyy");
-                const formattedTime = format(dateFromMongoDB, "hh:mm a");
-                return `${formattedDate}, ${formattedTime}`;
-            }
+    const formatDate = (dateString) => {
+        if (!dateString) return "Invalid Date";
+
+        const date = new Date(dateString);
+        if (isNaN(date)) return "Invalid Date";
+
+        return date.toLocaleString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: true
+        });
+    };
+
+    const handleViewMore = () => {
+        if (pagination?.hasNext) {
+            setPage(prevPage => prevPage + 1);
         }
     };
 
-    const handleViewAll = () => {
-        setViewAll(true);
-        setLimit(999);
-        setPage(1);
-    };
 
     const handleReadNotification = async (id) => {
         // Dispatch action to mark as read
@@ -91,7 +64,7 @@ const Notifications = () => {
         if (notification.title === "New user registered") {
             return `/customer/Customers/CustomersDetails/${id}`;
         }
-        if (notification.title === "Order created" || "Pending Amount paid") {
+        if (notification.title === "Order created" || notification.title === "Pending Amount paid") {
             if (notification?.isMutlipleOrder === false) {
                 return `/orders/Orders/OrderDetails/${notification?.orderId}`;
             } else if (notification?.isMutlipleOrder === true) {
@@ -101,9 +74,9 @@ const Notifications = () => {
         return null;
     };
 
-    const toggleOrder = () => {
-        setOrder(prev => (prev === "asc" ? "desc" : "asc"));
-    };
+    // const toggleOrder = () => {
+    //     setOrder(prev => (prev === "asc" ? "desc" : "asc"));
+    // };
 
 
     return (
@@ -130,9 +103,8 @@ const Notifications = () => {
                     <div className={notificationStyle.notificationList}>
                         {incomingNotification && incomingNotification?.map((notification, index) => (
                             <div
-                                key={notification._id} // Unique key for each notification
+                                key={notification._id} 
                                 className={notificationStyle.notificationItem}
-                                ref={index === incomingNotification.length - 1 ? lastNotificationRef : null}
                             >
                                 {notification?.isRead === false && (
                                     <div className={notificationStyle.icon}>
@@ -161,15 +133,17 @@ const Notifications = () => {
                                     </div>
                                     <span className={notificationStyle.notificationTimestamp} style={{ paddingBottom: 20 }}
                                     >
-                                        {formattedDate(notification.createdAt)}
+                                        {formatDate(notification.createdAt)}
                                     </span>
                                 </div>
                             </div>
                         ))}
                     </div>
-                    <div className={notificationStyle.viewAllStyle} onClick={handleViewAll}>
-                        <span> View All</span>
-                    </div>
+                    {pagination?.hasNext &&  (
+                        <div className={notificationStyle.viewAllStyle} onClick={handleViewMore}>
+                            <span>{isLoading ? 'Loading...' : 'View More'}</span>
+                        </div>
+                    )}
                 </div>
             </div>
 

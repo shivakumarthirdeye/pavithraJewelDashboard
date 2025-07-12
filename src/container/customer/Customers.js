@@ -22,7 +22,7 @@ export const Customers = () => {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
     const [datas, setData] = useState([]);
 
-    const { customerData, filterOptions, isLoading, isRefresh,exportCustomersData } = useSelector(
+    const { customerData, filterOptions, isLoading, isRefresh, exportCustomersData } = useSelector(
         (state) => state.customers
     );
     console.log('customerData==========', customerData);
@@ -51,9 +51,15 @@ export const Customers = () => {
 
 
     const handleOpenMenu = (e) => {
-        setOrder((prevOrder) => (prevOrder === 'asc' ? 'desc' : 'asc'));
-        dispatch(setFilterValues({ sortBy: e.target.value, order, page: 1 }))
+        const newOrder = order === 'asc' ? 'desc' : 'asc';
+        setOrder(newOrder);
+        dispatch(setFilterValues({
+            sortBy: e.target.value,
+            order: newOrder,
+            page: 1
+        }));
     };
+
     useEffect(() => {
         const getAllCustomer = async () => {
             try {
@@ -84,7 +90,7 @@ export const Customers = () => {
 
         const result = await dispatch(getExportsCustomers()).unwrap()
 
-        console.log('result.data?.users',result)
+        console.log('result.data?.users', result)
 
         const excelData = result?.map((item) => ({
             Customers_Name: `${item?.firstName} ${item?.lastName}` || '_',
@@ -98,7 +104,7 @@ export const Customers = () => {
         XLSX.utils.book_append_sheet(workbook, worksheet, 'Customers');
         XLSX.writeFile(workbook, 'customers.xlsx');
     };
-    
+
     return (
         <div style={{ padding: 20, marginTop: 60 }} >
             <div className={productStyle.container}>
@@ -127,138 +133,138 @@ export const Customers = () => {
                 />
             </div>
             <div className={productStyle.productStockContainer} style={{ marginTop: 10 }}>
-            <div className={productStyle.scrollContainer} >
-                <div className={productStyle.header} style={{ paddingLeft: 20 }}>
-                    <div className={customerStyle.customerStyle}> Customer </div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "firstName" } })}>
-                        <Drop color="#858D9D" /> </div>
-                    <div className={customerStyle.numberStyle}>Phone number</div>
-                    <div className={customerStyle.emailStyle}>Email</div>
-                    <div className={customerStyle.statusStyle}>Status</div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "status" } })}> <Drop color="#858D9D" /> </div>
-                    <div className={customerStyle.dateStyle}>Register Date</div>
-                    <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "createdAt" } })}> <Drop color="#858D9D" /> </div>
-                    <div className={customerStyle.actionStyle}>Action</div>
-                </div>
-                {isLoading ? (
-                    <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
-                        <CircularProgress />
-                    </Box>
-                ) : (
-                    <>
-                        {customerData?.data?.length > 0 ? (
-                            <>
-                                <div>
-                                    {customerData?.data?.map((item, index) => {
-                                        return (
-                                            <div className={productStyle.info} key={index} style={{ paddingLeft: 20 }}>
-                                                <div className={customerStyle.customerStyle}>
-                                                    {item?.profileImg?.length > 0 ? (
-                                                        <img src={item.profileImg} alt='Avatar' style={{ width: 40, height: 40, borderRadius: 20,objectFit:'cover' }} />
-                                                    ) :
-                                                        <div className={customerStyle.profileStyle}>
-                                                            {item?.firstName?.charAt(0).toUpperCase()}
+                <div className={productStyle.scrollContainer} >
+                    <div className={productStyle.header} style={{ paddingLeft: 20 }}>
+                        <div className={customerStyle.customerStyle}> Customer </div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "firstName" } })}>
+                            <Drop color="#858D9D" /> </div>
+                        <div className={customerStyle.numberStyle}>Phone number</div>
+                        <div className={customerStyle.emailStyle}>Email</div>
+                        <div className={customerStyle.statusStyle}>Status</div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "status" } })}> <Drop color="#858D9D" /> </div>
+                        <div className={customerStyle.dateStyle}>Register Date</div>
+                        <div className={productStyle.dropdownStyle} onClick={(e) => handleOpenMenu({ target: { value: "createdAt" } })}> <Drop color="#858D9D" /> </div>
+                        <div className={customerStyle.actionStyle}>Action</div>
+                    </div>
+                    {isLoading ? (
+                        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', margin: 20 }}>
+                            <CircularProgress />
+                        </Box>
+                    ) : (
+                        <>
+                            {customerData?.data?.length > 0 ? (
+                                <>
+                                    <div>
+                                        {customerData?.data?.map((item, index) => {
+                                            return (
+                                                <div className={productStyle.info} key={index} style={{ paddingLeft: 20 }}>
+                                                    <div className={customerStyle.customerStyle}>
+                                                        {item?.profileImg?.length > 0 ? (
+                                                            <img src={item.profileImg} alt='Avatar' style={{ width: 40, height: 40, borderRadius: 20, objectFit: 'cover' }} />
+                                                        ) :
+                                                            <div className={customerStyle.profileStyle}>
+                                                                {item?.firstName?.charAt(0).toUpperCase()}
+                                                            </div>
+                                                        }
+                                                        <div>
+                                                            <span style={{ marginLeft: 5, color: '#1D1F2C' }}>{item?.firstName}{" "}{item?.lastName}</span>
                                                         </div>
-                                                    }
-                                                    <div>
-                                                        <span style={{ marginLeft: 5, color: '#1D1F2C' }}>{item?.firstName}{" "}{item?.lastName}</span>
                                                     </div>
-                                                </div>
-                                                <div className={productStyle.dropdownStyle} />
-                                                <div className={customerStyle.numberStyle}>
-                                                    {item?.phone}
-                                                </div>
+                                                    <div className={productStyle.dropdownStyle} />
+                                                    <div className={customerStyle.numberStyle}>
+                                                        {item?.phone}
+                                                    </div>
 
-                                                <div className={customerStyle.emailStyle}>
-                                                    {item?.email}
-                                                </div>
-                                                <div
-                                                    style={{
-                                                        backgroundColor: item?.status === 'ACTIVE' ? "#E9FAF7" : '#F439391A',
-                                                        width: '10%',
-                                                        borderRadius: 10,
-                                                        height: 30,
-                                                        alignContent: 'center',
-                                                        justifyContent: 'center',
-                                                        display: 'flex',
-                                                        alignItems: 'center',
-                                                        // marginLeft: 20,
-                                                        alignSelf: 'center'
-                                                    }}
-                                                >
-                                                    <span
-                                                        style={{
-                                                            fontFamily: 'DM Sans',
-                                                            fontSize: 14,
-                                                            fontWeight: '600',
-                                                            letterSpacing: 0.5,
-                                                            textAlign: 'center',
-                                                            color: item?.status === "ACTIVE" ? "#1DB41D" : '#F92929',
-                                                        }}
-                                                    >{item?.status === "ACTIVE" ? 'Active' : 'Inactive'}</span>
-                                                </div>
-                                                <div className={productStyle.dropdownStyle} />
-                                                <div className={customerStyle.dateStyle} style={{ color: '#667085' }}>
-                                                    {formatDate(item?.createdAt)}
-                                                </div>
-                                                <div className={productStyle.dropdownStyle} />
-                                                <div className={customerStyle.actionStyle}>
+                                                    <div className={customerStyle.emailStyle}>
+                                                        {item?.email}
+                                                    </div>
                                                     <div
-                                                        onClick={() => navigate(`/customer/Customers/CustomersDetails/${item?._id}`)}
+                                                        style={{
+                                                            backgroundColor: item?.status === 'ACTIVE' ? "#E9FAF7" : '#F439391A',
+                                                            width: '10%',
+                                                            borderRadius: 10,
+                                                            height: 30,
+                                                            alignContent: 'center',
+                                                            justifyContent: 'center',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            // marginLeft: 20,
+                                                            alignSelf: 'center'
+                                                        }}
                                                     >
-                                                        <ViewIcon />
+                                                        <span
+                                                            style={{
+                                                                fontFamily: 'DM Sans',
+                                                                fontSize: 14,
+                                                                fontWeight: '600',
+                                                                letterSpacing: 0.5,
+                                                                textAlign: 'center',
+                                                                color: item?.status === "ACTIVE" ? "#1DB41D" : '#F92929',
+                                                            }}
+                                                        >{item?.status === "ACTIVE" ? 'Active' : 'Inactive'}</span>
                                                     </div>
-                                                    <div style={{ marginLeft: 12 }} onClick={() => openDeleteModal(item?._id)}>
-                                                        <DeleteIcon />
+                                                    <div className={productStyle.dropdownStyle} />
+                                                    <div className={customerStyle.dateStyle} style={{ color: '#667085' }}>
+                                                        {formatDate(item?.createdAt)}
+                                                    </div>
+                                                    <div className={productStyle.dropdownStyle} />
+                                                    <div className={customerStyle.actionStyle}>
+                                                        <div
+                                                            onClick={() => navigate(`/customer/Customers/CustomersDetails/${item?._id}`)}
+                                                        >
+                                                            <ViewIcon />
+                                                        </div>
+                                                        <div style={{ marginLeft: 12 }} onClick={() => openDeleteModal(item?._id)}>
+                                                            <DeleteIcon />
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        )
-                                    })}
+                                            )
+                                        })}
 
-                                    <div
-                                        className={catStyle.entryView}
-                                        style={{ padding: 20 }}
-                                    >
-                                        <div className={catStyle.showingText}>
-                                            Showing {start}-{end} from {customerData?.totalItems}{" "}
+                                        <div
+                                            className={catStyle.entryView}
+                                            style={{ padding: 20 }}
+                                        >
+                                            <div className={catStyle.showingText}>
+                                                Showing {start}-{end} from {customerData?.totalItems}{" "}
+                                            </div>
+                                            <Pagination
+                                                count={customerData?.totalPages}
+                                                page={filterOptions?.page}
+                                                onChange={handlePageChange}
+                                                shape="rounded"
+                                                siblingCount={1} // Show one sibling page (previous and next)
+                                                boundaryCount={0} // Do not show first and last buttons
+                                                sx={{
+                                                    "& .MuiPaginationItem-root": {
+                                                        margin: "0 4px",
+                                                        //   color: "#512DA8",
+                                                        border: "1px solid #E0E2E7",
+                                                        borderRadius: "6px",
+                                                        fontSize: "14px",
+                                                        fontFamily: `'Public Sans', sans-serif`,
+                                                    },
+                                                    "& .Mui-selected": {
+                                                        color: "#fff",
+                                                        backgroundColor: "#E87819  !important", // custom color for selected page
+                                                    },
+                                                    "& .MuiPaginationItem-root:hover": {
+                                                        color: "#fff",
+                                                        backgroundColor: "#E87819", // custom hover color
+                                                    },
+                                                }}
+                                            />
                                         </div>
-                                        <Pagination
-                                            count={customerData?.totalPages}
-                                            page={filterOptions?.page}
-                                            onChange={handlePageChange}
-                                            shape="rounded"
-                                            siblingCount={1} // Show one sibling page (previous and next)
-                                            boundaryCount={0} // Do not show first and last buttons
-                                            sx={{
-                                                "& .MuiPaginationItem-root": {
-                                                    margin: "0 4px",
-                                                    //   color: "#512DA8",
-                                                    border: "1px solid #E0E2E7",
-                                                    borderRadius: "6px",
-                                                    fontSize: "14px",
-                                                    fontFamily: `'Public Sans', sans-serif`,
-                                                },
-                                                "& .Mui-selected": {
-                                                    color: "#fff",
-                                                    backgroundColor: "#E87819  !important", // custom color for selected page
-                                                },
-                                                "& .MuiPaginationItem-root:hover": {
-                                                    color: "#fff",
-                                                    backgroundColor: "#E87819", // custom hover color
-                                                },
-                                            }}
-                                        />
                                     </div>
-                                </div>
-                            </>
-                        ) : (
-                            <>
-                                <ErrorPage />
-                            </>
-                        )}
-                    </>
-                )}
+                                </>
+                            ) : (
+                                <>
+                                    <ErrorPage />
+                                </>
+                            )}
+                        </>
+                    )}
                 </div>
             </div>
             <DeleteModal
