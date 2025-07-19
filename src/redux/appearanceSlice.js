@@ -16,8 +16,8 @@ const initialState = {
     addAboutUsData: {},
     brandSliderData: {},
     addBrandSliderData: {},
-    featurerdProductsData: {},
-    addFeaturerdProductsData: {},
+    // featurerdProductsData: [], 
+    featurerdProductsData: { success: false, data: [] },
     offerBannerData: {},
     addOfferBannerData: {},
     testimonialsData: {},
@@ -190,33 +190,32 @@ export const getFeaturerdProducts = createAsyncThunk('getFeaturerdProducts', asy
     try {
         const { data, status } = await api.getFeaturerdProducts(body);
         if (status === 200) {
-            //get categories data
-            dispatch(setFeaturerdProducts(data))
+            dispatch(setFeaturerdProducts(data?.data));
         }
-        return data
+        return data;
     } catch (err) {
-        // Toastify.error(err.response.data.message)
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
+        return rejectWithValue(err.response?.data?.message || "Something went wrong. Please try again later.");
     }
-}
-)
-export const addFeaturerdProducts = createAsyncThunk('addFeaturerdProducts', async (body, { rejectWithValue, dispatch }) => {
-    try {
-        const { data, status } = await api.addFeaturerdProducts(body);
-        if (status === 201) {
-            // render otp screen
-            dispatch(setAddFeaturerdProducts(body));
-            Toastify.success("Featurerd Products added successfully");
-            dispatch(setRefresh());
+})
+export const addFeaturerdProducts = createAsyncThunk(
+    'addFeaturerdProducts', 
+    async (body, { rejectWithValue, dispatch }) => {
+        try {
+            const { data, status } = await api.addFeaturerdProducts({
+                products: body.products
+            });
+            
+            if (status === 201) {
+                Toastify.success("Featured products updated.");
+                dispatch(getFeaturerdProducts());
+            }
+            return data;
+        } catch (err) {
+            Toastify.error("Error adding featured products!.");
+            return rejectWithValue(err.response?.data?.message || "Error");
         }
-        return data.data
-
-    } catch (err) {
-        Toastify.error(err.response.data.message);
-        return rejectWithValue(err.response.data.message || "'Something went wrong. Please try again later.'")
     }
-}
-)
+);
 export const getOfferbanner = createAsyncThunk('getOfferbanner', async (body, { rejectWithValue, dispatch }) => {
     try {
         const { data, status } = await api.getOfferbanner(body);
@@ -382,10 +381,7 @@ export const appearanceSlice = createSlice({
             state.addBrandSliderData = action.payload
         },
         setFeaturerdProducts: (state, action) => {
-            state.featurerdProductsData = action.payload
-        },
-        setAddFeaturerdProducts: (state, action) => {
-            state.addFeaturerdProductsData = action.payload
+            state.featurerdProductsData = action.payload;
         },
         setOfferbanner: (state, action) => {
             state.offerBannerData = action.payload
@@ -490,9 +486,22 @@ export const appearanceSlice = createSlice({
         })
         builder.addCase(getFeaturerdProducts.fulfilled, (state, action) => {
             state.isLoading = false
-            state.featurerdProductsData = action.payload
+            state.featurerdProductsData = action.payload;
         })
         builder.addCase(getFeaturerdProducts.rejected, (state, action) => {
+            state.isLoading = false
+            state.errorMsg = action.payload
+        })
+         // add featured products
+        builder.addCase(addFeaturerdProducts.pending, (state) => {
+            state.isLoading = true
+            state.isError = false
+        })
+        builder.addCase(addFeaturerdProducts.fulfilled, (state, action) => {
+            state.isLoading = false
+            state.isError = false
+        })
+        builder.addCase(addFeaturerdProducts.rejected, (state, action) => {
             state.isLoading = false
             state.errorMsg = action.payload
         })
@@ -568,7 +577,6 @@ export const {
     setBrandSlider,
     setAddBrandSlider,
     setFeaturerdProducts,
-    setAddFeaturerdProducts,
     setAddOfferbanner,
     setOfferbanner,
     setAddTestimonials,
