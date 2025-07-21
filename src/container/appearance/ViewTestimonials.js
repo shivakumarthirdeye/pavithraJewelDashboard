@@ -63,19 +63,18 @@ export default function ViewTestimonials() {
                 <div style={{ margin: "0px 20px 20px 19px" }}>
                     <label className={productStyle.label}>Photos</label>
                     <br />
-                    <div className={productStyle.imageUpload1}>
-                        <div className={productStyle.imageView}>
+                    <div className={productStyle.imageUpload1test}>
+                        <div className={productStyle.imageViewtest}>
 
                             {viewTestimonials?.image?.length > 0 ? (
                                 <>
-                                    <div className={productStyle.imageContainer}>
+                                    <div className={productStyle.imageContainertest}>
                                         {viewTestimonials?.image?.map((img, imgIndex) => (
-                                            <div key={imgIndex} className={productStyle.imageWrapper}>
+                                            <div key={imgIndex} className={productStyle.imageWrappertest}>
 
-                                                <img src={img} alt="Uploaded" className={productStyle.inventoryImage} />
+                                                <img src={img} alt="Uploaded" className={productStyle.inventoryImagetest} />
                                             </div>
                                         ))}
-
                                     </div>
                                 </>
                             ) : (
